@@ -7,11 +7,13 @@ import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import com.mulodo.test.constraints.Constraints;
 import com.mulodo.test.exception.DAOException;
 import com.mulodo.test.model.Person;
 
@@ -66,10 +68,25 @@ public class PersonDAOImpl implements PersonDAO {
     }
  
     @SuppressWarnings("unchecked")
-    public List<Person> listPersons() throws DAOException {
+    public List<Person> listPersons(int id, String name, String country, int pageNum) throws DAOException {
         try{
 	        session = this.sessionFactory.openSession();
-	        List<Person> personsList = session.createQuery("from Person").list();
+	        Criteria criteria = session.createCriteria(Person.class);
+	        if(id != 0){
+	        	criteria.add(Restrictions.eq("id",id));
+	        }
+	        if(name != null){
+	        	criteria.add(Restrictions.eq("name",name));
+	        }
+	        if(country != null){
+	        	criteria.add(Restrictions.eq("country",country));
+	        }
+	        
+	        criteria.setFirstResult((pageNum - 1)* Constraints.LIMIT_ROW);
+	        criteria.setMaxResults(Constraints.LIMIT_ROW);
+	        
+	        
+	        List<Person> personsList = criteria.list();
 	        for(Person p : personsList){
 	            logger.info("Person List::"+p);
 	        }
@@ -86,7 +103,7 @@ public class PersonDAOImpl implements PersonDAO {
     public Person getPersonById(int id) throws DAOException {  
         try{
 	        session = this.sessionFactory.openSession();
-	        Person p = (Person) session.load(Person.class, new Integer(id));
+	        Person p = (Person) session.get(Person.class, new Integer(id));
 	        logger.info("Person loaded successfully, Person details="+p);
 	        return p;
     	}catch(ObjectNotFoundException ex){
@@ -146,5 +163,33 @@ public class PersonDAOImpl implements PersonDAO {
     		session.close();
     	}
     }
+
+
+	@Override
+	public int totalPersons(int id, String name, String country)
+			throws DAOException {
+		try{
+	        session = this.sessionFactory.openSession();
+	        Criteria criteria = session.createCriteria(Person.class);
+	        if(id != 0){
+	        	criteria.add(Restrictions.eq("id",id));
+	        }
+	        if(name != null){
+	        	criteria.add(Restrictions.eq("name",name));
+	        }
+	        if(country != null){
+	        	criteria.add(Restrictions.eq("country",country));
+	        }
+	        	        
+	        int total = ((Number)criteria.setProjection(Projections.rowCount()).uniqueResult()).intValue();
+	        logger.info("Total person search by type:"+ total);
+	        return total;
+    	}catch(Exception ex){
+    		ex.printStackTrace();
+    		throw new DAOException(ex.getMessage());
+    	}finally {
+    		   session.close();
+    	}
+	}
 	
 }

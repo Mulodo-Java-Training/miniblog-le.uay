@@ -28,8 +28,8 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	@Transactional
-	public List<Person> listPersons() throws DAOException {
-		return personDAO.listPersons();
+	public List<Person> listPersons(int id, String name, String country, int page) throws DAOException {
+		return personDAO.listPersons(id, name, country, page);
 	}
 
 	@Transactional
@@ -45,6 +45,12 @@ public class PersonServiceImpl implements PersonService {
 	public void removePerson(int id) throws DAOException {
 		this.personDAO.removePerson(id);
 		
+	}
+
+	@Override
+	public int totalPersons(int id, String name, String country)
+			throws DAOException {
+		return personDAO.totalPersons(id, name, country);
 	}
 	
 }
