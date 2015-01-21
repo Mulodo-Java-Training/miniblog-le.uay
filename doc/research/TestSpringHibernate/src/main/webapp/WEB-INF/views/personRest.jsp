@@ -32,116 +32,13 @@
 			getListPersons(null, null, null, 1);
 			
 
-			function getListPersons(id, name, country, pageNum){
-				$('#id').text(id);
-				$('#name').text(name);
-				$('#country').text(country);
-
-				$('#spinner').fadeIn();
-				$.ajax({
-					type:"GET",
-					url:"person/",
-					data: {id: id, name: name, country: country, pageNum: pageNum}
-				}).done(function(data){
-
-					$('#spinner').fadeOut();
-
-					if(data.message){
-						$('#message').text(data.message);
-						$("tbody").children().remove();
-						$("#infor-data").empty();
-						$("#page-selection").empty();
-					}else{
 						
-						$('#message').text("");
-						console.log("page size = " + data.listPersons[0].name);
-						setDataTable(data.listPersons);
-						setInfoData(data.totalAnimalByType, data.limitPage, data.pageNum, data.pageSize);
-						setPagination(data.pageSize, data.pageNum);
-					}
-				}).fail(function (){
-
-					$('#spinner').fadeOut();
-
-					$('#message').text("Have some error--Please try agian later");
-
-					$("tbody").children().remove();
-					$("#infor-data").empty();
-					$("#page-selection").empty();
-				});			
-			}
-			
-			function addPerson(id, name, country){
-				console.log("name ="+name);
-				console.log("country ="+country);
-				$.ajax({
-					type:"POST",
-					url:"person/add",
-					data:{id: id, name: name, country: country}
-				}).done(function(data){
-					
-					console.log(data);
-					console.log(data.message);
-					if(data.message){
-						$('#message').text(data.message);
-					}else{
-						var id = $('#id').text();
-			        	var name = $('#name').text();
-			        	var country = $('#country').text();
-			        	getListPersons(id, name, country, 1);
-					}        	
-				}).fail(function (){
-					$('#message').text("Have some error AJAX--Please try again later");
-				});
-				
-			}
-			
-			$('#buttonSubmit').click(function(){
+			$('#buttonSubmit').click(function(){				
+				var id = $('#idLable').text();
 				var name = $('#nameInput').val();
 				var country = $('#countryInput').val();
-				addPerson(null,name,country);
+				saveOrUpdate(id,name,country);
 			});
-					
-
-			function setDataTable(listPersons){
-				$("tbody").children().remove();
-				var body = '';
-				for (var i=0, size=listPersons.length; i<size; i++) {
-
-					body += '<tr><td >'
-			  			 + listPersons[i].id					             
-			             + '</td><td>'
-			             + listPersons[i].name
-			             + '</td><td>'
-			             + listPersons[i].country
-			             + '</td><td>'
-			             + '<a href="person/edit/' + listPersons[i].id + '" >Edit</a>'
-			             + '</td><td>'
-			             + '<a href="person/delete/' + listPersons[i].id + '" >Delele</a>'
-			             + '</td></tr>';
-				}
-
-				$('#dataTable').append(body);
-			}	
-			
-
-			function setInfoData(totalAnimal, limitPage, page, totalPage){
-				if(page*limitPage >= totalAnimal){
-					$("#infor-data").text("Current page "+ page + " of " + totalPage + ", from "+ ((page-1)*limitPage+1) +" to " + totalAnimal + " of " + totalAnimal);
-				}else{
-					$("#infor-data").text("Current page "+ page + " of " + totalPage + ", from "+ ((page-1)*limitPage+1) +" to " + page*limitPage + " of " + totalAnimal);	
-				}
-				 
-			}
-			
- 
-			function setPagination(totalPage, page){
-				$('#page-selection').bootpag({
-		            total: totalPage,
-		            page : page,
-		            maxVisible: 5
-		        });
-			}
 			
 
 			$('#page-selection').bootpag().on("page", function(event, num){
@@ -149,6 +46,7 @@
 	        	var name = $('#name').text();
 	        	var country = $('#country').text();
 	        	getListPersons(id, name, country,num);
+	        	$("#pageNum").text(num);
 	        });
 			
 
@@ -161,8 +59,145 @@
 					$('#page-selection').css('text-align','center');
 				}
 			});
-	
+			
+			$(".deletePerson").click(function(e){
+			    e.preventDefault();//this will prevent the link trying to navigate to another page
+			   	console.log('get ok');
+			});
+			
+			$(".editPerson").click(function(e){
+			    e.preventDefault();//this will prevent the link trying to navigate to another page
+			   	console.log('get ok');
+			});
+			
 		});
+		
+		function getListPersons(id, name, country, pageNum){
+			$('#id').text(id);
+			$('#name').text(name);
+			$('#country').text(country);
+
+			$('#spinner').fadeIn();
+			$.ajax({
+				type:"GET",
+				url:"person/",
+				data: {id: id, name: name, country: country, pageNum: pageNum}
+			}).done(function(data){
+
+				$('#spinner').fadeOut();
+
+				if(data.message){
+					$('#message').text(data.message);
+					$("tbody").children().remove();
+					$("#infor-data").empty();
+					$("#page-selection").empty();
+				}else{
+					
+					$('#message').text("");
+					setDataTable(data.listPersons);
+					setInfoData(data.totalAnimalByType, data.limitPage, data.pageNum, data.pageSize);
+					setPagination(data.pageSize, data.pageNum);
+				}
+			}).fail(function (){
+
+				$('#spinner').fadeOut();
+
+				$('#message').text("Have some error--Please try agian later");
+
+				$("tbody").children().remove();
+				$("#infor-data").empty();
+				$("#page-selection").empty();
+			});			
+		}
+		
+		function setDataTable(listPersons){
+			$("tbody").children().remove();
+			var body = '';
+			for (var i=0, size=listPersons.length; i<size; i++) {
+
+				body += '<tr><td >'
+		  			 + listPersons[i].id					             
+		             + '</td><td>'
+		             + listPersons[i].name
+		             + '</td><td>'
+		             + listPersons[i].country
+		             + '</td><td>'
+		             + '<a href="javascript:void(0);" class="editPerson" onclick="return editPerson('+ listPersons[i].id +')">Edit</a>'
+		             + '</td><td>'
+		             + '<a href="javascript:void(0);" class="deletePerson" onclick="return deletePerson('+ listPersons[i].id +')">Delele</a>'
+		             + '</td></tr>';
+			}
+
+			$('#dataTable').append(body);
+		}	
+		
+
+		function setInfoData(totalAnimal, limitPage, page, totalPage){
+			if(page*limitPage >= totalAnimal){
+				$("#infor-data").text("Current page "+ page + " of " + totalPage + ", from "+ ((page-1)*limitPage+1) +" to " + totalAnimal + " of " + totalAnimal);
+			}else{
+				$("#infor-data").text("Current page "+ page + " of " + totalPage + ", from "+ ((page-1)*limitPage+1) +" to " + page*limitPage + " of " + totalAnimal);	
+			}
+			 
+		}
+		
+
+		function setPagination(totalPage, page){
+			$('#page-selection').bootpag({
+	            total: totalPage,
+	            page : page,
+	            maxVisible: 5
+	        });
+		}
+		
+		function saveOrUpdate(id, name, country){
+			console.log("name ="+name);
+			console.log("country ="+country);
+			$.ajax({
+				type:"POST",
+				url:"person/saveOrUpdate",
+				data:{id: id, name: name, country: country}
+			}).done(function(data){
+					var id = $('#id').text();
+		        	var name = $('#name').text();
+		        	var country = $('#country').text();
+		        	getListPersons(id, name, country, 1);
+		        	$('#message').text(data.message); 
+		        	$('#buttonSubmit').val('Edit');
+			}).fail(function (){
+				$('#message').text("Have some error AJAX--Please try again later");
+			});
+			
+		}
+
+		function editPerson(id){
+			$.ajax({
+				url: 'person/edit/'+id,
+				type:'GET'
+			}).done(function(data){
+				$('#idLable').text(data.person.id);
+				$('#nameInput').val(data.person.name);
+				$('#countryInput').val(data.person.country);
+				$('#buttonSubmit').val('Edit');
+			}).fail(function(){
+				$('#message').text("Have some error AJAX--Please try again later");
+			});
+		}
+
+		function deletePerson(id){
+			$.ajax({
+				url: 'person/remove/'+id,
+				type:'DELETE'
+			}).done(function(data){
+				
+				var pageNum = $('#pageNum').text();
+				
+				getListPersons(null, null, null,pageNum);
+				$('#message').text(data.message);
+			}).fail(function(){
+				$('#message').text("Have some error AJAX--Please try again later");
+			});
+		};
 	</script>
 
 
@@ -176,6 +211,14 @@
 			</div>
 		</div>
 		<div class="row" id="menu">
+			<div class="row">
+				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 " id="lable">
+					Id:
+				</div>
+				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 " id="inputType">
+					<p id="idLable"></p>
+				</div>
+			</div>
 			<div class="row">
 				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 " id="lable">
 					Name:
@@ -196,8 +239,11 @@
 			<div id="id" style="display:none;"></div>
 			<div id="name" style="display:none;"></div>
 			<div id="country" style="display:none;"></div>
+			<div id="pageNum" style="display:none;"></div>
 			
 		</div>
+		
+		
 		
 		<div class="row"> <p id="message" style="color: red;text-align:center;"></p> </div>
 		

@@ -17,6 +17,6 @@ public class Constraints {
 	public final static String NAME_ERROR = "Name can't not null or blank";
 	public final static String ADD_SUCCESS = "Add success";
 	public final static String EDIT_SUCCESS = "Edit success";
-	public static final String DELETE_SUCCESS_Ok = "Delete success";
-	public static final String DELETE_SUCCESS = "deleteSuccess";
+	public static final String DELETE_SUCCESS = "Delete success";
+	public static final String NOT_FOUND_PERSON = "Person not found";
 }

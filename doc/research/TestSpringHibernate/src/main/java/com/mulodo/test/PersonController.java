@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder.In;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,18 +77,15 @@ public class PersonController {
 		return result.toString();
 	}
 	
-	@RequestMapping(value = "/person/add", method = RequestMethod.POST, headers="Accept=application/json")
+	@RequestMapping(value = "/person/saveOrUpdate", method = RequestMethod.POST, headers="Accept=application/json")
 	public String addPerson(@RequestParam("id") String idTemp,@RequestParam("name") String name, @RequestParam("country") String country){
 		
 		JSONObject result = new JSONObject();
-		System.out.println("load in to add service success");
-		System.out.println("name = " +name);
-		System.out.println("country = " +country);
 //		if(p.getId() != 0){
 		
-//			System.out.println("id = "+ p.getId());
-//			System.out.println("name = "+ p.getName());
-//			System.out.println("Country = "+ p.getCountry());
+			System.out.println("id C= "+ idTemp);
+			System.out.println("name C= "+ name);
+			System.out.println("Country C= "+ country);
 		if(name == null || name.equals("")){
 			result.put(Constraints.MESSAGE, Constraints.NAME_ERROR);
 			return result.toString();
@@ -100,13 +98,20 @@ public class PersonController {
 		}
 		
 		if(id != 0){
-			Person person = new Person();
-			person.setId(id);
-			person.setName(name);
-			person.setCountry(country);
+			System.out.println("load edit");
+
 			try {
+				Person personTemp = this.personService.getPersonById(id);
+				if(personTemp == null){
+					result.put(Constraints.MESSAGE, Constraints.NOT_FOUND_PERSON);
+					return result.toString();
+				}
+				Person person = new Person();
+				person.setId(id);
+				person.setName(name);
+				person.setCountry(country);
 				this.personService.updatePerson(person);
-				result.put(Constraints.MESSAGE, Constraints.ADD_SUCCESS);
+				result.put(Constraints.MESSAGE, Constraints.EDIT_SUCCESS);
 			} catch (DAOException e) {
 				e.printStackTrace();
 				result.put(Constraints.MESSAGE, Constraints.ERROR);
@@ -117,7 +122,7 @@ public class PersonController {
 				person.setName(name);
 				person.setCountry(country);
 				this.personService.addPerson(person);
-				result.put(Constraints.MESSAGE, Constraints.EDIT_SUCCESS);
+				result.put(Constraints.MESSAGE, Constraints.ADD_SUCCESS);
 			} catch (DAOException e) {			
 				e.printStackTrace();
 				result.put(Constraints.MESSAGE, Constraints.ERROR);
@@ -126,12 +131,19 @@ public class PersonController {
 		return result.toString();
 	}
 	
-	@RequestMapping(value = "/person/remove/{id}", method = RequestMethod.GET, headers="Accept=application/json")
-	public String removePerson(@PathVariable("id") int id){
+	@RequestMapping(value = "/person/remove/{id}", method = RequestMethod.DELETE, headers="Accept=application/json")
+	public String removePerson(@PathVariable("id") String idTemp){
 		JSONObject result = new JSONObject();
 		try {
+			int id = 0;
+			id = Integer.parseInt(idTemp);
+			Person person = this.personService.getPersonById(id);
+			if(person == null){
+				result.put(Constraints.MESSAGE, Constraints.NOT_FOUND_PERSON);
+				return result.toString();
+			}
 			this.personService.removePerson(id);
-			result.put(Constraints.DELETE_SUCCESS, Constraints.DELETE_SUCCESS_Ok);
+			result.put(Constraints.MESSAGE, Constraints.DELETE_SUCCESS);
 		} catch (DAOException e) {
 		
 			e.printStackTrace();
