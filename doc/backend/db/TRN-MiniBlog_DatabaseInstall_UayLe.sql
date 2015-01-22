@@ -8,88 +8,109 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- Schema mydb
 -- -----------------------------------------------------
 -- -----------------------------------------------------
--- Schema MiniBlog
+-- Schema miniblog
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema MiniBlog
+-- Schema miniblog
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `MiniBlog` DEFAULT CHARACTER SET utf8 ;
-USE `MiniBlog` ;
+CREATE SCHEMA IF NOT EXISTS `miniblog` DEFAULT CHARACTER SET utf8 ;
+USE `miniblog` ;
 
 -- -----------------------------------------------------
--- Table `MiniBlog`.`User`
+-- Table `miniblog`.`user`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `MiniBlog`.`User` ;
+DROP TABLE IF EXISTS `miniblog`.`user` ;
 
-CREATE TABLE IF NOT EXISTS `MiniBlog`.`User` (
+CREATE TABLE IF NOT EXISTS `miniblog`.`user` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(30) NOT NULL,
+  `username` VARCHAR(40) NOT NULL,
   `password` VARCHAR(200) NOT NULL,
   `lastname` VARCHAR(45) NOT NULL,
   `firstname` VARCHAR(45) NOT NULL,
   `email` VARCHAR(100) NULL DEFAULT NULL,
-  `create_at` DATETIME NULL DEFAULT NULL,
-  `modified_at` DATETIME NULL DEFAULT NULL,
-  PRIMARY KEY (`id`, `username`, `lastname`, `firstname`))
-ENGINE = MyISAM
+  `create_at` DATETIME NOT NULL,
+  `modified_at` DATETIME NOT NULL,
+  `status` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `MiniBlog`.`Post`
+-- Table `miniblog`.`post`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `MiniBlog`.`Post` ;
+DROP TABLE IF EXISTS `miniblog`.`post` ;
 
-CREATE TABLE IF NOT EXISTS `MiniBlog`.`Post` (
+CREATE TABLE IF NOT EXISTS `miniblog`.`post` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(150) NOT NULL,
-  `content` LONGTEXT NULL DEFAULT NULL,
-  `created_at` DATETIME NULL DEFAULT NULL,
-  `modified_at` DATETIME NULL DEFAULT NULL,
-  `status` VARCHAR(15) NOT NULL,
-  `user_id` INT(11) NOT NULL,
-  PRIMARY KEY (`id`, `title`),
+  `content` LONGTEXT NOT NULL,
+  `created_at` DATETIME NOT NULL,
+  `modified_at` DATETIME NOT NULL,
+  `status` TINYINT(1) NOT NULL,
+  `author_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),
-  INDEX `fk_Post_User1_idx` (`user_id` ASC))
-ENGINE = MyISAM
+  INDEX `fk_Post_User1_idx` (`author_id` ASC),
+  CONSTRAINT `fk_post_user1`
+    FOREIGN KEY (`author_id`)
+    REFERENCES `miniblog`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `MiniBlog`.`Comment`
+-- Table `miniblog`.`comment`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `MiniBlog`.`Comment` ;
+DROP TABLE IF EXISTS `miniblog`.`comment` ;
 
-CREATE TABLE IF NOT EXISTS `MiniBlog`.`Comment` (
+CREATE TABLE IF NOT EXISTS `miniblog`.`comment` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `content` VARCHAR(500) NOT NULL,
   `created_at` DATETIME NOT NULL,
   `modifed_at` DATETIME NOT NULL,
-  `status` VARCHAR(20) NULL DEFAULT NULL,
   `post_id` INT(11) NOT NULL,
   `user_id` INT(11) NOT NULL,
-  PRIMARY KEY (`id`, `post_id`, `user_id`),
+  PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   INDEX `fk_Comment_Post_idx` (`post_id` ASC),
-  INDEX `fk_Comment_User1_idx` (`user_id` ASC))
-ENGINE = MyISAM
+  INDEX `fk_Comment_User1_idx` (`user_id` ASC),
+  CONSTRAINT `fk_comment_user`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `miniblog`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_comment_post1`
+    FOREIGN KEY (`post_id`)
+    REFERENCES `miniblog`.`post` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `MiniBlog`.`Token`
+-- Table `miniblog`.`token`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `MiniBlog`.`Token` ;
+DROP TABLE IF EXISTS `miniblog`.`token` ;
 
-CREATE TABLE IF NOT EXISTS `MiniBlog`.`Token` (
-  `id` VARCHAR(200) NOT NULL,
+CREATE TABLE IF NOT EXISTS `miniblog`.`token` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `access_key` VARCHAR(200) NOT NULL,
   `created_at` DATETIME NOT NULL,
   `expired_at` DATETIME NOT NULL,
   `user_id` INT(11) NOT NULL,
-  PRIMARY KEY (`id`, `user_id`),
-  INDEX `fk_Token_User1_idx` (`user_id` ASC))
-ENGINE = MyISAM
+  PRIMARY KEY (`id`),
+  INDEX `fk_Token_User1_idx` (`user_id` ASC),
+  CONSTRAINT `fk_token_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `miniblog`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
