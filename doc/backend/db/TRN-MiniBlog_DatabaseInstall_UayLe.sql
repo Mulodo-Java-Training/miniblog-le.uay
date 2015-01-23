@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `miniblog`.`user` ;
 CREATE TABLE IF NOT EXISTS `miniblog`.`user` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(40) NOT NULL,
-  `password` VARCHAR(200) NOT NULL,
+  `password` VARCHAR(72) NOT NULL,
   `lastname` VARCHAR(45) NOT NULL,
   `firstname` VARCHAR(45) NOT NULL,
   `email` VARCHAR(100) NULL DEFAULT NULL,
@@ -45,7 +45,7 @@ DROP TABLE IF EXISTS `miniblog`.`post` ;
 CREATE TABLE IF NOT EXISTS `miniblog`.`post` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(150) NOT NULL,
-  `content` LONGTEXT NOT NULL,
+  `content` VARCHAR(3000) NOT NULL,
   `created_at` DATETIME NOT NULL,
   `modified_at` DATETIME NOT NULL,
   `status` TINYINT(1) NOT NULL,
