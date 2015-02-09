@@ -1,0 +1,14 @@
+.DS_Store
+
+# Eclipse and idea
+.settings
+.project
+.classpath
+
+
+# Netbean
+/nbproject/private/
+
+# logs file
+logs/*
+application/logs/mail/*
