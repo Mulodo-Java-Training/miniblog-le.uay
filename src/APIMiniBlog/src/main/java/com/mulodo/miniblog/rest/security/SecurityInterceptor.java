@@ -77,18 +77,18 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 						token.setExpired_at(cal_expired_at.getTime());
 						this.tokenService.update(token);
 						jsonObject = new JSONObject();
-						jsonObject = BuildJSON.build_return(new Meta(Constraints.CODE_1000, Constraints.CODE_1003), null);
+						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_1003), null);
 						requestContext.abortWith(Response.status(200).entity(jsonObject.toString()).header(Constraints.ACCESS_KEY, access_key).build()); 
 						return;
 					}
 				} catch (ServiceException e) {
 					jsonObject = new JSONObject();
-					jsonObject = BuildJSON.build_return(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);			
+					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);			
 					requestContext.abortWith(Response.status(Constraints.CODE_1000).entity(jsonObject.toString()).build());  
 					return;
 				}catch(Exception ex){
 					ex.printStackTrace();
-					jsonObject = BuildJSON.build_return(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
+					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
 					requestContext.abortWith(Response.status(500).entity(jsonObject.toString()).build());
 					return;
 				}
@@ -102,7 +102,7 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 			if(method.isAnnotationPresent(DenyAll.class))
 			{
 				jsonObject = new JSONObject();
-				jsonObject = BuildJSON.build_return(new Meta(Constraints.CODE_1000, Constraints.CODE_1004), null);
+				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_1004), null);
 				requestContext.abortWith(Response.status(403).entity(jsonObject.toString()).build()); 
 				return;
 			}
@@ -120,7 +120,7 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 							if(tokenTemp == null || !tokenTemp.getAccess_key().equals(access_key)
 									|| cal.getTime().compareTo(tokenTemp.getExpired_at()) > 0){
 								jsonObject = new JSONObject();
-								jsonObject = BuildJSON.build_return(new Meta(Constraints.CODE_1000, Constraints.CODE_1002), null);
+								jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_1002), null);
 								requestContext.abortWith(Response.status(401).entity(jsonObject.toString()).build()); 
 								return;
 							}else{
@@ -132,18 +132,18 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 							}
 						} catch (ServiceException e) {
 							jsonObject = new JSONObject();
-							jsonObject = BuildJSON.build_return(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
+							jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
 							requestContext.abortWith(Response.status(500).entity(jsonObject.toString()).build());  
 							return;
 						}catch(Exception ex){
 							jsonObject = new JSONObject();
-							jsonObject = BuildJSON.build_return(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
+							jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
 							requestContext.abortWith(Response.status(500).entity(jsonObject.toString()).build());  
 							return;
 						}
 					}else{
 						jsonObject = new JSONObject();
-						jsonObject = BuildJSON.build_return(new Meta(Constraints.CODE_1000, Constraints.CODE_1002), null);
+						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_1002), null);
 						requestContext.abortWith(Response.status(401).entity(jsonObject.toString()).build()); 
 						return;
 					}
@@ -153,7 +153,7 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 	}
 	
 	private Token isValidToken(String access_key) throws ServiceException{
-			Token token = tokenService.find_by_access_key(access_key);
+			Token token = tokenService.findByAccessKey(access_key);
 			if(token != null && ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(token.getAccess_key())){
 				return token;
 			}else{

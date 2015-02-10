@@ -39,6 +39,12 @@ public class BuildJSON {
 		
 		if(data != null){
 			dataJSON= new JSONObject(data);
+			if(dataJSON.isNull("listUser") || dataJSON.isNull("listPost") || dataJSON.isNull("listComment")){
+				dataJSON.remove(Constraints.LIMIT_ROW_STRING);
+				dataJSON.remove(Constraints.PAGE_NUM);
+				dataJSON.remove(Constraints.TOTAL_PAGE);
+				dataJSON.remove(Constraints.TOTAL_ROW);
+			}
 		}
 		JSONObject result = new JSONObject();
 		result.put(Constraints.META, metaJSON);

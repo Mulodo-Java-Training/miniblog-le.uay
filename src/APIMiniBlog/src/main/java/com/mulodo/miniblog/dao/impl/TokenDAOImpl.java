@@ -59,7 +59,6 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO{
 			}else{
 				Token token = (Token) criteria.list().get(0);
 				session.delete(token);
-	 	        System.out.println("delete success ");
 	 	        tx.commit();
 	 	        logger.info("Token deleted successfully, token details="+token);
 	 	        return true;

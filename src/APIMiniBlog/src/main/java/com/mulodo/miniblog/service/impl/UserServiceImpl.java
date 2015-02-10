@@ -113,8 +113,6 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 			username = username.replaceAll(Constraints.REGEX_END_WHITESPACE, "");
 			password = password.replaceAll(Constraints.REGEX_END_WHITESPACE, "");
 			password = EncrypUtils.encrypData(password);
-			System.out.println("user ="+username);
-			System.out.println("pass = "+password);
 			return this.userDAO.isValidLogin(username,password);
 		}catch(NoSuchAlgorithmException ex){
 			throw new ServiceException(ex.getMessage());
@@ -137,6 +135,26 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 	public List<User> findByName(String name) throws ServiceException {
 		try{
 			return this.userDAO.findByName(name);
+		}catch(DAOException ex){
+			throw new ServiceException(ex.getMessage());
+		}
+	}
+
+	
+	/**
+	 *  deleteByUsername use to check delete user by username in database
+	 *	
+	 *	@param	username : string username use to check
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	@Override
+	public Boolean deleteByUsername(String username) throws ServiceException {
+		try{
+			return this.userDAO.deleteByUsername(username);
 		}catch(DAOException ex){
 			throw new ServiceException(ex.getMessage());
 		}

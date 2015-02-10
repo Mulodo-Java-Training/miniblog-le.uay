@@ -85,7 +85,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 	}
 	
 	/**
-	 *  is_user_exits use to check exist user in database
+	 *  isUserExits use to check exist user in database
 	 *	
 	 *	@param	username : string username use to check
 	 *
@@ -182,7 +182,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 	}
 
 	/**
-	 *  is_valid_login check valid login
+	 *  isValidLogin check valid login
 	 *	
 	 *	@param	username : username for login
 	 *  @param  password : password for login
@@ -267,7 +267,6 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 //	        criteria.setMaxResults(Constraints.LIMIT_ROW);
 	        
 	        if(!criteria.list().isEmpty()){
-	        	System.out.println("find success");
 		        List<User> usersList = criteria.list();
 		        for(User us : usersList){
 		            logger.info("Person List::"+us);
@@ -282,5 +281,45 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
     	}finally {
     		   session.close();
     	}
+	}
+
+	
+	/**
+	 *  deleteByUsername use to check delete user by username in database
+	 *	
+	 *	@param	username : string username use to check
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	@Override
+	public Boolean deleteByUsername(String username) throws DAOException {
+		try{ 
+ 	        session = this.sessionFactory.openSession();
+ 	        tx = session.beginTransaction();
+			Criteria criteria = session.createCriteria(User.class);
+			if(username != null){
+	        	criteria.add(Restrictions.eq("username",username));
+			}
+			
+			if(criteria.list().isEmpty()){
+				return false;
+			}else{
+				User user = (User) criteria.list().get(0);
+				session.delete(user);
+	 	        tx.commit();
+	 	        logger.info("User deleted successfully, user details="+user);
+	 	        return true;
+			}
+     	}catch(HibernateException ex){
+     		logger.info("Hibernate exception, Details="+ex.getMessage());
+     		if(tx != null)	tx.rollback();
+     		ex.printStackTrace();
+     		throw new DAOException(ex.getMessage());
+     	}finally {
+     		session.close();
+     	}
 	}	
 }

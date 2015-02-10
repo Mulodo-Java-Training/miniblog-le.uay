@@ -301,10 +301,6 @@ public class CommentController {
 			data = new Data();
 			data.setListComment(listComment);
 			jsonObject = BuildJSON.buildReturn(null, data);
-			jsonObject.getJSONObject(Constraints.DATA).remove("totalRow");
-			jsonObject.getJSONObject(Constraints.DATA).remove("limitRow");
-			jsonObject.getJSONObject(Constraints.DATA).remove("totalPage");
-			jsonObject.getJSONObject(Constraints.DATA).remove("pageNum");
 		}catch(ServiceException ex){
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 		}catch(Exception ex){

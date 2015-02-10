@@ -24,7 +24,7 @@ import com.mulodo.miniblog.model.User;
 public interface UserDAO extends GenericDAO<User>{
 	
 	/**
-	 *  is_user_exits use to check exist user in database
+	 *  isUserExits use to check exist user in database
 	 *	
 	 *	@param	username : string username use to check
 	 *
@@ -36,7 +36,7 @@ public interface UserDAO extends GenericDAO<User>{
 	public Boolean isUserExits(String username) throws DAOException;
 	
 	/**
-	 *  is_email_exits use to check exist email in database
+	 *  isEmailExits use to check exist email in database
 	 *	
 	 *	@param	email : email for check
 	 *  @param  user  : check email but not check email for this user
@@ -49,7 +49,7 @@ public interface UserDAO extends GenericDAO<User>{
 	public Boolean isEmailExits(String email, User user) throws DAOException;
 	
 	/**
-	 *  is_valid_login check valid login
+	 *  isValidLogin check valid login
 	 *	
 	 *	@param	username : username for login
 	 *  @param  password : password for login
@@ -62,7 +62,7 @@ public interface UserDAO extends GenericDAO<User>{
 	public User isValidLogin(String username, String password) throws DAOException;
 	
 	/**
-	 *  find_by_name use for find user in database
+	 *  findByName use for find user in database
 	 *	
 	 *	@param	name : name of username, firstname, lastname
 	 *
@@ -72,4 +72,17 @@ public interface UserDAO extends GenericDAO<User>{
 	 *  @exception  DAOException
 	 */
 	public List<User> findByName(String name) throws DAOException;
+	
+
+	/**
+	 *  deleteByUsername use to check delete user by username in database
+	 *	
+	 *	@param	username : string username use to check
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	public Boolean deleteByUsername(String username) throws DAOException;
 }

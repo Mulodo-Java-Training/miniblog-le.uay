@@ -72,4 +72,16 @@ public interface UserService extends GenericService<User> {
 	 *  @exception  ServiceException
 	 */
 	public List<User> findByName(String name) throws ServiceException;
+	
+	/**
+	 *  deleteByUsername use to check delete user by username in database
+	 *	
+	 *	@param	username : string username use to check
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	public Boolean deleteByUsername(String username) throws ServiceException;
 }

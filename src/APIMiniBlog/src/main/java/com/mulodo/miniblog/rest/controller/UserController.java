@@ -185,7 +185,9 @@ public class UserController {
     @Path("update")
     public Response updateUser( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
     		@FormParam("password") String password, @FormParam("firstname") String firstname,
-    		@FormParam("lastname") String lastname, @FormParam("email") String email,@FormParam("status") String status) {
+    		@FormParam("lastname") String lastname, @FormParam("email") String email,
+    		@FormParam("status") String status) {
+		
 		JSONObject jsonObject = new JSONObject();
 		
 		//validate data from client and add to meta
@@ -194,14 +196,14 @@ public class UserController {
 		//if have any error, add meta to jsonobject and return to client
 		if(meta != null) {
 			jsonObject = BuildJSON.buildReturn(meta, data);
-			return Response.status(200).entity(jsonObject).build();
+			return Response.status(200).entity(jsonObject.toString()).build();
 		}
 		try {
 			//get token from access_key 
 			Token token = this.tokenService.findByAccessKey(access_key);
 			if(token == null){
 				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_2008), null);
-				return Response.status(200).entity(jsonObject).build();
+				return Response.status(200).entity(jsonObject.toString()).build();
 			}
 			
 			//encryp password and check valid password with current user login
@@ -211,28 +213,28 @@ public class UserController {
 			if(!isValid){
 				//if password did not match, return code error
 				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_2012), null);
-				return Response.status(Constraints.CODE_200).entity(jsonObject).build();
+				return Response.status(Constraints.CODE_200).entity(jsonObject.toString()).build();
 			}
 			//check exists email in database, exclusion current user's email in database
 			isValid = this.userService.isEmailExits(email.replaceAll(Constraints.REGEX_END_WHITESPACE, ""), token.getUser());
 			if(isValid){
 				//if exists email in database, return code error
 				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_2009), null);
-				return Response.status(200).entity(jsonObject).build();
+				return Response.status(200).entity(jsonObject.toString()).build();
 			}
 			//get user from token, and change data
 			User user = token.getUser();
 			user.setFirstname(firstname.replaceAll(Constraints.REGEX_END_WHITESPACE, ""));
 			user.setLastname(lastname.replaceAll(Constraints.REGEX_END_WHITESPACE, ""));
 			user.setEmail(email.replaceAll(Constraints.REGEX_END_WHITESPACE, ""));
-			user.setStatus(Constraints.USER_ACTIVE);
+			user.setStatus(Integer.parseInt(status));
 			Calendar date = Calendar.getInstance();
 			user.setModified_at(date.getTime());
 			//cal user service to update
 			this.userService.update(user);
 			//return message success
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_201, 0), null);
-			return Response.status(Constraints.CODE_200).entity(jsonObject).build();
+			return Response.status(Constraints.CODE_200).entity(jsonObject.toString()).build();
 		} catch (NoSuchAlgorithmException ex){
 			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
@@ -245,7 +247,7 @@ public class UserController {
 		}
 	
 		
-		return Response.status(200).entity(jsonObject).build();
+		return Response.status(200).entity(jsonObject.toString()).build();
     }
     
 	
@@ -281,17 +283,7 @@ public class UserController {
 			data.setListUser(listUser);
 			//add data to jsonobject and return json to client
 			jsonObject = BuildJSON.buildReturn(meta, data);
-			if(listUser != null){
-				jsonObject.getJSONObject(Constraints.DATA).remove(Constraints.LIMIT_ROW_STRING);
-				jsonObject.getJSONObject(Constraints.DATA).remove(Constraints.TOTAL_ROW);
-				jsonObject.getJSONObject(Constraints.DATA).remove(Constraints.TOTAL_PAGE);
-				jsonObject.getJSONObject(Constraints.DATA).remove(Constraints.PAGE_NUM);
-				
-//				for(int i = 0; i < jsonObject.getJSONObject(Constraints.DATA).getJSONArray(Constraints.LIST_USER).length(); i++){
-//					jsonObject.getJSONObject(Constraints.DATA).getJSONArray(Constraints.LIST_USER).getJSONObject(i).remove(Constraints.STATUS);
-//					
-//				}
-			}	
+			
 		} catch (ServiceException ex) {
 			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
@@ -496,15 +488,15 @@ public class UserController {
 						this.tokenService.deleteByUser(user);
 						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_203, 0), null);
 					}else{
-						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_2016), null);
+						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_2016), null);
 					}
 				}
 			}catch (ServiceException e) {
 				e.printStackTrace();
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
+				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
 			}catch(Exception ex){
 				ex.printStackTrace();
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
+				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
 			}
 		}
 		

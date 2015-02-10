@@ -120,7 +120,6 @@ public final class Constraints {
 	//Token
 	public static final String ACCESS_KEY = "access_key";
 	public static final String TOKEN = "token";
-	public static final String CODE_205_CONTENT = null;
 	
 	//pagination
 	public static final int LIMIT_ROW = 10;
