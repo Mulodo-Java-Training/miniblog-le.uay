@@ -10,9 +10,7 @@
  */
 package com.mulodo.miniblog.utils;
 
-
 import org.json.JSONObject;
-
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.object.Data;
@@ -38,13 +36,25 @@ public class BuildJSON {
 		}
 		
 		if(data != null){
+			
 			dataJSON= new JSONObject(data);
-			if(dataJSON.isNull("listUser") || dataJSON.isNull("listPost") || dataJSON.isNull("listComment")){
+			boolean isValid = false;
+				
+			if(dataJSON.has("listPost")){
+				isValid = true;
+			}else if(dataJSON.has("listUser")){
+				isValid = true;
+			}else if(dataJSON.has("listComment")){
+				isValid = true;
+			}
+			
+			if(!isValid){
 				dataJSON.remove(Constraints.LIMIT_ROW_STRING);
 				dataJSON.remove(Constraints.PAGE_NUM);
 				dataJSON.remove(Constraints.TOTAL_PAGE);
 				dataJSON.remove(Constraints.TOTAL_ROW);
 			}
+			
 		}
 		JSONObject result = new JSONObject();
 		result.put(Constraints.META, metaJSON);

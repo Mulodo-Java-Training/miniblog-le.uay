@@ -10,6 +10,7 @@
  */
 package com.mulodo.miniblog.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class PostServiceImpl extends GenericServiceImpl<Post> implements PostSer
 	 *
 	 *	@return List<Post>
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  ServiceException
 	 */
 	@Override
 	public Data getAllPostForUser(int pageNum, int author_id, Boolean isOwerUser)
@@ -67,17 +68,29 @@ public class PostServiceImpl extends GenericServiceImpl<Post> implements PostSer
 				List<Post> listPost = null; 
 				int totalPost = 0;
 				if(pageNum > 0){
-					listPost =  this.postDAO.getAllPost(pageNum, author_id, true, isOwerUser);
-					totalPost = this.postDAO.getAllPostSize(author_id, true, isOwerUser);
+					//get list post folow page number
+					//get total post follow condition
+					listPost =  this.postDAO.getAllPost(pageNum, author_id, null, true, isOwerUser);
+					totalPost = this.postDAO.getAllPostSize(author_id, null, true, isOwerUser);
 				}
 				if(listPost != null){
 					int totalPage = (int) Math.round(totalPost/Constraints.LIMIT_ROW + 0.5);
+					//set list post to data object
 					data = new Data();
 					data.setLimitRow(Constraints.LIMIT_ROW);
 					data.setTotalPage(totalPage);
 					data.setTotalRow(totalPost);
 					data.setPageNum(pageNum);
 					data.setListPost(listPost);
+				}else{
+					//if have no data match with condition.
+					//return all variable is zero
+					data = new Data();
+					data.setListPost(new ArrayList<Post>());
+					data.setTotalPage(0);
+					data.setTotalRow(0);
+					data.setPageNum(0);
+					data.setLimitRow(0);
 				}
 				return data;
 			}
@@ -95,28 +108,77 @@ public class PostServiceImpl extends GenericServiceImpl<Post> implements PostSer
 	 *
 	 *	@return List<Post>
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  ServiceException
 	 */
 	@Override
-	public Data getAllPost(int pageNum, int current_user_id) throws ServiceException {
+	public Data getAllPost(int pageNum, int current_user_id, String description) throws ServiceException {
 		Data data = null;
 		try{
 			List<Post> listPost = null; 
 			int totalPost = 0;
 			if(pageNum > 0){
-				listPost =  this.postDAO.getAllPost(pageNum, current_user_id, false, false);
-				totalPost = this.postDAO.getAllPostSize(current_user_id, false, false);
+				//get list post folow page number
+				//get total post follow condition
+				listPost =  this.postDAO.getAllPost(pageNum, current_user_id, description, false, false);
+				totalPost = this.postDAO.getAllPostSize(current_user_id, description, false, false);
 			}
-			if(!listPost.isEmpty()){
+			if(listPost != null){
 				int totalPage = (int) Math.round(totalPost/Constraints.LIMIT_ROW + 0.5);
+				//set value to data object
 				data = new Data();
 				data.setLimitRow(Constraints.LIMIT_ROW);
 				data.setTotalPage(totalPage);
 				data.setTotalRow(totalPost);
 				data.setPageNum(pageNum);
 				data.setListPost(listPost);
+			}else{
+				//if have no data match with condition.
+				//return all variable is zero
+				data = new Data();
+				data.setListPost(new ArrayList<Post>());
+				data.setTotalPage(0);
+				data.setTotalRow(0);
+				data.setPageNum(0);
+				data.setLimitRow(0);
 			}
 			return data;
+		}catch(DAOException ex){
+			throw new ServiceException(ex.getMessage());
+		}
+	}
+
+	/**
+	 *  deleteByTitle use for delete post by title in the database
+	 *	
+	 *	@param	title : title of post
+	 *
+	 *	@return void
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public void deleteByTitle(String title) throws ServiceException {
+		try{
+			this.postDAO.deleteByTitle(title);
+		}catch(DAOException ex){
+			throw new ServiceException(ex.getMessage());
+		}
+		
+	}
+
+	/**
+	 *  findByTitle use for find post by title in the database for unit test
+	 *	
+	 *	@param	title : title of post
+	 *
+	 *	@return Post
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public Post findByTitle(String title) throws ServiceException {
+		try{
+			return this.postDAO.findByTitle(title);
 		}catch(DAOException ex){
 			throw new ServiceException(ex.getMessage());
 		}

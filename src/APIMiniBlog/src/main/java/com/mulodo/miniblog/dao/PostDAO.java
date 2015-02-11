@@ -35,7 +35,7 @@ public interface PostDAO extends GenericDAO<Post>{
 	 *	
 	 *  @exception  DAOException
 	 */
-	public List<Post> getAllPost(int pageNum, int author_id, Boolean isForUser, Boolean isOwnerUser) throws DAOException;
+	public List<Post> getAllPost(int pageNum, int author_id, String description, Boolean isForUser, Boolean isOwnerUser) throws DAOException;
 	
 	/**
 	 *  get_all_post_size use to get size of post with owner user from database
@@ -48,5 +48,28 @@ public interface PostDAO extends GenericDAO<Post>{
 	 *	
 	 *  @exception  DAOException
 	 */
-	public int getAllPostSize(int author_id, Boolean isForUser, Boolean isOwnerUser) throws DAOException;
+	public int getAllPostSize(int author_id, String description, Boolean isForUser, Boolean isOwnerUser) throws DAOException;
+
+	
+	/**
+	 *  deleteByTitle use for delete post by title in the database
+	 *	
+	 *	@param	title : title of post
+	 *
+	 *	@return void
+	 *	
+	 *  @exception  DAOException
+	 */
+	public void deleteByTitle(String title) throws DAOException;
+
+	/**
+	 *  findByTitle use for find post by title in the database for unit test
+	 *	
+	 *	@param	title : title of post
+	 *
+	 *	@return Post
+	 *	
+	 *  @exception  DAOException
+	 */
+	public Post findByTitle(String title) throws DAOException;
 }

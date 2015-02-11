@@ -11,6 +11,7 @@
 package com.mulodo.miniblog.rest.controller;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -267,7 +268,7 @@ public class UserController {
 		
 		JSONObject jsonObject = new JSONObject();
 		//validate data from client
-		Meta meta = UserValidate.validateFindUserInfo(name);
+		Meta meta = UserValidate.validateFindUserByName(name);
 		Data data = null;
 		//if have any error, add meta to jsonobject and return to client
 		if(meta != null) {
@@ -280,7 +281,11 @@ public class UserController {
 			listUser = this.userService.findByName(name);
 			data = new Data();
 			//set list user to data
-			data.setListUser(listUser);
+			if(listUser != null){
+				data.setListUser(listUser);
+			} else{
+				data.setListUser(new ArrayList<User>());
+			}
 			//add data to jsonobject and return json to client
 			jsonObject = BuildJSON.buildReturn(meta, data);
 			

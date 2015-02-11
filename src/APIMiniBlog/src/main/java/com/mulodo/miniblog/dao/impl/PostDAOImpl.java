@@ -57,7 +57,7 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO{
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Post> getAllPost(int pageNum, int author_id, Boolean isForUser, Boolean isOwnerUser) throws DAOException {
+	public List<Post> getAllPost(int pageNum, int author_id, String description, Boolean isForUser, Boolean isOwnerUser) throws DAOException {
 		List<Post> listPost = null;
 		try{
 	        session = this.sessionFactory.openSession();
@@ -94,6 +94,12 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO{
 	        			Restrictions.eq("us.status", Constraints.USER_ACTIVE));
 	        	Criterion criterionCurrentActive = Restrictions.eq("us.id", author_id);
 	        	criteria.add(Restrictions.or(criterionCurrentActive, criterionPostUserActive));
+	        }
+	        
+	        if(description != null){
+	        	criteria.add(Restrictions.disjunction()
+		        			.add(Restrictions.like("title", "%"+description+"%"))
+		        			.add(Restrictions.like("content","%"+description+"%")));
 	        }
 	        
 	        criteria.addOrder(Order.desc("created_at"));
@@ -141,7 +147,7 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO{
 	 *  @exception  DAOException
 	 */
 	@Override
-	public int getAllPostSize(int author_id,
+	public int getAllPostSize(int author_id, String description,
 			Boolean isForUser, Boolean isOwnerUser) throws DAOException {
 		try{
 	        session = this.sessionFactory.openSession();
@@ -165,6 +171,12 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO{
 	        	criteria.add(Restrictions.or(criterionCurrentActive, criterionPostUserActive));
 	        }
 	        
+	        if(description != null){
+	        	criteria.add(Restrictions.disjunction()
+	        			.add(Restrictions.like("title", "%"+description+"%"))
+	        			.add(Restrictions.like("content","%"+description+"%")));
+	        }
+	        
 	        Integer totalPost = ((Number)criteria.setProjection(Projections.rowCount()).uniqueResult()).intValue();  
 	        return totalPost;
     	}catch(HibernateException ex){
@@ -173,5 +185,75 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO{
     	}finally {
     		   session.close();
     	}
+	}
+
+	/**
+	 *  deleteByTitle use for delete post by title in the database
+	 *	
+	 *	@param	title : title of post
+	 *
+	 *	@return void
+	 *	
+	 *  @exception  DAOException
+	 */
+	@Override
+	public void deleteByTitle(String title) throws DAOException {
+		try{ 
+ 	        session = this.sessionFactory.openSession();
+ 	        tx = session.beginTransaction();
+			Criteria criteria = session.createCriteria(Post.class);
+			if(title != null){
+	        	criteria.add(Restrictions.eq("title",title));
+	        	if(!criteria.list().isEmpty()){
+		        	Post post = (Post) criteria.list().get(0);
+					session.delete(post);
+					logger.info("Post deleted successfully, post details="+post);
+	        	}
+	        	tx.commit();
+			}
+			   
+     	}catch(HibernateException ex){
+     		logger.info("Hibernate exception, Details="+ex.getMessage());
+     		if(tx != null)	tx.rollback();
+     		ex.printStackTrace();
+     		throw new DAOException(ex.getMessage());
+     	}finally {
+     		session.close();
+     	}
+		
+	}
+
+	/**
+	 *  findByTitle use for find post by title in the database for unit test
+	 *	
+	 *	@param	title : title of post
+	 *
+	 *	@return Post
+	 *	
+	 *  @exception  DAOException
+	 */
+	@Override
+	public Post findByTitle(String title) throws DAOException {
+		try{ 
+ 	        session = this.sessionFactory.openSession();
+ 	        tx = session.beginTransaction();
+			Criteria criteria = session.createCriteria(Post.class);
+			if(title != null){
+	        	criteria.add(Restrictions.eq("title",title));
+	        	Post post = (Post) criteria.list().get(0);
+				
+	 	        tx.commit();
+	 	        logger.info("Post deleted successfully, post details="+post);
+	 	        return post;
+			}
+			return null;
+     	}catch(HibernateException ex){
+     		logger.info("Hibernate exception, Details="+ex.getMessage());
+     		if(tx != null)	tx.rollback();
+     		ex.printStackTrace();
+     		throw new DAOException(ex.getMessage());
+     	}finally {
+     		session.close();
+     	}
 	}
 }

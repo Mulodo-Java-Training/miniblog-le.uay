@@ -36,7 +36,7 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "Post")
 public class Post {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(nullable = false)
@@ -128,6 +128,21 @@ public class Post {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+	
+	public Post() {
+		super();
+	}
+
+	public Post(String title, String content, Date created_at,
+			Date modified_at, int status, User user) {
+		super();
+		this.title = title;
+		this.content = content;
+		this.created_at = created_at;
+		this.modified_at = modified_at;
+		this.status = status;
+		this.user = user;
 	}
 	
 }

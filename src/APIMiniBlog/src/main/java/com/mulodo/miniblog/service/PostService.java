@@ -10,7 +10,6 @@
  */
 package com.mulodo.miniblog.service;
 
-import com.mulodo.miniblog.exeption.DAOException;
 import com.mulodo.miniblog.exeption.ServiceException;
 import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.object.Data;
@@ -31,9 +30,9 @@ public interface PostService extends GenericService<Post>{
 	 *
 	 *	@return List<Post>
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  ServiceException
 	 */
-	public Data getAllPost(int pageNum, int current_user_id) throws ServiceException;
+	public Data getAllPost(int pageNum, int current_user_id, String description) throws ServiceException;
 	
 	
 	/**
@@ -44,7 +43,29 @@ public interface PostService extends GenericService<Post>{
 	 *
 	 *	@return List<Post>
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  ServiceException
 	 */
 	public Data getAllPostForUser(int pageNum, int author_id, Boolean isOwnerUser) throws ServiceException;
+
+	/**
+	 *  deleteByTitle use for delete post by title in the database for unit test
+	 *	
+	 *	@param	title : title of post
+	 *
+	 *	@return void
+	 *	
+	 *  @exception  ServiceException
+	 */
+	public void deleteByTitle(String title) throws ServiceException;
+
+	/**
+	 *  findByTitle use for find post by title in the database for unit test
+	 *	
+	 *	@param	title : title of post
+	 *
+	 *	@return Post
+	 *	
+	 *  @exception  ServiceException
+	 */
+	public Post findByTitle(String title) throws ServiceException;
 }

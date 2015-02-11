@@ -152,7 +152,7 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T> {
 			this.genericType = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(), GenericDAOImpl.class);
 	        session = this.sessionFactory.openSession();
 	        tx = session.beginTransaction();
-	        T p = (T) session.load(this.genericType, id);
+	        T p = (T) session.get(this.genericType, id);
 	        logger.info("Entity loaded successfully, Entity details="+p);
 	        tx.commit();
 	        return p;

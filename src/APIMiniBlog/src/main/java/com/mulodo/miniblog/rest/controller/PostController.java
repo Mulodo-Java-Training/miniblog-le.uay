@@ -55,9 +55,10 @@ import com.mulodo.miniblog.validator.PostValidate;
 @Produces(MediaType.APPLICATION_JSON)
 public class PostController {
 	
-	
+	//declare postService for get bean from applicationcontext.xml
 	private PostService postService;
 	
+	//declare tokenService for get bean from applicationcontext.xml
 	private TokenService tokenService;
 	
 	/**
@@ -100,11 +101,11 @@ public class PostController {
 	@RolesAllowed("ADMIN")
     @POST
     @Path("add")
-    public Response add_post( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
+    public Response addPost( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
     		@FormParam("title") String title, @FormParam("content") String content) {
 		
+		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
-		
 		//validate data from client and add to meta
 		Meta meta =  PostValidate.validateAddNew(title, content);
 		Data data = null;
@@ -158,34 +159,44 @@ public class PostController {
 	@RolesAllowed("ADMIN")
     @PUT
     @Path("activeDeactive")
-	public Response active_deactive_post(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+	public Response activeDeactivePost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@FormParam("id") String id, @FormParam("status") String status){
 		
-		
+		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
 		
+		//validate post data
 		Meta meta = PostValidate.validateActiveDeactive(id, status);
 		Data data = null;
+		//if have error, return error
 		if(meta != null){
 			jsonObject = BuildJSON.buildReturn(meta, data);
 			return Response.status(200).entity(jsonObject.toString()).build();
 		}
 		try{
+			//get token for getting user from accessy_key in header
 			Token token = null;
 			if(access_key != null){
 				token = this.tokenService.findByAccessKey(access_key);
 			}
 			if(token != null){
+				//get post from post id send from client
 				int postId = Integer.parseInt(id);
 				Post post = this.postService.findOne(postId);
+				//if have post and current user have permission on it, call update function
+				// else if have post but not have permission on it, return permission error code
+				// else return invalid post error code
 				if(post != null && post.getUser().getId() == token.getUser().getId()){
 					int newStatus = Integer.parseInt(status); 
 					post.setStatus(newStatus);
 					this.postService.update(post);
+					//return success code
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_208, 0), null);
 				}else if (post != null && post.getUser().getId() != token.getUser().getId()) {
+					//return permission error code
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2509), null);
 				}else{
+					//return invalid error code
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2501), null);
 				}
 			}
@@ -213,13 +224,14 @@ public class PostController {
 	@RolesAllowed("ADMIN")
     @PUT
     @Path("update")
-	public Response update_post(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+	public Response updatePost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@FormParam("id") String id, @FormParam("title") String title,
 			@FormParam("content") String content){
 		
-		
+		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
 		
+		//validate post data, if have error, return error code in meta object to client
 		Meta meta = PostValidate.validateUpdate(id, title, content);
 		Data data = null;
 		if(meta != null){
@@ -234,16 +246,22 @@ public class PostController {
 			if(token != null){
 				int postId = Integer.parseInt(id);
 				Post post = this.postService.findOne(postId);
+				//if have post and current user have permission on it, call update function
+				// else if have post but not have permission on it, return permission error code
+				// else return invalid post error code
 				if(post != null && post.getUser().getId() == token.getUser().getId()){
 					post.setContent(content);
 					post.setTitle(title);
 					Calendar cal = Calendar.getInstance();
 					post.setModified_at(cal.getTime());
 					this.postService.update(post);
+					//return success code
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_207, 0), null);
 				}else if (post != null && post.getUser().getId() != token.getUser().getId()) {
+					//return permission error code
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2509), null);
 				}else{
+					//return invalid error code
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2501), null);
 				}
 			}
@@ -272,8 +290,10 @@ public class PostController {
 	public Response delete(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@PathParam("id") String id){
 		
+		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
 		
+		//validate post data, if have error, return error code in meta object to client
 		Meta meta = PostValidate.validateDelete(id);
 		Data data = null;
 		if(meta != null){
@@ -288,12 +308,18 @@ public class PostController {
 			if(token != null){
 				int postId = Integer.parseInt(id);
 				Post post = this.postService.findOne(postId);
+				//if have post and current user have permission on it, call update function
+				// else if have post but not have permission on it, return permission error code
+				// else return invalid post error code
 				if(post != null && post.getUser().getId() == token.getUser().getId()){
 					this.postService.delete(postId);
+					//return success code
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_209, 0), null);
 				}else if (post != null && post.getUser().getId() != token.getUser().getId()) {
+					//return permission error code
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2509), null);
 				}else{
+					//return invalid error code
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2501), null);
 				}
 			}
@@ -321,10 +347,12 @@ public class PostController {
     @GET
     @Path("getAllPost")
 	public Response getAllPost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
-			@QueryParam("pageNum") String pageNum){
+			@QueryParam("pageNum") String pageNum, @QueryParam("description") String description){
 		
+		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
 		
+		//validate post data, if have error, return error code in meta object to client
 		Meta meta = PostValidate.validateGetAllPost(pageNum);
 		Data data = null;
 		if(meta != null){
@@ -332,10 +360,11 @@ public class PostController {
 			return Response.status(200).entity(jsonObject.toString()).build();
 		}		
 		try{
-			
+			//get current user login
 			Token token =	this.tokenService.findByAccessKey(access_key);
 			int pageNumInt = Integer.parseInt(pageNum);
-			data = this.postService.getAllPost(pageNumInt,token.getUser().getId());
+			//get all post of current user and like description(if not null)
+			data = this.postService.getAllPost(pageNumInt,token.getUser().getId(), description);
 			jsonObject = BuildJSON.buildReturn(meta, data);
 		}catch(ServiceException ex){
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
@@ -363,8 +392,10 @@ public class PostController {
 	public Response getAllPostForUser(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@QueryParam("pageNum") String pageNum, @QueryParam("user_id")  String user_id){
 		
+		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
 		
+		//validate post data, if have error, return error code in meta object to client
 		Meta meta = PostValidate.validateGetAllPostForUser(pageNum, user_id);
 		Data data = null;
 		if(meta != null){
@@ -372,8 +403,13 @@ public class PostController {
 			return Response.status(200).entity(jsonObject.toString()).build();
 		}	
 		try{
+			//get current user login
 			Token token =	this.tokenService.findByAccessKey(access_key);
 			int pageNumInt = Integer.parseInt(pageNum);
+			//if current user login have same user id send from client,
+			//system get all post from database include: all post of current user login, and 
+			//post have status active of other users and user have status active
+			//if not same, get all post have status active and user have status active
 			if(token.getUser().getId() == Integer.parseInt(user_id)){
 				data = this.postService.getAllPostForUser(pageNumInt, token.getUser().getId(), true);
 			}else{

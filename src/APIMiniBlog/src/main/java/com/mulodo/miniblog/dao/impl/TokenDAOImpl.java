@@ -52,17 +52,17 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO{
 			Criteria criteria = session.createCriteria(Token.class);
 			if(access_key != null){
 	        	criteria.add(Restrictions.eq("access_key",access_key));
+	        	if(criteria.list().isEmpty()){
+					return false;
+				}else{
+					Token token = (Token) criteria.list().get(0);
+					session.delete(token);
+		 	        tx.commit();
+		 	        logger.info("Token deleted successfully, token details="+token);
+		 	        return true;
+				}
 			}
-			
-			if(criteria.list().isEmpty()){
-				return false;
-			}else{
-				Token token = (Token) criteria.list().get(0);
-				session.delete(token);
-	 	        tx.commit();
-	 	        logger.info("Token deleted successfully, token details="+token);
-	 	        return true;
-			}
+			return false;
      	}catch(HibernateException ex){
      		logger.info("Hibernate exception, Details="+ex.getMessage());
      		if(tx != null)	tx.rollback();
@@ -91,15 +91,15 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO{
 			Criteria criteria = session.createCriteria(Token.class);
 			if(access_key != null){
 	        	criteria.add(Restrictions.eq("access_key",access_key));
+	        	if(criteria.list().isEmpty()){
+					return null;
+				}else{
+					Token token = (Token) criteria.list().get(0);
+					logger.info("Token searching successfully, token details="+token);
+					return token;
+				}
 			}
-			
-			if(criteria.list().isEmpty()){
-				return null;
-			}else{
-				Token token = (Token) criteria.list().get(0);
-				logger.info("Token searching successfully, token details="+token);
-				return token;
-			}
+			return null;
      	}catch(HibernateException ex){
      		logger.info("Hibernate exception, Details="+ex.getMessage());
      		if(tx != null)	tx.rollback();

@@ -105,7 +105,7 @@ public class CommentController {
 	@RolesAllowed("ADMIN")
     @POST
     @Path("add")
-    public Response add_comment( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
+    public Response addComment( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
     		@FormParam("post_id") String post_id, @FormParam("content") String content) {
 		
 		JSONObject jsonObject = new JSONObject();
@@ -152,7 +152,7 @@ public class CommentController {
 	@RolesAllowed("ADMIN")
     @PUT
     @Path("update")
-    public Response update_comment( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
+    public Response updateComment( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
     		@FormParam("comment_id") String comment_id, @FormParam("content") String content) {
 		
 		JSONObject jsonObject = new JSONObject();

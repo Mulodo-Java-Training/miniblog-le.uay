@@ -304,7 +304,7 @@ public class UserValidate {
 	 *  @return Meta
 	 *	
 	 */
-	public static Meta validateFindUserInfo(String name){
+	public static Meta validateFindUserByName(String name){
 		
 		//List message contain error message validate
 		List<Message> listMessage = new ArrayList<Message>();

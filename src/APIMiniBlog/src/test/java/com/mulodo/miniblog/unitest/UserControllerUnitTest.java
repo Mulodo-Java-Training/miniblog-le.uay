@@ -3,7 +3,7 @@
  *  
  * 1.0
  * 
- * 2015/02/02
+ * 2015/02/09
  *  
  * Copyright (c) 2015 Le U Uay
  * 
@@ -41,11 +41,15 @@ import com.mulodo.miniblog.utils.EncrypUtils;
 @SuppressWarnings("deprecation")
 public class UserControllerUnitTest {
 	
-	private String ROOT_USER_URL = "http://localhost:8080/APIMiniBlog/api/users";
-	ApplicationContext appContext = 
+	//declare root user url
+	private final String ROOT_USER_URL = "http://localhost:8080/APIMiniBlog/api/users";
+	//declare ApplicationContext for getting bean from applicationContext.xml
+	private final ApplicationContext appContext = 
 	    	  new ClassPathXmlApplicationContext("classpath:/WEB-INF/applicationContext.xml");
-	
-	UserService userService = (UserService) appContext.getBean("userService"); 
+	//set seesion bean in applicationContext.xml to userservice
+	private final UserService userService = (UserService) appContext.getBean("userService");
+	private ClientResponse<String> respone = null;
+	private ClientRequest clientRequest = null;
 	
 	/**
 	 *  add_new user for unit testing addNew in usercontroller
@@ -59,8 +63,7 @@ public class UserControllerUnitTest {
 	@Test
 	public void add_new() throws Exception {
 		
-		ClientRequest clientRequest = new ClientRequest(ROOT_USER_URL+"/add");
-		ClientResponse<String> respone;
+		clientRequest = new ClientRequest(ROOT_USER_URL+"/add");
 		
 		//==Create list error==
 		List<Integer> listError = new ArrayList<Integer>();
@@ -128,7 +131,7 @@ public class UserControllerUnitTest {
 		assertEquals(true, listError.contains(respone.getStatus()));
 		assertNotNull(jsonObject.getJSONArray(Constraints.MESSAGES));
 		
-		//compare response error code with list error
+		//compare response error code with 
 		for(int i = 0; i < jsonObject.getJSONArray(Constraints.MESSAGES).length(); i++){
 			assertEquals(true, listError.contains(jsonObject.getJSONArray(Constraints.MESSAGES)
 					.getJSONObject(i).get(Constraints.CODE)));
@@ -144,7 +147,7 @@ public class UserControllerUnitTest {
 		jsonObject = new JSONObject(respone.getEntity().toString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
-		//compare status return with status in list error
+		//compare status return with with success status
 		assertEquals(Constraints.CODE_200, jsonObject.get(Constraints.CODE));
 		assertEquals(true, listError.contains(respone.getStatus()));
 		this.userService.deleteByUsername("le.thanh");
@@ -163,9 +166,8 @@ public class UserControllerUnitTest {
 	@Test
 	public void login() throws Exception{
 		
-		ClientRequest clientRequest = new ClientRequest(ROOT_USER_URL+"/login");
+		clientRequest = new ClientRequest(ROOT_USER_URL+"/login");
 		//==Create list error==
-		ClientResponse<String> respone;
 		List<Integer> listError = new ArrayList<Integer>();
 		listError.add(Constraints.CODE_1000);
 		listError.add(Constraints.CODE_1003);
@@ -243,9 +245,7 @@ public class UserControllerUnitTest {
 	@Test
 	public void logout() throws Exception{
 		
-		ClientRequest clientRequest = new ClientRequest(ROOT_USER_URL+"/logout");
-		//==Create list error==
-		ClientResponse<String> respone;
+		clientRequest = new ClientRequest(ROOT_USER_URL+"/logout");
 		
 		//post data to add user api
 		respone = clientRequest.put(String.class);
@@ -304,21 +304,10 @@ public class UserControllerUnitTest {
 	@Test
 	public void update() throws Exception {
 		
-		ClientRequest clientRequest = new ClientRequest(ROOT_USER_URL+"/update");
-		ClientResponse<String> respone;
+		clientRequest = new ClientRequest(ROOT_USER_URL+"/update");
 		
-		ClientRequest clientRequestLogin = new ClientRequest(ROOT_USER_URL+"/login");
-		clientRequestLogin.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "username=le.tung&password=abcd1234");
-		//post data to add user api
-		respone = clientRequestLogin.post(String.class);
-		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
-		//get meta json object
-		jsonObject = jsonObject.getJSONObject(Constraints.META);
-		//get access_key from login
-		String access_key = (String) respone.getHeaders().get(Constraints.ACCESS_KEY).get(0);
-		assertNotNull(access_key);
+		
+		String access_key = login_for_test();
 	
 		
 		//==Create list error==
@@ -343,7 +332,7 @@ public class UserControllerUnitTest {
 		//compare status return with status in list error
 		assertEquals(Constraints.CODE_200, respone.getStatus());
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		
@@ -418,21 +407,9 @@ public class UserControllerUnitTest {
 	@Test
 	public void get_user_info() throws Exception {
 		
-		ClientRequest clientRequest = new ClientRequest(ROOT_USER_URL+"/getUserInfo");
-		ClientResponse<String> respone;
+		clientRequest = new ClientRequest(ROOT_USER_URL+"/getUserInfo");
 		
-		ClientRequest clientRequestLogin = new ClientRequest(ROOT_USER_URL+"/login");
-		clientRequestLogin.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "username=le.tung&password=abcd1234");
-		//post data to add user api
-		respone = clientRequestLogin.post(String.class);
-		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
-		//get meta json object
-		jsonObject = jsonObject.getJSONObject(Constraints.META);
-		//get access_key from login
-		String access_key = (String) respone.getHeaders().get(Constraints.ACCESS_KEY).get(0);
-		assertNotNull(access_key);
+		String access_key = login_for_test();
 	
 		
 		//set access key to header and send to logout api
@@ -442,7 +419,7 @@ public class UserControllerUnitTest {
 		//compare status return with status in list error
 		assertEquals(Constraints.CODE_200, respone.getStatus());
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.DATA);
 		
@@ -470,21 +447,9 @@ public class UserControllerUnitTest {
 	@Test
 	public void find_user_by_name() throws Exception {
 		
-		ClientRequest clientRequest = null;
-		ClientResponse<String> respone;
+		clientRequest = null;
 		
-		ClientRequest clientRequestLogin = new ClientRequest(ROOT_USER_URL+"/login");
-		clientRequestLogin.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "username=le.tung&password=abcd1234");
-		//post data to add user api
-		respone = clientRequestLogin.post(String.class);
-		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
-		//get meta json object
-		jsonObject = jsonObject.getJSONObject(Constraints.META);
-		//get access_key from login
-		String access_key = (String) respone.getHeaders().get(Constraints.ACCESS_KEY).get(0);
-		assertNotNull(access_key);
+		String access_key = login_for_test();
 	
 		//==validate not null name===
 		//set data to path
@@ -496,7 +461,7 @@ public class UserControllerUnitTest {
 		//compare status return with status in list error
 		assertEquals(Constraints.CODE_200, respone.getStatus());
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		assertEquals(Constraints.CODE_2000, jsonObject.get(Constraints.CODE));
@@ -539,8 +504,7 @@ public class UserControllerUnitTest {
 	@Test
 	public void change_password() throws Exception {
 		
-		ClientRequest clientRequest = new ClientRequest(ROOT_USER_URL+"/chagnePassword");
-		ClientResponse<String> respone;
+		clientRequest = new ClientRequest(ROOT_USER_URL+"/chagnePassword");
 		
 
 		//==Create list error==
@@ -552,18 +516,7 @@ public class UserControllerUnitTest {
 		listError.add(Constraints.CODE_2016);
 		listError.add(Constraints.CODE_2000);
 		
-		ClientRequest clientRequestLogin = new ClientRequest(ROOT_USER_URL+"/login");
-		clientRequestLogin.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "username=le.tung&password=abcd1234");
-		//post data to add user api
-		respone = clientRequestLogin.post(String.class);
-		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
-		//get meta json object
-		jsonObject = jsonObject.getJSONObject(Constraints.META);
-		//get access_key from login
-		String access_key = (String) respone.getHeaders().get(Constraints.ACCESS_KEY).get(0);
-		assertNotNull(access_key);
+		String access_key = login_for_test();
 	
 		//==validate password===
 		//set access key to header and send to chagne password api
@@ -573,7 +526,7 @@ public class UserControllerUnitTest {
 				+ "oldPassword=&newPassword=");
 		//post data to add user api
 		respone = clientRequest.put(String.class);
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare status return with status in list error
 		assertEquals(Constraints.CODE_200, respone.getStatus());
@@ -657,6 +610,7 @@ public class UserControllerUnitTest {
 		user.setPassword(EncrypUtils.encrypData("abcd1234"));
 		user.setFirstname("tung");
 		user.setLastname("le");
+		user.setStatus(1);
 		user.setEmail("le.tung@mulodo.com");
 		Calendar date = Calendar.getInstance();
 		user.setCreated_at(date.getTime());
@@ -677,5 +631,29 @@ public class UserControllerUnitTest {
 	@After
 	public void clearData() throws Exception{
 		this.userService.deleteByUsername("le.tung");
+	}
+	
+	/**
+	 *  login use for return access_key for api require authentication  usercontroller
+	 *	
+	 *	
+	 *  @return 
+	 *  
+	 *  @exception Exception
+	 *	
+	 */
+	private String login_for_test() throws Exception{
+		ClientRequest clientRequestLogin = new ClientRequest(ROOT_USER_URL+"/login");
+		clientRequestLogin.body(MediaType.APPLICATION_FORM_URLENCODED,""
+				+ "username=le.tung&password=abcd1234");
+		//post data to add user api
+		respone = clientRequestLogin.post(String.class);
+		//get json object from response
+		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
+		//get meta json object
+		jsonObject = jsonObject.getJSONObject(Constraints.META);
+		//get access_key from login
+		String access_key = (String) respone.getHeaders().get(Constraints.ACCESS_KEY).get(0);
+		return access_key;
 	}
 }

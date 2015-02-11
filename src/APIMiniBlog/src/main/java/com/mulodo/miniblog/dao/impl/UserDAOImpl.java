@@ -302,17 +302,17 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 			Criteria criteria = session.createCriteria(User.class);
 			if(username != null){
 	        	criteria.add(Restrictions.eq("username",username));
+	        	if(criteria.list().isEmpty()){
+					return false;
+				}else{
+					User user = (User) criteria.list().get(0);
+					session.delete(user);
+		 	        tx.commit();
+		 	        logger.info("User deleted successfully, user details="+user);
+		 	        return true;
+				}
 			}
-			
-			if(criteria.list().isEmpty()){
-				return false;
-			}else{
-				User user = (User) criteria.list().get(0);
-				session.delete(user);
-	 	        tx.commit();
-	 	        logger.info("User deleted successfully, user details="+user);
-	 	        return true;
-			}
+			return false;
      	}catch(HibernateException ex){
      		logger.info("Hibernate exception, Details="+ex.getMessage());
      		if(tx != null)	tx.rollback();

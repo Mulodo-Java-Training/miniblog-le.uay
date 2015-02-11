@@ -135,7 +135,7 @@ public class PostValidate {
 			listMessage.add(new Message(Constraints.CODE_2503));
 		}else{
 			//check valid length of string
-			isValid = ValidatorUtils.isValidLength(title, 1, 3000);
+			isValid = ValidatorUtils.isValidLength(content, 1, 3000);
 			if(!isValid){
 				//check if have error, add message error to listmessage
 				listMessage.add(new Message(Constraints.CODE_2505));
@@ -145,6 +145,7 @@ public class PostValidate {
 		//check null empty or white space if string
 		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(title);		
 		if(!isValid){
+			
 			//check if have error, add message error to listmessage
 			listMessage.add(new Message(Constraints.CODE_2502));
 		}else{
@@ -215,7 +216,7 @@ public class PostValidate {
 			listMessage.add(new Message(Constraints.CODE_2510));
 		}
 		
-		if(!listMessage.isEmpty() ){
+		if(!listMessage.isEmpty()){
 			//check if have error, add message error to listmessage
 			Meta meta = new Meta(Constraints.CODE_2500, listMessage);
 			return meta;
