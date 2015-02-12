@@ -127,7 +127,10 @@ public class CommentController {
 					
 					Post post = this.postService.findOne(Integer.parseInt(post_id));
 					if(post == null){
-						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3002), null);
+						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3007), null);
+						return Response.status(200).entity(jsonObject.toString()).build();
+					}else if(post.getStatus() == Constraints.POST_INACTIVE){
+						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3007), null);
 						return Response.status(200).entity(jsonObject.toString()).build();
 					}
 					Comment comment = new Comment();
@@ -162,7 +165,7 @@ public class CommentController {
 		if(meta != null){
 			jsonObject = BuildJSON.buildReturn(meta, data);
 			return Response.status(200).entity(jsonObject.toString()).build();
-		}
+		}							
 		if(access_key != null){
 			try {
 			
@@ -198,7 +201,7 @@ public class CommentController {
 	@RolesAllowed("ADMIN")
     @DELETE
     @Path("delete/{id}")
-	public Response delelte(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+	public Response delete(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@PathParam("id") String id){
 		
 		JSONObject jsonObject = new JSONObject();

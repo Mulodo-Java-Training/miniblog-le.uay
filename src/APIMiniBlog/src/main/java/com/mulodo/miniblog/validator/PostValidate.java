@@ -35,7 +35,7 @@ public class PostValidate {
 	 *  @return Meta
 	 *	
 	 */
-	public static Meta validateAddNew(String title, String content){
+	public Meta validateAddNew(String title, String content){
 		
 		//List message contain error message validate
 		List<Message> listMessage = new ArrayList<Message>();
@@ -85,7 +85,7 @@ public class PostValidate {
 	 *  @return Meta
 	 *	
 	 */
-	public static Meta validateActiveDeactive(String id, String status){
+	public Meta validateActiveDeactive(String id, String status){
 		
 		//List message contain error message validate
 		List<Message> listMessage = new ArrayList<Message>();
@@ -120,7 +120,7 @@ public class PostValidate {
 	 *  @return Meta
 	 *	
 	 */
-	public static Meta validateUpdate(String id, String title,
+	public Meta validateUpdate(String id, String title,
 			String content) {
 		
 		//List message contain error message validate
@@ -179,7 +179,7 @@ public class PostValidate {
 	 *  @return Meta
 	 *	
 	 */
-	public static Meta validateDelete(String id) {
+	public Meta validateDelete(String id) {
 		
 		//List message contain error message validate
 		List<Message> listMessage = new ArrayList<Message>();
@@ -206,7 +206,7 @@ public class PostValidate {
 	 *  @return Meta
 	 *	
 	 */
-	public static Meta validateGetAllPost(String pageNum) {
+	public Meta validateGetAllPost(String pageNum) {
 		
 		//List message contain error message validate
 		List<Message> listMessage = new ArrayList<Message>();
@@ -233,7 +233,7 @@ public class PostValidate {
 	 *  @return Meta
 	 *	
 	 */
-	public static Meta validateGetAllPostForUser(String pageNum, String user_id) {
+	public Meta validateGetAllPostForUser(String pageNum, String user_id) {
 		
 		//List message contain error message validate
 		List<Message> listMessage = new ArrayList<Message>();

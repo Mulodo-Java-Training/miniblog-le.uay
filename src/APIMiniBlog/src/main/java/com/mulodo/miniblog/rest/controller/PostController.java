@@ -53,7 +53,8 @@ import com.mulodo.miniblog.validator.PostValidate;
 @Controller
 @Path("/posts")
 @Produces(MediaType.APPLICATION_JSON)
-public class PostController {
+public class PostController 
+{
 	
 	//declare postService for get bean from applicationcontext.xml
 	private PostService postService;
@@ -107,7 +108,8 @@ public class PostController {
 		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
 		//validate data from client and add to meta
-		Meta meta =  PostValidate.validateAddNew(title, content);
+		PostValidate postValidate = new PostValidate();
+		Meta meta =  postValidate.validateAddNew(title, content);
 		Data data = null;
 		//if have error, add error to jsonobject and return to client
 		if(meta != null){
@@ -166,7 +168,8 @@ public class PostController {
 		JSONObject jsonObject = new JSONObject();
 		
 		//validate post data
-		Meta meta = PostValidate.validateActiveDeactive(id, status);
+		PostValidate postValidate = new PostValidate();
+		Meta meta = postValidate.validateActiveDeactive(id, status);
 		Data data = null;
 		//if have error, return error
 		if(meta != null){
@@ -232,7 +235,8 @@ public class PostController {
 		JSONObject jsonObject = new JSONObject();
 		
 		//validate post data, if have error, return error code in meta object to client
-		Meta meta = PostValidate.validateUpdate(id, title, content);
+		PostValidate postValidate = new PostValidate();
+		Meta meta = postValidate.validateUpdate(id, title, content);
 		Data data = null;
 		if(meta != null){
 			jsonObject = BuildJSON.buildReturn(meta, data);
@@ -294,7 +298,8 @@ public class PostController {
 		JSONObject jsonObject = new JSONObject();
 		
 		//validate post data, if have error, return error code in meta object to client
-		Meta meta = PostValidate.validateDelete(id);
+		PostValidate postValidate = new PostValidate();
+		Meta meta = postValidate.validateDelete(id);
 		Data data = null;
 		if(meta != null){
 			jsonObject = BuildJSON.buildReturn(meta, data);
@@ -353,7 +358,8 @@ public class PostController {
 		JSONObject jsonObject = new JSONObject();
 		
 		//validate post data, if have error, return error code in meta object to client
-		Meta meta = PostValidate.validateGetAllPost(pageNum);
+		PostValidate postValidate = new PostValidate();
+		Meta meta = postValidate.validateGetAllPost(pageNum);
 		Data data = null;
 		if(meta != null){
 			jsonObject = BuildJSON.buildReturn(meta, data);
@@ -396,7 +402,8 @@ public class PostController {
 		JSONObject jsonObject = new JSONObject();
 		
 		//validate post data, if have error, return error code in meta object to client
-		Meta meta = PostValidate.validateGetAllPostForUser(pageNum, user_id);
+		PostValidate postValidate = new PostValidate();
+		Meta meta = postValidate.validateGetAllPostForUser(pageNum, user_id);
 		Data data = null;
 		if(meta != null){
 			jsonObject = BuildJSON.buildReturn(meta, data);

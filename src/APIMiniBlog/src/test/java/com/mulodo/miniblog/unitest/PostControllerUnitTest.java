@@ -42,7 +42,8 @@ import com.mulodo.miniblog.utils.EncrypUtils;
  * 
  */
 @SuppressWarnings("deprecation")
-public class PostControllerUnitTest {
+public class PostControllerUnitTest 
+{
 	
 	//declare root user url
 	private final String ROOT_POST_URL = "http://localhost:8080/APIMiniBlog/api/posts";

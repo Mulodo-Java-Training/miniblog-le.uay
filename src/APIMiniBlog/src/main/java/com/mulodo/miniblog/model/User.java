@@ -11,7 +11,7 @@
 package com.mulodo.miniblog.model;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -67,13 +67,13 @@ public class User {
 	private int status;
 	
 	@OneToMany(targetEntity=Comment.class ,mappedBy = "user",fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    private Set<Comment> comments;
+    private List<Comment> comments;
 	
 	@OneToMany(targetEntity=Post.class ,mappedBy = "user",fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    private Set<Post> posts;
+    private List<Post> posts;
 	
 	@OneToMany(targetEntity=Token.class ,mappedBy = "user",fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    private Set<Token> tokens;
+    private List<Token> tokens;
 	
 	
 	

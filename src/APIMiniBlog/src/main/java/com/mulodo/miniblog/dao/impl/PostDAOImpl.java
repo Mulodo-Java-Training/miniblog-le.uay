@@ -39,7 +39,8 @@ import com.mulodo.miniblog.model.User;
  * 
  */
 @Repository("postDAO")
-public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO{
+public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO
+{
 
 	private static final Logger logger = LoggerFactory.getLogger(PostDAOImpl.class);
 	
@@ -139,7 +140,8 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO{
 	 *  get_all_post_size use to get size of post with owner user from database
 	 *	
 	 *	@param	author_id : user id that owner post
-	 *  @param  isForUser : result of check current user owner or not
+	 *  @param  isForUser : result of get post for user
+	 *  @param  isOwnerUser : result of check current user owner or not
 	 *
 	 *	@return int
 	 *	

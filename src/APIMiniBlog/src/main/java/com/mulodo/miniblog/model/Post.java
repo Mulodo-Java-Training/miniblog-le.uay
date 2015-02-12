@@ -11,7 +11,7 @@
 package com.mulodo.miniblog.model;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -64,13 +64,13 @@ public class Post {
     private User user;
 	
 	@OneToMany(targetEntity=Comment.class ,mappedBy = "post",fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    private Set<Comment> comments;
+    private List<Comment> comments;
 	
-	public Set<Comment> getComments() {
+	public List<Comment> getComments() {
 		return comments;
 	}
 
-	public void setComments(Set<Comment> comments) {
+	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
 

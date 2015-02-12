@@ -39,7 +39,8 @@ import com.mulodo.miniblog.utils.EncrypUtils;
  * 
  */
 @SuppressWarnings("deprecation")
-public class UserControllerUnitTest {
+public class UserControllerUnitTest 
+{
 	
 	//declare root user url
 	private final String ROOT_USER_URL = "http://localhost:8080/APIMiniBlog/api/users";
@@ -565,7 +566,6 @@ public class UserControllerUnitTest {
 				+ "oldPassword=abcd12345&newPassword=4321dcbaa");
 		//post data to add user api
 		respone = clientRequest.put(String.class);
-		System.out.println(respone.getEntity().toString());
 		jsonObject = new JSONObject(respone.getEntity().toString());
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare status return with status in list error
@@ -586,7 +586,6 @@ public class UserControllerUnitTest {
 				+ "oldPassword=abcd1234&newPassword=4321dcba");
 		//post data to add user api
 		respone = clientRequest.put(String.class);
-		System.out.println(respone.getEntity().toString());
 		jsonObject = new JSONObject(respone.getEntity().toString());
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare status return with status in list error

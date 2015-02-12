@@ -56,6 +56,20 @@ public class Comment {
 	@ManyToOne
     @JoinColumn(nullable = false,name = "post_id", referencedColumnName = "id")
     private Post post;
+	
+	public Comment() {
+		super();
+	}
+
+	public Comment(String content, Date created_at, Date modified_at,
+			User user, Post post) {
+		super();
+		this.content = content;
+		this.created_at = created_at;
+		this.modified_at = modified_at;
+		this.user = user;
+		this.post = post;
+	}
 
 	public User getUser() {
 		return user;
