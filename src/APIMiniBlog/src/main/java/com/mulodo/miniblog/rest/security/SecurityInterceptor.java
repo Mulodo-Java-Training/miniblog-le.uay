@@ -46,10 +46,10 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 
 	JSONObject jsonObject = null;
 	
-	ApplicationContext appContext = 
+	private ApplicationContext appContext = 
 	    	  new ClassPathXmlApplicationContext("classpath:/WEB-INF/applicationContext.xml");
 	
-    TokenService tokenService = (TokenService) appContext.getBean("tokenService"); 
+	private TokenService tokenService = (TokenService) appContext.getBean("tokenService");
 	
 	
 	@Override
@@ -75,6 +75,7 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 						Calendar cal_expired_at = Calendar.getInstance();
 						cal_expired_at.add(Calendar.HOUR_OF_DAY, 1);
 						token.setExpired_at(cal_expired_at.getTime());
+						
 						this.tokenService.update(token);
 						jsonObject = new JSONObject();
 						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_1003), null);
@@ -83,10 +84,11 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 					}
 				} catch (ServiceException e) {
 					jsonObject = new JSONObject();
-					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);			
+					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
+					e.printStackTrace();
 					requestContext.abortWith(Response.status(Constraints.CODE_1000).entity(jsonObject.toString()).build());  
 					return;
-				}catch(Exception ex){
+				}catch(Exception ex){	
 					ex.printStackTrace();
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
 					requestContext.abortWith(Response.status(500).entity(jsonObject.toString()).build());
@@ -131,11 +133,13 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 								this.tokenService.update(tokenTemp);
 							}
 						} catch (ServiceException e) {
+							e.printStackTrace();
 							jsonObject = new JSONObject();
 							jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
-							requestContext.abortWith(Response.status(500).entity(jsonObject.toString()).build());  
+							requestContext.abortWith(Response.status(500).entity(jsonObject.toString()).build());
 							return;
-						}catch(Exception ex){
+						}catch(Exception e){
+							e.printStackTrace();
 							jsonObject = new JSONObject();
 							jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
 							requestContext.abortWith(Response.status(500).entity(jsonObject.toString()).build());  

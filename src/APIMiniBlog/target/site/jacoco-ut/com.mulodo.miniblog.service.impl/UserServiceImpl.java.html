@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UserServiceImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">APIMiniBlog</a> &gt; <a href="index.source.html" class="el_package">com.mulodo.miniblog.service.impl</a> &gt; <span class="el_source">UserServiceImpl.java</span></div><h1>UserServiceImpl.java</h1><pre class="source lang-java linenums">/* 
+ * UserServiceImpl.java 
+ *  
+ * 1.0
+ * 
+ * 2015/02/02
+ *  
+ * Copyright (c) 2015 Le U Uay
+ * 
+ */
+package com.mulodo.miniblog.service.impl;
+
+
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.mulodo.miniblog.contraints.Constraints;
+import com.mulodo.miniblog.dao.UserDAO;
+import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.model.User;
+import com.mulodo.miniblog.service.UserService;
+import com.mulodo.miniblog.utils.EncrypUtils;
+
+/**
+ * The user service impl
+ * 
+ * @author UayLU
+ * 
+ */
+@Service
+<span class="fc" id="L37">public class UserServiceImpl extends GenericServiceImpl&lt;User&gt; implements UserService{</span>
+	
+	private UserDAO userDAO;
+	
+	 /**
+	 *  setUserDAO use to set datasource from applicationcontent.xml
+	 *	
+	 *	@param	ud : UserDAO from datasource
+	 *
+	 *	@return void
+	 */
+	@Autowired
+	@Qualifier(&quot;userDAO&quot;)
+	public void setUserDAO(UserDAO ud){
+<span class="fc" id="L51">		this.userDAO = ud;</span>
+<span class="fc" id="L52">	}</span>
+
+	/**
+	 *  is_user_exits use to check exist user in database
+	 *	
+	 *	@param	username : string username use to check
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	@Transactional
+	public Boolean isUserExits(String username) throws ServiceException {
+		try{
+<span class="nc" id="L68">			username = username.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;);</span>
+<span class="nc" id="L69">			return this.userDAO.isUserExits(username);</span>
+<span class="nc" id="L70">		}catch(DAOException ex){</span>
+<span class="nc" id="L71">			throw new ServiceException(ex.getMessage());</span>
+		}
+	}
+
+	/**
+	 *  is_email_exits use to check exist email in database
+	 *	
+	 *	@param	email : email for check
+	 *  @param  user  : check email but not check email for this user
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	@Transactional
+	public Boolean isEmailExits(String email, User user) throws ServiceException {
+		try{
+<span class="nc" id="L90">			email = email.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;);</span>
+<span class="nc" id="L91">			return this.userDAO.isEmailExits(email, user);</span>
+<span class="nc" id="L92">		}catch(DAOException ex){</span>
+<span class="nc" id="L93">			throw new ServiceException(ex.getMessage());</span>
+		}
+	}
+
+	/**
+	 *  is_valid_login check valid login
+	 *	
+	 *	@param	username : username for login
+	 *  @param  password : password for login
+	 *
+	 *	@return User
+	 *	
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	@Transactional
+	public User isValidLogin(String username, String password)
+			throws ServiceException {
+		try{
+<span class="nc" id="L113">			username = username.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;);</span>
+<span class="nc" id="L114">			password = password.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;);</span>
+<span class="nc" id="L115">			password = EncrypUtils.encrypData(password);</span>
+<span class="nc" id="L116">			return this.userDAO.isValidLogin(username,password);</span>
+<span class="nc" id="L117">		}catch(NoSuchAlgorithmException ex){</span>
+<span class="nc" id="L118">			throw new ServiceException(ex.getMessage());</span>
+<span class="nc" id="L119">		}catch(DAOException ex){</span>
+<span class="nc" id="L120">			throw new ServiceException(ex.getMessage());</span>
+		}
+	}
+
+	/**
+	 *  find_by_name use for find user in database
+	 *	
+	 *	@param	name : name of username, firstname, lastname
+	 *
+	 *	@return List&lt;User&gt;
+	 *	
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public List&lt;User&gt; findByName(String name) throws ServiceException {
+		try{
+<span class="nc" id="L137">			return this.userDAO.findByName(name);</span>
+<span class="nc" id="L138">		}catch(DAOException ex){</span>
+<span class="nc" id="L139">			throw new ServiceException(ex.getMessage());</span>
+		}
+	}
+
+	
+	/**
+	 *  deleteByUsername use to check delete user by username in database
+	 *	
+	 *	@param	username : string username use to check
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public Boolean deleteByUsername(String username) throws ServiceException {
+		try{
+<span class="fc" id="L157">			return this.userDAO.deleteByUsername(username);</span>
+<span class="nc" id="L158">		}catch(DAOException ex){</span>
+<span class="nc" id="L159">			throw new ServiceException(ex.getMessage());</span>
+		}
+	}
+
+	/**
+	 *  searchByUsername use to check delete user by username in database
+	 *	
+	 *	@param	username : string username use to check
+	 *
+	 *	@return User
+	 *	
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public User findByUsername(String username) throws ServiceException {
+		try{
+<span class="fc" id="L176">			return this.userDAO.findByUsername(username);</span>
+<span class="nc" id="L177">		}catch(DAOException ex){</span>
+<span class="nc" id="L178">			throw new ServiceException(ex.getMessage());</span>
+		}
+	}
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

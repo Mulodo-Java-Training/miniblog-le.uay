@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UserDAOImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">APIMiniBlog</a> &gt; <a href="index.source.html" class="el_package">com.mulodo.miniblog.dao.impl</a> &gt; <span class="el_source">UserDAOImpl.java</span></div><h1>UserDAOImpl.java</h1><pre class="source lang-java linenums">/* 
+ * GenericDAOImpl.java 
+ *  
+ * 1.0
+ * 
+ * 2015/02/02
+ *  
+ * Copyright (c) 2015 Le U Uay
+ * 
+ */
+package com.mulodo.miniblog.dao.impl;
+
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.ObjectNotFoundException;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+
+import com.mulodo.miniblog.contraints.Constraints;
+import com.mulodo.miniblog.dao.UserDAO;
+import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.model.User;
+
+/**
+ * The user dao impl
+ * 
+ * @author UayLU
+ * 
+ */
+@Repository(&quot;userDAO&quot;)
+<span class="fc" id="L37">public class UserDAOImpl extends GenericDAOImpl&lt;User&gt; implements UserDAO{</span>
+
+<span class="fc" id="L39">	private static final Logger logger = LoggerFactory.getLogger(UserDAOImpl.class);</span>
+	
+	
+	/**
+	 *  findAll use to find all user exist in database
+	 *	
+	 *	@param	tableName : table need for find
+	 *
+	 *	@return List&lt;T&gt;
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	@Override
+	 public List&lt;User&gt; findAll(String tableName) throws DAOException{
+		try{			
+<span class="nc" id="L56">	        session = this.sessionFactory.openSession();</span>
+<span class="nc" id="L57">	        tx = session.beginTransaction();</span>
+<span class="nc" id="L58">	        Criteria criteria = session.createCriteria(User.class)</span>
+<span class="nc" id="L59">	        		.setProjection(Projections.projectionList()</span>
+<span class="nc" id="L60">	        			      .add(Projections.property(&quot;id&quot;), &quot;id&quot;)</span>
+<span class="nc" id="L61">	        			      .add(Projections.property(&quot;username&quot;), &quot;username&quot;)</span>
+<span class="nc" id="L62">	        			      .add(Projections.property(&quot;firstname&quot;), &quot;firstname&quot;)</span>
+<span class="nc" id="L63">	        			      .add(Projections.property(&quot;lastname&quot;), &quot;lastname&quot;)</span>
+<span class="nc" id="L64">	        			      .add(Projections.property(&quot;created_at&quot;), &quot;created_at&quot;)</span>
+<span class="nc" id="L65">	        			      .add(Projections.property(&quot;modified_at&quot;), &quot;modified_at&quot;)</span>
+<span class="nc" id="L66">	        			      .add(Projections.property(&quot;email&quot;), &quot;email&quot;)</span>
+<span class="nc" id="L67">	        			      .add(Projections.property(&quot;status&quot;), &quot;status&quot;))</span>
+<span class="nc" id="L68">	        			    .setResultTransformer(Transformers.aliasToBean(User.class));</span>
+<span class="nc" id="L69">	        logger.info(&quot;Get list user loaded successfully, user details&quot;);</span>
+<span class="nc" id="L70">	        tx.commit();</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">	        if(!criteria.list().isEmpty()){</span>
+<span class="nc" id="L72">	        	return criteria.list();</span>
+	        }else{
+<span class="nc" id="L74">	        	return null;</span>
+	        }
+<span class="nc" id="L76">    	}catch(ObjectNotFoundException ex){</span>
+<span class="nc" id="L77">    		ex.printStackTrace();</span>
+<span class="nc" id="L78">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L79">    	}catch(HibernateException ex){</span>
+<span class="nc" id="L80">    		ex.printStackTrace();</span>
+<span class="nc" id="L81">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L82">    	}finally {</span>
+<span class="nc" id="L83">    		   session.close();</span>
+<span class="nc" id="L84">    	}	</span>
+	}
+	
+	/**
+	 *  isUserExits use to check exist user in database
+	 *	
+	 *	@param	username : string username use to check
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	@Override
+	public Boolean isUserExits(String username) throws DAOException {
+		try{
+			
+<span class="nc" id="L101">	        session = this.sessionFactory.openSession();</span>
+<span class="nc" id="L102">	        tx = session.beginTransaction();</span>
+<span class="nc" id="L103">	        Criteria criteria = session.createCriteria(User.class);</span>
+	        
+<span class="nc bnc" id="L105" title="All 2 branches missed.">	        if(username != null){</span>
+<span class="nc" id="L106">	        	criteria.add(Restrictions.eq(&quot;username&quot;,username));</span>
+	        }
+	        
+<span class="nc bnc" id="L109" title="All 2 branches missed.">	        if(criteria.list().isEmpty()){</span>
+<span class="nc" id="L110">	        	return false;</span>
+	        }
+<span class="nc" id="L112">	        User user = (User) criteria.list().get(0);</span>
+<span class="nc" id="L113">	        logger.info(&quot;Check user successfully,  details=&quot;+user.getId());</span>
+<span class="nc" id="L114">	        tx.commit();</span>
+<span class="nc bnc" id="L115" title="All 4 branches missed.">	        if(user.getId() != 0 &amp;&amp; user.getUsername().equals(username)){</span>
+<span class="nc" id="L116">	        	return true;</span>
+	        }else{
+<span class="nc" id="L118">	        	return false;</span>
+	        }
+<span class="nc" id="L120">    	}catch(ObjectNotFoundException ex){</span>
+<span class="nc" id="L121">    		ex.printStackTrace();</span>
+<span class="nc" id="L122">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L123">    	}catch(HibernateException ex){</span>
+<span class="nc" id="L124">    		ex.printStackTrace();</span>
+<span class="nc" id="L125">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L126">    	}finally {</span>
+<span class="nc" id="L127">    		   session.close();</span>
+<span class="nc" id="L128">    	}</span>
+	}
+
+	/**
+	 *  is_email_exits use to check exist email in database
+	 *	
+	 *	@param	email : email for check
+	 *  @param  user  : check email but not check email for this user
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	@Override
+	public Boolean isEmailExits(String email, User user) throws DAOException {
+		
+		try{
+			
+<span class="nc" id="L147">	        session = this.sessionFactory.openSession();</span>
+<span class="nc" id="L148">	        tx = session.beginTransaction();</span>
+<span class="nc" id="L149">	        Criteria criteria = session.createCriteria(User.class);</span>
+	        
+<span class="nc bnc" id="L151" title="All 2 branches missed.">	        if(email != null){</span>
+<span class="nc" id="L152">	        	criteria.add(Restrictions.eq(&quot;email&quot;,email));</span>
+	        }
+	        
+<span class="nc bnc" id="L155" title="All 2 branches missed.">	        if(criteria.list().isEmpty()){</span>
+<span class="nc" id="L156">	        	return false;</span>
+	        }
+<span class="nc" id="L158">	        User userDB = (User) criteria.list().get(0);</span>
+
+
+<span class="nc" id="L161">	        tx.commit();</span>
+<span class="nc bnc" id="L162" title="All 4 branches missed.">	        if(userDB.getId() != 0 &amp;&amp; userDB.getEmail().equals(email)){</span>
+<span class="nc" id="L163">	        	logger.info(&quot;Email check successfully, email details=&quot;+userDB.getEmail());</span>
+<span class="nc bnc" id="L164" title="All 4 branches missed.">	        	if(user != null &amp;&amp; user.getId() == userDB.getId()){</span>
+<span class="nc" id="L165">	        		return false;</span>
+	        	}else{
+<span class="nc" id="L167">	        		return true;</span>
+	        	}
+	        }else{
+<span class="nc" id="L170">	        	return false;</span>
+	        }
+	        
+<span class="nc" id="L173">    	}catch(ObjectNotFoundException ex){</span>
+<span class="nc" id="L174">    		ex.printStackTrace();</span>
+<span class="nc" id="L175">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L176">    	}catch(HibernateException ex){</span>
+<span class="nc" id="L177">    		ex.printStackTrace();</span>
+<span class="nc" id="L178">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L179">    	}finally {</span>
+<span class="nc" id="L180">    		   session.close();</span>
+<span class="nc" id="L181">    	}</span>
+	}
+
+	/**
+	 *  isValidLogin check valid login
+	 *	
+	 *	@param	username : username for login
+	 *  @param  password : password for login
+	 *
+	 *	@return User
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	@Override
+	public User isValidLogin(String username, String password) throws DAOException{
+		try{
+			
+<span class="nc" id="L199">	        session = this.sessionFactory.openSession();</span>
+<span class="nc" id="L200">	        tx = session.beginTransaction();</span>
+<span class="nc" id="L201">	        Criteria criteria = session.createCriteria(User.class);</span>
+	        
+<span class="nc bnc" id="L203" title="All 4 branches missed.">	        if(username != null &amp;&amp; password != null){</span>
+<span class="nc" id="L204">	        	criteria.add(Restrictions.eq(&quot;username&quot;,username));</span>
+<span class="nc" id="L205">	        	criteria.add(Restrictions.eq(&quot;password&quot;,password));</span>
+	        }
+	        
+	        
+<span class="nc bnc" id="L209" title="All 2 branches missed.">	        if(criteria.list().isEmpty()){</span>
+<span class="nc" id="L210">	        	return null;</span>
+	        }
+<span class="nc" id="L212">	        User user = (User) criteria.list().get(0);</span>
+<span class="nc" id="L213">	        logger.info(&quot;Person loaded successfully, Person details=&quot;+user);</span>
+<span class="nc" id="L214">	        tx.commit();</span>
+<span class="nc bnc" id="L215" title="All 4 branches missed.">	        if(user.getUsername().equals(username) &amp;&amp; user.getPassword().equals(password)){</span>
+<span class="nc" id="L216">	        	return user;</span>
+	        }else{
+<span class="nc" id="L218">	        	return null;</span>
+	        }
+<span class="nc" id="L220">		}catch(ObjectNotFoundException ex){</span>
+<span class="nc" id="L221">			ex.printStackTrace();</span>
+<span class="nc" id="L222">			throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L223">		}catch(HibernateException ex){</span>
+<span class="nc" id="L224">			ex.printStackTrace();</span>
+<span class="nc" id="L225">			throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L226">		}finally {</span>
+<span class="nc" id="L227">			   session.close();</span>
+<span class="nc" id="L228">		}</span>
+	}
+
+	/**
+	 *  find_by_name use for find user in database
+	 *	
+	 *	@param	name : name of username, firstname, lastname
+	 *
+	 *	@return List&lt;User&gt;
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	@Override
+	public List&lt;User&gt; findByName(String name) throws DAOException {
+		try{
+<span class="nc" id="L245">	        session = this.sessionFactory.openSession();</span>
+	        
+<span class="nc" id="L247">	        Criteria criteria = session.createCriteria(User.class);</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">	        if(name != null){</span>
+<span class="nc" id="L249">	        	criteria.add(Restrictions.disjunction()</span>
+<span class="nc" id="L250">		        			.add(Restrictions.like(&quot;username&quot;, &quot;%&quot;+name+&quot;%&quot;))</span>
+<span class="nc" id="L251">		        			.add(Restrictions.like(&quot;firstname&quot;,&quot;%&quot;+name+&quot;%&quot;))</span>
+<span class="nc" id="L252">		        			.add(Restrictions.like(&quot;lastname&quot;,&quot;%&quot;+name+&quot;%&quot;)))</span>
+<span class="nc" id="L253">		        		.add(Restrictions.eq(&quot;status&quot;,Constraints.USER_ACTIVE))</span>
+<span class="nc" id="L254">	        			.setProjection(Projections.projectionList()</span>
+<span class="nc" id="L255">	        			      .add(Projections.property(&quot;id&quot;), &quot;id&quot;)</span>
+<span class="nc" id="L256">	        			      .add(Projections.property(&quot;username&quot;), &quot;username&quot;)</span>
+<span class="nc" id="L257">	        			      .add(Projections.property(&quot;firstname&quot;), &quot;firstname&quot;)</span>
+<span class="nc" id="L258">	        			      .add(Projections.property(&quot;lastname&quot;), &quot;lastname&quot;)</span>
+<span class="nc" id="L259">	        			      .add(Projections.property(&quot;status&quot;), &quot;status&quot;)</span>
+<span class="nc" id="L260">	        			      .add(Projections.property(&quot;email&quot;), &quot;email&quot;))</span>
+<span class="nc" id="L261">	        			.setResultTransformer(Transformers.aliasToBean(User.class));</span>
+	        }
+	        
+
+	        
+//	        criteria.setFirstResult((pageNum - 1)* Constraints.LIMIT_ROW);
+//	        criteria.setMaxResults(Constraints.LIMIT_ROW);
+	        
+<span class="nc bnc" id="L269" title="All 2 branches missed.">	        if(!criteria.list().isEmpty()){</span>
+<span class="nc" id="L270">		        List&lt;User&gt; usersList = criteria.list();</span>
+<span class="nc bnc" id="L271" title="All 2 branches missed.">		        for(User us : usersList){</span>
+<span class="nc" id="L272">		            logger.info(&quot;Person List::&quot;+us);</span>
+		        }
+<span class="nc" id="L274">		        return usersList;</span>
+	        }else{
+<span class="nc" id="L276">	        	return null;</span>
+	        }
+<span class="nc" id="L278">    	}catch(HibernateException ex){</span>
+<span class="nc" id="L279">    		ex.printStackTrace();</span>
+<span class="nc" id="L280">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L281">    	}finally {</span>
+<span class="nc" id="L282">    		   session.close();</span>
+<span class="nc" id="L283">    	}</span>
+	}
+
+	
+	/**
+	 *  deleteByUsername use to check delete user by username in database
+	 *	
+	 *	@param	username : string username use to check
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	@Override
+	public Boolean deleteByUsername(String username) throws DAOException {
+		try{ 
+<span class="fc" id="L300"> 	        session = this.sessionFactory.openSession();</span>
+<span class="fc" id="L301"> 	        tx = session.beginTransaction();</span>
+<span class="fc" id="L302">			Criteria criteria = session.createCriteria(User.class);</span>
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">			if(username != null){</span>
+<span class="fc" id="L304">	        	criteria.add(Restrictions.eq(&quot;username&quot;,username));</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">	        	if(criteria.list().isEmpty()){</span>
+<span class="nc" id="L306">					return false;</span>
+				}else{
+<span class="fc" id="L308">					User user = (User) criteria.list().get(0);</span>
+<span class="fc" id="L309">					session.delete(user);</span>
+<span class="fc" id="L310">		 	        tx.commit();</span>
+<span class="fc" id="L311">		 	        logger.info(&quot;User deleted successfully, user details=&quot;+user);</span>
+<span class="fc" id="L312">		 	        return true;</span>
+				}
+			}
+<span class="nc" id="L315">			return false;</span>
+<span class="nc" id="L316">     	}catch(HibernateException ex){</span>
+<span class="nc" id="L317">     		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
+<span class="nc bnc" id="L318" title="All 2 branches missed.">     		if(tx != null)	tx.rollback();</span>
+<span class="nc" id="L319">     		ex.printStackTrace();</span>
+<span class="nc" id="L320">     		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L321">     	}finally {</span>
+<span class="pc" id="L322">     		session.close();</span>
+<span class="nc" id="L323">     	}</span>
+	}
+
+	
+	/**
+	 *  findByUsername use to check search user by username in database
+	 *	
+	 *	@param	username : string username use to search
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	@Override
+	public User findByUsername(String username) throws DAOException {
+		try{ 
+<span class="fc" id="L340"> 	        session = this.sessionFactory.openSession();</span>
+<span class="fc" id="L341"> 	        tx = session.beginTransaction();</span>
+<span class="fc" id="L342">			Criteria criteria = session.createCriteria(User.class);</span>
+<span class="pc bpc" id="L343" title="1 of 2 branches missed.">			if(username != null){</span>
+<span class="fc" id="L344">	        	criteria.add(Restrictions.eq(&quot;username&quot;,username));</span>
+<span class="pc bpc" id="L345" title="1 of 2 branches missed.">	        	if(criteria.list().isEmpty()){</span>
+<span class="nc" id="L346">					return null;</span>
+				}else{
+<span class="fc" id="L348">					User user = (User) criteria.list().get(0);</span>
+<span class="fc" id="L349">		 	        tx.commit();</span>
+<span class="fc" id="L350">		 	        logger.info(&quot;Find user successfully, user details=&quot;+user);</span>
+<span class="fc" id="L351">		 	        return user;</span>
+				}
+			}
+<span class="nc" id="L354">			return null;</span>
+<span class="nc" id="L355">     	}catch(HibernateException ex){</span>
+<span class="nc" id="L356">     		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">     		if(tx != null)	tx.rollback();</span>
+<span class="nc" id="L358">     		ex.printStackTrace();</span>
+<span class="nc" id="L359">     		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L360">     	}finally {</span>
+<span class="pc" id="L361">     		session.close();</span>
+<span class="nc" id="L362">     	}</span>
+	}	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

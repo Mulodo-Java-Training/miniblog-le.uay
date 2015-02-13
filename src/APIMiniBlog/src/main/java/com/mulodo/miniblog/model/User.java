@@ -80,12 +80,30 @@ public class User {
 	public User() {
 		super();
 	}
+	
 	public User(int id, String username, int status) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.status = status;
 	}
+	
+	
+	
+	public User(String username, String password, String lastname,
+			String firstname, String email, Date created_at, Date modified_at,
+			int status) {
+		super();
+		this.username = username;
+		this.password = password;
+		this.lastname = lastname;
+		this.firstname = firstname;
+		this.email = email;
+		this.created_at = created_at;
+		this.modified_at = modified_at;
+		this.status = status;
+	}
+
 	public int getId() {
 		return id;
 	}

@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CommentController.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">APIMiniBlog</a> &gt; <a href="index.source.html" class="el_package">com.mulodo.miniblog.rest.controller</a> &gt; <span class="el_source">CommentController.java</span></div><h1>CommentController.java</h1><pre class="source lang-java linenums">/* 
+ * CommentController.java 
+ *  
+ * 1.0
+ * 
+ * 2015/02/02
+ *  
+ * Copyright (c) 2015 Le U Uay
+ * 
+ */
+package com.mulodo.miniblog.rest.controller;
+
+import java.util.Calendar;
+import java.util.List;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+
+import com.mulodo.miniblog.contraints.Constraints;
+import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.model.Comment;
+import com.mulodo.miniblog.model.Post;
+import com.mulodo.miniblog.model.Token;
+import com.mulodo.miniblog.model.User;
+import com.mulodo.miniblog.object.Data;
+import com.mulodo.miniblog.object.Meta;
+import com.mulodo.miniblog.service.CommentService;
+import com.mulodo.miniblog.service.PostService;
+import com.mulodo.miniblog.service.TokenService;
+import com.mulodo.miniblog.utils.BuildJSON;
+import com.mulodo.miniblog.validator.CommentValidate;
+
+/**
+ * The comment controller
+ * 
+ * @author UayLU
+ * 
+ */
+@Controller
+@Path(&quot;/comments&quot;)
+@Produces(MediaType.APPLICATION_JSON)
+<span class="fc" id="L58">public class CommentController {</span>
+	
+	private PostService postService;
+	
+	private TokenService tokenService;
+	
+	private CommentService commentService;
+	
+	/**
+	 *  setPostService use to set datasource from applicationcontent.xml
+	 *	
+	 *	@param	ps : PostService from datasource
+	 *
+	 *	@return void
+	 */
+	@Autowired
+	@Qualifier(&quot;postService&quot;)
+	public void setPostService(PostService ps){
+<span class="fc" id="L76">		this.postService = ps;</span>
+<span class="fc" id="L77">	}</span>
+	
+	/**
+	 *  setPostService use to set datasource from applicationcontent.xml
+	 *	
+	 *	@param	ps : PostService from datasource
+	 *
+	 *	@return void
+	 */
+	@Autowired
+	@Qualifier(&quot;tokenService&quot;)
+	public void setTokenService(TokenService ts){
+<span class="fc" id="L89">		this.tokenService = ts;</span>
+<span class="fc" id="L90">	}</span>
+	
+	/**
+	 *  setCommentService use to set datasource from applicationcontent.xml
+	 *	
+	 *	@param	cs : CommentService from datasource
+	 *
+	 *	@return void
+	 */
+	@Autowired
+	@Qualifier(&quot;commentService&quot;)
+	public void setCommentService(CommentService cs){
+<span class="fc" id="L102">		this.commentService = cs;</span>
+<span class="fc" id="L103">	}</span>
+	
+	@RolesAllowed(&quot;ADMIN&quot;)
+    @POST
+    @Path(&quot;add&quot;)
+    public Response addComment( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
+    		@FormParam(&quot;post_id&quot;) String post_id, @FormParam(&quot;content&quot;) String content) {
+		
+<span class="nc" id="L111">		JSONObject jsonObject = new JSONObject();</span>
+		
+<span class="nc" id="L113">		Meta meta =  CommentValidate.validateAddNew(post_id, content);</span>
+<span class="nc" id="L114">		Data data = null;</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">		if(meta != null){</span>
+<span class="nc" id="L116">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L117">			return Response.status(200).entity(jsonObject.toString()).build();</span>
+		}
+<span class="nc bnc" id="L119" title="All 2 branches missed.">		if(access_key != null){</span>
+			try {
+			
+<span class="nc" id="L122">				Token token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">				if(token != null){</span>
+					
+<span class="nc" id="L125">					User user = token.getUser();</span>
+<span class="nc" id="L126">					Calendar cal = Calendar.getInstance();</span>
+					
+<span class="nc" id="L128">					Post post = this.postService.findOne(Integer.parseInt(post_id));</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">					if(post == null){</span>
+<span class="nc" id="L130">						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3007), null);</span>
+<span class="nc" id="L131">						return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">					}else if(post.getStatus() == Constraints.POST_INACTIVE){</span>
+<span class="nc" id="L133">						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3007), null);</span>
+<span class="nc" id="L134">						return Response.status(200).entity(jsonObject.toString()).build();</span>
+					}
+<span class="nc" id="L136">					Comment comment = new Comment();</span>
+<span class="nc" id="L137">					comment.setContent(content);</span>
+<span class="nc" id="L138">					comment.setCreated_at(cal.getTime());</span>
+<span class="nc" id="L139">					comment.setModified_at(cal.getTime());</span>
+<span class="nc" id="L140">					comment.setPost(post);</span>
+<span class="nc" id="L141">					comment.setUser(user);</span>
+<span class="nc" id="L142">					this.commentService.add(comment);</span>
+<span class="nc" id="L143">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_210, 0), null);</span>
+				}
+<span class="nc" id="L145">			}catch(ServiceException ex){</span>
+<span class="nc" id="L146">				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+<span class="nc" id="L147">			}catch(Exception ex){</span>
+<span class="nc" id="L148">				ex.printStackTrace();</span>
+<span class="nc" id="L149">				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+			}
+		}
+<span class="nc" id="L152">		return Response.status(200).entity(jsonObject.toString()).build();</span>
+    }
+	
+	@RolesAllowed(&quot;ADMIN&quot;)
+    @PUT
+    @Path(&quot;update&quot;)
+    public Response updateComment( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
+    		@FormParam(&quot;comment_id&quot;) String comment_id, @FormParam(&quot;content&quot;) String content) {
+		
+<span class="nc" id="L161">		JSONObject jsonObject = new JSONObject();</span>
+		
+<span class="nc" id="L163">		Meta meta =  CommentValidate.validateUpdate(comment_id, content);</span>
+<span class="nc" id="L164">		Data data = null;</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">		if(meta != null){</span>
+<span class="nc" id="L166">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L167">			return Response.status(200).entity(jsonObject.toString()).build();</span>
+		}							
+<span class="nc bnc" id="L169" title="All 2 branches missed.">		if(access_key != null){</span>
+			try {
+			
+<span class="nc" id="L172">				Token token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">				if(token != null){</span>
+					
+<span class="nc" id="L175">					Calendar cal = Calendar.getInstance();</span>
+					
+<span class="nc" id="L177">					Comment comment = this.commentService.findOne(Integer.parseInt(comment_id));</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">					if(comment == null){</span>
+<span class="nc" id="L179">						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3006), null);</span>
+<span class="nc" id="L180">						return Response.status(200).entity(jsonObject.toString()).build();</span>
+					}
+<span class="nc bnc" id="L182" title="All 2 branches missed.">					if(comment.getUser().getId() != token.getUser().getId()){</span>
+<span class="nc" id="L183">						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3008), null);</span>
+<span class="nc" id="L184">						return Response.status(200).entity(jsonObject.toString()).build();</span>
+					}
+<span class="nc" id="L186">					comment.setContent(content);</span>
+<span class="nc" id="L187">					comment.setModified_at(cal.getTime());</span>
+<span class="nc" id="L188">					this.commentService.update(comment);</span>
+<span class="nc" id="L189">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_211, 0), null);</span>
+				}
+<span class="nc" id="L191">			}catch(ServiceException ex){</span>
+<span class="nc" id="L192">				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+<span class="nc" id="L193">			}catch(Exception ex){</span>
+<span class="nc" id="L194">				ex.printStackTrace();</span>
+<span class="nc" id="L195">				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+			}
+		}
+<span class="nc" id="L198">		return Response.status(200).entity(jsonObject.toString()).build();</span>
+    }
+	
+	@RolesAllowed(&quot;ADMIN&quot;)
+    @DELETE
+    @Path(&quot;delete/{id}&quot;)
+	public Response delete(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+			@PathParam(&quot;id&quot;) String id){
+		
+<span class="nc" id="L207">		JSONObject jsonObject = new JSONObject();</span>
+		
+<span class="nc" id="L209">		Meta meta = CommentValidate.validateDelete(id);</span>
+<span class="nc" id="L210">		Data data = null;</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">		if(meta != null){</span>
+<span class="nc" id="L212">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L213">			return Response.status(200).entity(jsonObject.toString()).build();</span>
+		}
+		try{
+<span class="nc" id="L216">			Token token = null;</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">			if(access_key != null){</span>
+<span class="nc" id="L218">				token = this.tokenService.findByAccessKey(access_key);</span>
+			}
+<span class="nc bnc" id="L220" title="All 2 branches missed.">			if(token != null){</span>
+<span class="nc" id="L221">				int commentId = Integer.parseInt(id);</span>
+<span class="nc" id="L222">				Comment comment = this.commentService.findOne(commentId);</span>
+<span class="nc bnc" id="L223" title="All 4 branches missed.">				if(comment != null &amp;&amp; comment.getUser().getId() == token.getUser().getId()){</span>
+<span class="nc" id="L224">					this.postService.delete(commentId);</span>
+<span class="nc" id="L225">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_212, 0), null);</span>
+<span class="nc bnc" id="L226" title="All 4 branches missed.">				}else if (comment != null &amp;&amp; comment.getUser().getId() != token.getUser().getId()) {</span>
+<span class="nc" id="L227">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3008), null);</span>
+<span class="nc" id="L228">				}else{</span>
+<span class="nc" id="L229">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3006), null);</span>
+				}
+			}
+<span class="nc" id="L232">		}catch(ServiceException ex){</span>
+<span class="nc" id="L233">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+<span class="nc" id="L234">		}catch(Exception ex){</span>
+<span class="nc" id="L235">			ex.printStackTrace();</span>
+<span class="nc" id="L236">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+		}
+		
+<span class="nc" id="L239">		return Response.status(200).entity(jsonObject.toString()).build();</span>
+	}	
+	
+	@RolesAllowed(&quot;ADMIN&quot;)
+    @GET
+    @Path(&quot;getByPost&quot;)
+	public Response getAllCommentForPost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+			@QueryParam(&quot;post_id&quot;) String post_id){
+		
+<span class="nc" id="L248">		JSONObject jsonObject = new JSONObject();</span>
+		
+<span class="nc" id="L250">		Meta meta = CommentValidate.validateGetAllCommentForPost(post_id);</span>
+<span class="nc" id="L251">		Data data = null;</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">		if(meta != null){</span>
+<span class="nc" id="L253">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L254">			return Response.status(200).entity(jsonObject.toString()).build();</span>
+		}	
+		try{
+<span class="nc" id="L257">			Token token = this.tokenService.findByAccessKey(access_key);</span>
+			
+<span class="nc" id="L259">			Post post = this.postService.findOne(Integer.parseInt(post_id));</span>
+<span class="nc" id="L260">			List&lt;Comment&gt; listComment = null;</span>
+<span class="nc bnc" id="L261" title="All 2 branches missed.">			if(post.getUser().getId() == token.getUser().getId()){</span>
+<span class="nc" id="L262">				listComment = this.commentService.getAllCommentForPost(Integer.parseInt(post_id), true);</span>
+<span class="nc" id="L263">			}else{</span>
+<span class="nc" id="L264">				listComment = this.commentService.getAllCommentForPost(Integer.parseInt(post_id), false);</span>
+			}
+			
+<span class="nc" id="L267">			data = new Data();</span>
+<span class="nc" id="L268">			data.setListComment(listComment);</span>
+<span class="nc" id="L269">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L270">		}catch(ServiceException ex){</span>
+<span class="nc" id="L271">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+<span class="nc" id="L272">		}catch(Exception ex){</span>
+<span class="nc" id="L273">			ex.printStackTrace();</span>
+<span class="nc" id="L274">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+		}
+		
+<span class="nc" id="L277">		return Response.status(200).entity(jsonObject.toString()).build();</span>
+	}
+	
+	@RolesAllowed(&quot;ADMIN&quot;)
+    @GET
+    @Path(&quot;getByUser&quot;)
+	public Response getAllCommentForUser(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+			@QueryParam(&quot;user_id&quot;) String user_id){
+		
+<span class="nc" id="L286">		JSONObject jsonObject = new JSONObject();</span>
+		
+<span class="nc" id="L288">		Meta meta = CommentValidate.validateGetAllCommentForUser(user_id);</span>
+<span class="nc" id="L289">		Data data = null;</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">		if(meta != null){</span>
+<span class="nc" id="L291">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L292">			return Response.status(200).entity(jsonObject.toString()).build();</span>
+		}	
+		try{
+<span class="nc" id="L295">			Token token = this.tokenService.findByAccessKey(access_key);</span>
+			
+<span class="nc" id="L297">			int userIdDao = Integer.parseInt(user_id);</span>
+<span class="nc" id="L298">			List&lt;Comment&gt; listComment = null;</span>
+<span class="nc bnc" id="L299" title="All 2 branches missed.">			if(token.getUser().getId() == userIdDao){</span>
+<span class="nc" id="L300">				listComment = this.commentService.getAllCommentForUser(token.getUser().getId(), true);</span>
+<span class="nc" id="L301">			}else{</span>
+<span class="nc" id="L302">				listComment = this.commentService.getAllCommentForUser(token.getUser().getId(), false);</span>
+			}
+<span class="nc" id="L304">			data = new Data();</span>
+<span class="nc" id="L305">			data.setListComment(listComment);</span>
+<span class="nc" id="L306">			jsonObject = BuildJSON.buildReturn(null, data);</span>
+<span class="nc" id="L307">		}catch(ServiceException ex){</span>
+<span class="nc" id="L308">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+<span class="nc" id="L309">		}catch(Exception ex){</span>
+<span class="nc" id="L310">			ex.printStackTrace();</span>
+<span class="nc" id="L311">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+		}
+		
+<span class="nc" id="L314">		return Response.status(200).entity(jsonObject.toString()).build();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

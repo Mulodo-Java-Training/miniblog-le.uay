@@ -149,12 +149,31 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  ServiceException
 	 */
 	@Override
 	public Boolean deleteByUsername(String username) throws ServiceException {
 		try{
 			return this.userDAO.deleteByUsername(username);
+		}catch(DAOException ex){
+			throw new ServiceException(ex.getMessage());
+		}
+	}
+
+	/**
+	 *  searchByUsername use to check delete user by username in database
+	 *	
+	 *	@param	username : string username use to check
+	 *
+	 *	@return User
+	 *	
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public User findByUsername(String username) throws ServiceException {
+		try{
+			return this.userDAO.findByUsername(username);
 		}catch(DAOException ex){
 			throw new ServiceException(ex.getMessage());
 		}

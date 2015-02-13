@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GenericDAOImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">APIMiniBlog</a> &gt; <a href="index.source.html" class="el_package">com.mulodo.miniblog.dao.impl</a> &gt; <span class="el_source">GenericDAOImpl.java</span></div><h1>GenericDAOImpl.java</h1><pre class="source lang-java linenums">/* 
+ * GenericDAOImpl.java 
+ *  
+ * 1.0
+ * 
+ * 2015/02/02
+ *  
+ * Copyright (c) 2015 Le U Uay
+ * 
+ */
+package com.mulodo.miniblog.dao.impl;
+
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.ObjectNotFoundException;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.classic.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.GenericTypeResolver;
+
+import com.mulodo.miniblog.dao.GenericDAO;
+import com.mulodo.miniblog.exeption.DAOException;
+
+/**
+ * The abstract class of generic dao impl
+ * 
+ * @author UayLU
+ * 
+ */
+<span class="fc" id="L33">public abstract class GenericDAOImpl&lt;T&gt; implements GenericDAO&lt;T&gt; {</span>
+
+	protected SessionFactory sessionFactory;
+<span class="fc" id="L36">	protected Session session = null;</span>
+<span class="fc" id="L37">	protected Transaction tx = null;</span>
+<span class="fc" id="L38">	private static final Logger logger = LoggerFactory.getLogger(GenericDAOImpl.class);</span>
+	private Class&lt;T&gt; genericType;
+	
+	public void setSessionFactory(SessionFactory sessionFactory){
+<span class="fc" id="L42">		this.sessionFactory = sessionFactory;</span>
+<span class="fc" id="L43">	}</span>
+	
+	/**
+	 *  add use to add new entity to database
+	 *	
+	 *	@param	entity : match with entity in model package
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+    @Override
+    public Boolean add(T entity) throws DAOException {
+		try{
+<span class="fc" id="L58">	        session = this.sessionFactory.openSession();</span>
+<span class="fc" id="L59">	        tx = session.beginTransaction();</span>
+<span class="fc" id="L60">	        session.persist(entity);</span>
+<span class="fc" id="L61">	        tx.commit();</span>
+<span class="fc" id="L62">            logger.info(&quot;Entity saved successfully, Entity Details=&quot;+entity);</span>
+<span class="fc" id="L63">            return true;</span>
+<span class="nc" id="L64">    	}catch(HibernateException ex){</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">    		if(tx != null)	tx.rollback();</span>
+<span class="nc" id="L66">    		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
+<span class="nc" id="L67">    		ex.printStackTrace();</span>
+<span class="nc" id="L68">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L69">    	}finally {</span>
+<span class="pc" id="L70">    		   session.close();</span>
+<span class="nc" id="L71">    	}</span>
+    }
+
+    /**
+	 *  update use to update new information of entity to database
+	 *	
+	 *	@param	entity : match with entity in model package
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+    @Override
+    public Boolean update(T entity) throws DAOException {
+    	try{
+<span class="nc" id="L87">	        session = this.sessionFactory.openSession();</span>
+<span class="nc" id="L88">	        tx = session.beginTransaction();</span>
+<span class="nc" id="L89">	        session.update(entity);</span>
+<span class="nc" id="L90">	        tx.commit();</span>
+<span class="nc" id="L91">	        logger.info(&quot;Entity updated successfully, Entity Details=&quot;+entity);</span>
+<span class="nc" id="L92">	        return true;</span>
+<span class="nc" id="L93">    	}catch(HibernateException ex){</span>
+<span class="nc" id="L94">    		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
+<span class="nc" id="L95">    		tx.rollback();</span>
+<span class="nc" id="L96">    		ex.printStackTrace();</span>
+<span class="nc" id="L97">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L98">    	}finally {</span>
+<span class="nc" id="L99">    		   session.close();</span>
+<span class="nc" id="L100">    	}</span>
+    }
+
+    /**
+	 *  delete use to delete entity exist in database
+	 *	
+	 *	@param	id : id of entity in database
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	@Override
+	@SuppressWarnings(&quot;unchecked&quot;)
+    public Boolean delete(int id) throws DAOException {
+    	 try{
+    		 
+<span class="nc" id="L118">    		this.genericType = (Class&lt;T&gt;) GenericTypeResolver.resolveTypeArgument(getClass(), GenericDAOImpl.class); </span>
+<span class="nc" id="L119"> 	        session = this.sessionFactory.openSession();</span>
+<span class="nc" id="L120"> 	        tx = session.beginTransaction();</span>
+<span class="nc" id="L121">			T p = (T) session.load(this.genericType, id);</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed."> 	        if(p != null){</span>
+<span class="nc" id="L123"> 	            session.delete(p);</span>
+ 	        }
+<span class="nc" id="L125"> 	        tx.commit();</span>
+<span class="nc" id="L126"> 	        logger.info(&quot;Entity deleted successfully, Entity details=&quot;+p);</span>
+<span class="nc" id="L127"> 	        return true;</span>
+<span class="nc" id="L128">     	}catch(HibernateException ex){</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">     		if(tx != null)	tx.rollback();</span>
+<span class="nc" id="L130">     		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
+<span class="nc" id="L131">     		ex.printStackTrace();</span>
+<span class="nc" id="L132">     		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L133">     	}finally {</span>
+<span class="nc" id="L134">     		session.close();</span>
+<span class="nc" id="L135">     	}</span>
+    }
+    
+	/**
+	 *  findOne use to find one entity exist in database
+	 *	
+	 *	@param	id : id of entity in database
+	 *
+	 *	@return T
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	@Override
+	public T findOne(int id) throws DAOException {
+		try{
+<span class="nc" id="L152">			this.genericType = (Class&lt;T&gt;) GenericTypeResolver.resolveTypeArgument(getClass(), GenericDAOImpl.class);</span>
+<span class="nc" id="L153">	        session = this.sessionFactory.openSession();</span>
+<span class="nc" id="L154">	        tx = session.beginTransaction();</span>
+<span class="nc" id="L155">	        T p = (T) session.get(this.genericType, id);</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">	        if(p != null){</span>
+<span class="nc" id="L157">	        	logger.info(&quot;Entity loaded successfully, Entity details=&quot;+p);</span>
+	        }
+<span class="nc" id="L159">	        tx.commit();</span>
+<span class="nc" id="L160">	        return p;</span>
+<span class="nc" id="L161">    	}catch(ObjectNotFoundException ex){</span>
+<span class="nc" id="L162">    		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
+<span class="nc" id="L163">    		ex.printStackTrace();</span>
+<span class="nc" id="L164">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L165">    	}catch(HibernateException ex){</span>
+<span class="nc" id="L166">    		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
+<span class="nc" id="L167">    		ex.printStackTrace();</span>
+<span class="nc" id="L168">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L169">    	}finally {</span>
+<span class="nc" id="L170">    		   session.close();</span>
+<span class="nc" id="L171">    	}</span>
+	}
+
+	/**
+	 *  findAll use to find all entity exist in database
+	 *	
+	 *	@param	tableName : table need for find
+	 *
+	 *	@return List&lt;T&gt;
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+    @Override
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public List&lt;T&gt; findAll(String tableName) throws DAOException {
+<span class="nc" id="L187">		session = sessionFactory.getCurrentSession();</span>
+<span class="nc" id="L188">		List&lt;T&gt; list= session.createQuery(&quot;from &quot;+tableName).list();</span>
+<span class="nc" id="L189">		return list;</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

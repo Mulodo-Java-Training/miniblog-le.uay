@@ -491,7 +491,8 @@ public class PostControllerUnitTest
 		}
 		
 		//==get all post==
-		clientRequest = new ClientRequest(ROOT_POST_URL+"/getPostForUser?pageNum=1&user_id=1");
+		User user = userService.findByUsername("le.uay");
+		clientRequest = new ClientRequest(ROOT_POST_URL+"/getPostForUser?pageNum=1&user_id="+ user.getId());
 		clientRequest.header(Constraints.ACCESS_KEY, access_key);
 		//post data to add user api
 		respone = clientRequest.get(String.class);
@@ -524,79 +525,89 @@ public class PostControllerUnitTest
 	@BeforeClass
 	public static void  setUpData() throws Exception{
 		
-		Calendar date = Calendar.getInstance();
+		Calendar datePost = Calendar.getInstance();
+		Calendar dateUser = Calendar.getInstance();
 		
-		Post post = new Post("Title 1 le.uay","Content 1 le.uay",date.getTime(),date.getTime()
-				,1,new User(1, "le.uay", 1));
+		User userTung = new User("le.tung",EncrypUtils.encrypData("abcd1234"), "le", "tung", 
+				"le.tung@mulodo.com", dateUser.getTime(), dateUser.getTime(), 1);
+		userService.add(userTung);
+		
+		User userUay = new User("le.uay",EncrypUtils.encrypData("abcd1234"), "le", "uay", 
+				"le.uay@mulodo.com", dateUser.getTime(), dateUser.getTime(), 1);
+		userService.add(userUay);
+		
+		User userHuy = new User("le.huy",EncrypUtils.encrypData("abcd1234"), "le", "huy", 
+				"le.huy@mulodo.com", dateUser.getTime(), dateUser.getTime(), 1);
+		userService.add(userHuy);
+		
+		User userMinhTung = new User("minh.tung",EncrypUtils.encrypData("abcd1234"), "minh", "tung", 
+				"minh.tung@mulodo.com", dateUser.getTime(), dateUser.getTime(), 0);
+		userService.add(userMinhTung);
+		
+		userHuy = userService.findByUsername("le.huy");
+		userUay = userService.findByUsername("le.uay");
+		userMinhTung = userService.findByUsername("minh.tung");
+		
+		Post post = new Post("Title 1 le.uay","Content 1 le.uay",datePost.getTime(),datePost.getTime()
+				,1, userUay);
 		postService.add(post);
 		
-		date.add(Calendar.HOUR_OF_DAY, 1);
-		post = new Post("Title 2 le.uay","Content 2 le.uay",date.getTime(),date.getTime()
-				,0,new User(1, "le.uay", 1));
+		datePost.add(Calendar.HOUR_OF_DAY, 1);
+		post = new Post("Title 2 le.uay","Content 2 le.uay",datePost.getTime(),datePost.getTime()
+				,0, userUay);
 		postService.add(post);
 		
-		date.add(Calendar.HOUR_OF_DAY, 1);
-		post = new Post("Title 3 le.uay","Content 3 le.uay",date.getTime(),date.getTime()
-				,1,new User(1, "le.uay", 1));
+		datePost.add(Calendar.HOUR_OF_DAY, 1);
+		post = new Post("Title 3 le.uay","Content 3 le.uay",datePost.getTime(),datePost.getTime()
+				,1, userUay);
 		postService.add(post);
 		
-		date.add(Calendar.HOUR_OF_DAY, 1);
-		post = new Post("Title 4 le.uay","Content 4 le.uay",date.getTime(),date.getTime()
-				,0,new User(1, "le.uay", 1));
+		datePost.add(Calendar.HOUR_OF_DAY, 1);
+		post = new Post("Title 4 le.uay","Content 4 le.uay",datePost.getTime(),datePost.getTime()
+				,0, userUay);
 		postService.add(post);
 
 		
-		date.add(Calendar.HOUR_OF_DAY, 1);
-		post = new Post("Title 1 le.huy","Content 1 le.huy",date.getTime(),date.getTime()
-				,0,new User(2, "le.huy", 1));
+		datePost.add(Calendar.HOUR_OF_DAY, 1);
+		post = new Post("Title 1 le.huy","Content 1 le.huy",datePost.getTime(),datePost.getTime()
+				,0, userHuy);
 		postService.add(post);
 		
-		date.add(Calendar.HOUR_OF_DAY, 1);
-		post = new Post("Title 2 le.huy","Content 2 le.huy",date.getTime(),date.getTime()
-				,1,new User(2, "le.huy", 1));
+		datePost.add(Calendar.HOUR_OF_DAY, 1);
+		post = new Post("Title 2 le.huy","Content 2 le.huy",datePost.getTime(),datePost.getTime()
+				,1, userHuy);
 		postService.add(post);
 		
-		date.add(Calendar.HOUR_OF_DAY, 1);
-		post = new Post("Title 3 le.huy","Content 3 le.huy",date.getTime(),date.getTime()
-				,1,new User(2, "le.huy", 1));
+		datePost.add(Calendar.HOUR_OF_DAY, 1);
+		post = new Post("Title 3 le.huy","Content 3 le.huy",datePost.getTime(),datePost.getTime()
+				,1, userHuy);
 		postService.add(post);
 		
-		date.add(Calendar.HOUR_OF_DAY, 1);
-		post = new Post("Title 4 le.huy","Content 4 le.huy",date.getTime(),date.getTime()
-				,1,new User(2, "le.huy", 1));
+		datePost.add(Calendar.HOUR_OF_DAY, 1);
+		post = new Post("Title 4 le.huy","Content 4 le.huy",datePost.getTime(),datePost.getTime()
+				,1, userHuy);
 		postService.add(post);
 		
-		date.add(Calendar.HOUR_OF_DAY, 1);
-		post = new Post("Title 1 nguyen.tung","Content 1 nguyen.tung",date.getTime(),date.getTime()
-				,0,new User(3, "nguyen.tung", 0));
+		datePost.add(Calendar.HOUR_OF_DAY, 1);
+		post = new Post("Title 1 nguyen.tung","Content 1 nguyen.tung",datePost.getTime(),datePost.getTime()
+				,0, userMinhTung);
 		postService.add(post);
 		
-		date.add(Calendar.HOUR_OF_DAY, 1);
-		post = new Post("Title 2 nguyen.tung","Content 2 nguyen.tung",date.getTime(),date.getTime()
-				,1,new User(3, "nguyen.tung", 0));
+		datePost.add(Calendar.HOUR_OF_DAY, 1);
+		post = new Post("Title 2 nguyen.tung","Content 2 nguyen.tung",datePost.getTime(),datePost.getTime()
+				,1, userMinhTung);
 		postService.add(post);
 		
-		date.add(Calendar.HOUR_OF_DAY, 1);
-		post = new Post("Title 3 nguyen.tung","Content 3 nguyen.tung",date.getTime(),date.getTime()
-				,0,new User(3, "nguyen.tung", 0));
+		datePost.add(Calendar.HOUR_OF_DAY, 1);
+		post = new Post("Title 3 nguyen.tung","Content 3 nguyen.tung",datePost.getTime(),datePost.getTime()
+				,0, userMinhTung);
 		postService.add(post);
 		
-		date.add(Calendar.HOUR_OF_DAY, 1);
-		post = new Post("Title 4 nguyen.tung","Content 4 nguyen.tung",date.getTime(),date.getTime()
-				,1,new User(3, "nguyen.tung", 0));
+		datePost.add(Calendar.HOUR_OF_DAY, 1);
+		post = new Post("Title 4 nguyen.tung","Content 4 nguyen.tung",datePost.getTime(),datePost.getTime()
+				,1, userMinhTung);
 		postService.add(post);
 		
-		User user = new User();
-		user.setUsername("le.tung");
-		user.setPassword(EncrypUtils.encrypData("abcd1234"));
-		user.setFirstname("tung");
-		user.setLastname("le");
-		user.setEmail("le.tung@mulodo.com");
-		user.setStatus(1);
-		Calendar dateUser = Calendar.getInstance();
-		user.setCreated_at(dateUser.getTime());
-		user.setModified_at(dateUser.getTime());
-		userService.add(user);
 	}
 	
 	
@@ -625,6 +636,9 @@ public class PostControllerUnitTest
 		postService.deleteByTitle("Title 4 nguyen.tung");
 		
 		userService.deleteByUsername("le.tung");
+		userService.deleteByUsername("le.huy");
+		userService.deleteByUsername("le.uay");
+		userService.deleteByUsername("minh.tung");
 	}
 	
 	

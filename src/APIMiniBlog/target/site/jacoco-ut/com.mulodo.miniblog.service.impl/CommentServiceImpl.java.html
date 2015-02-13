@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CommentServiceImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">APIMiniBlog</a> &gt; <a href="index.source.html" class="el_package">com.mulodo.miniblog.service.impl</a> &gt; <span class="el_source">CommentServiceImpl.java</span></div><h1>CommentServiceImpl.java</h1><pre class="source lang-java linenums">/* 
+ * CommentServiceImpl.java 
+ *  
+ * 1.0
+ * 
+ * 2015/02/02
+ *  
+ * Copyright (c) 2015 Le U Uay
+ * 
+ */
+package com.mulodo.miniblog.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.mulodo.miniblog.dao.CommentDAO;
+import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.model.Comment;
+import com.mulodo.miniblog.service.CommentService;
+
+/**
+ * The comment service impl
+ * 
+ * @author UayLU
+ * 
+ */
+@Service
+<span class="fc" id="L32">public class CommentServiceImpl extends GenericServiceImpl&lt;Comment&gt; implements CommentService{</span>
+	
+	private CommentDAO commentDAO;
+	
+	/**
+	 *  setCommentDAO use to set datasource from applicationcontent.xml
+	 *	
+	 *	@param	cd : CommentDAO from datasource
+	 *
+	 *	@return void
+	 */
+	@Autowired
+	@Qualifier(&quot;commentDAO&quot;)
+	public void setCommentDAO(CommentDAO cd){
+<span class="fc" id="L46">		this.commentDAO = cd;</span>
+<span class="fc" id="L47">	}</span>
+
+	/**
+	 *  get_all_comment_for_post use to call get all comment for post function in 
+	 *  commentdao for post.
+	 *	
+	 *	@param	post_id : id of post for search
+	 *  @param  isOwnerPost : result of check current user owner or not
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public List&lt;Comment&gt; getAllCommentForPost(int post_id, Boolean isOwnerPost)
+			throws ServiceException {
+		try {
+<span class="nc" id="L65">			return this.commentDAO.getAllCommentForPost(post_id, isOwnerPost);</span>
+<span class="nc" id="L66">		} catch (DAOException e) {</span>
+<span class="nc" id="L67">			throw new ServiceException(e.getMessage());</span>
+		}
+	}
+
+	/**
+	 *  get_all_comment_for_user use to call get all comment for user function in 
+	 *  commentdao for post.
+	 *	
+	 *	@param	post_id : id of post for search
+	 *  @param  isOwnerPost : result of check current user owner or not
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public List&lt;Comment&gt; getAllCommentForUser(int user_id, Boolean isOwnerUser)
+			throws ServiceException {
+		try {
+<span class="nc" id="L87">			return this.commentDAO.getAllCommentForUser(user_id, isOwnerUser);</span>
+<span class="nc" id="L88">		} catch (DAOException e) {</span>
+<span class="nc" id="L89">			throw new ServiceException(e.getMessage());</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

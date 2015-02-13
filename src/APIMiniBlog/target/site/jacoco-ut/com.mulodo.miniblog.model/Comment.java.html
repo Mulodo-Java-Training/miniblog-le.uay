@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Comment.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">APIMiniBlog</a> &gt; <a href="index.source.html" class="el_package">com.mulodo.miniblog.model</a> &gt; <span class="el_source">Comment.java</span></div><h1>Comment.java</h1><pre class="source lang-java linenums">/* 
+ * Comment.java 
+ *  
+ * 1.0
+ * 
+ * 2015/02/02
+ *  
+ * Copyright (c) 2015 Le U Uay
+ * 
+ */
+package com.mulodo.miniblog.model;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+/**
+ * The comment entity work with hibernate 
+ * 
+ * @author UayLU
+ * 
+ */
+@Entity
+@Table(name = &quot;Comment&quot;)
+public class Comment {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(nullable = false)
+	private int id;
+	
+	@Column(nullable = false, name = &quot;content&quot;, length= 500)
+	private String content;
+	
+	@Column(nullable = false, name = &quot;created_at&quot;, columnDefinition=&quot;DATETIME&quot;)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created_at;
+	
+	@Column(nullable = false, name = &quot;modified_at&quot;, columnDefinition=&quot;DATETIME&quot;)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modified_at;
+	
+	@ManyToOne
+    @JoinColumn(nullable = false,name = &quot;user_id&quot;, referencedColumnName = &quot;id&quot;)
+    private User user;
+	
+	@ManyToOne
+    @JoinColumn(nullable = false,name = &quot;post_id&quot;, referencedColumnName = &quot;id&quot;)
+    private Post post;
+	
+	public Comment() {
+<span class="fc" id="L61">		super();</span>
+<span class="fc" id="L62">	}</span>
+
+	public Comment(String content, Date created_at, Date modified_at,
+			User user, Post post) {
+<span class="fc" id="L66">		super();</span>
+<span class="fc" id="L67">		this.content = content;</span>
+<span class="fc" id="L68">		this.created_at = created_at;</span>
+<span class="fc" id="L69">		this.modified_at = modified_at;</span>
+<span class="fc" id="L70">		this.user = user;</span>
+<span class="fc" id="L71">		this.post = post;</span>
+<span class="fc" id="L72">	}</span>
+
+	public User getUser() {
+<span class="nc" id="L75">		return user;</span>
+	}
+
+	public void setUser(User user) {
+<span class="nc" id="L79">		this.user = user;</span>
+<span class="nc" id="L80">	}</span>
+
+	public Post getPost() {
+<span class="nc" id="L83">		return post;</span>
+	}
+
+	public void setPost(Post post) {
+<span class="nc" id="L87">		this.post = post;</span>
+<span class="nc" id="L88">	}</span>
+
+	public int getId() {
+<span class="nc" id="L91">		return id;</span>
+	}
+
+	public void setId(int id) {
+<span class="nc" id="L95">		this.id = id;</span>
+<span class="nc" id="L96">	}</span>
+
+	public String getContent() {
+<span class="nc" id="L99">		return content;</span>
+	}
+
+	public void setContent(String content) {
+<span class="nc" id="L103">		this.content = content;</span>
+<span class="nc" id="L104">	}</span>
+
+	public Date getCreated_at() {
+<span class="nc" id="L107">		return created_at;</span>
+	}
+
+	public void setCreated_at(Date created_at) {
+<span class="nc" id="L111">		this.created_at = created_at;</span>
+<span class="nc" id="L112">	}</span>
+
+	public Date getModified_at() {
+<span class="nc" id="L115">		return modified_at;</span>
+	}
+
+	public void setModified_at(Date modified_at) {
+<span class="nc" id="L119">		this.modified_at = modified_at;</span>
+<span class="nc" id="L120">	}</span>
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

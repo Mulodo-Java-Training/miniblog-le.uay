@@ -321,5 +321,44 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
      	}finally {
      		session.close();
      	}
+	}
+
+	
+	/**
+	 *  findByUsername use to check search user by username in database
+	 *	
+	 *	@param	username : string username use to search
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	@Override
+	public User findByUsername(String username) throws DAOException {
+		try{ 
+ 	        session = this.sessionFactory.openSession();
+ 	        tx = session.beginTransaction();
+			Criteria criteria = session.createCriteria(User.class);
+			if(username != null){
+	        	criteria.add(Restrictions.eq("username",username));
+	        	if(criteria.list().isEmpty()){
+					return null;
+				}else{
+					User user = (User) criteria.list().get(0);
+		 	        tx.commit();
+		 	        logger.info("Find user successfully, user details="+user);
+		 	        return user;
+				}
+			}
+			return null;
+     	}catch(HibernateException ex){
+     		logger.info("Hibernate exception, Details="+ex.getMessage());
+     		if(tx != null)	tx.rollback();
+     		ex.printStackTrace();
+     		throw new DAOException(ex.getMessage());
+     	}finally {
+     		session.close();
+     	}
 	}	
 }

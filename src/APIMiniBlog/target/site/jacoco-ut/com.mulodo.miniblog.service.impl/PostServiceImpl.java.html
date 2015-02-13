@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PostServiceImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">APIMiniBlog</a> &gt; <a href="index.source.html" class="el_package">com.mulodo.miniblog.service.impl</a> &gt; <span class="el_source">PostServiceImpl.java</span></div><h1>PostServiceImpl.java</h1><pre class="source lang-java linenums">/* 
+ * PostServiceImpl.java 
+ *  
+ * 1.0
+ * 
+ * 2015/02/02
+ *  
+ * Copyright (c) 2015 Le U Uay
+ * 
+ */
+package com.mulodo.miniblog.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.mulodo.miniblog.contraints.Constraints;
+import com.mulodo.miniblog.dao.PostDAO;
+import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.model.Post;
+import com.mulodo.miniblog.object.Data;
+import com.mulodo.miniblog.service.PostService;
+
+/**
+ * The post service impl
+ * 
+ * @author UayLU
+ * 
+ */
+@Service
+<span class="fc" id="L35">public class PostServiceImpl extends GenericServiceImpl&lt;Post&gt; implements PostService{</span>
+	
+	private PostDAO postDAO;
+	
+	/**
+	 *  setPostDAO use to set datasource from applicationcontent.xml
+	 *	
+	 *	@param	pd : PostDAO from datasource
+	 *
+	 *	@return void
+	 */
+	@Autowired
+	@Qualifier(&quot;postDAO&quot;)
+	public void setPostDAO(PostDAO pd){
+<span class="fc" id="L49">		this.postDAO = pd;</span>
+<span class="fc" id="L50">	}</span>
+
+	/**
+	 *  get_all_post use for get all post in the database limit by 10 post per request
+	 *	
+	 *	@param	author_id : user id that owner post
+	 *  @param  pageNume: the number of page you want to get
+	 *
+	 *	@return List&lt;Post&gt;
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public Data getAllPostForUser(int pageNum, int author_id, Boolean isOwerUser)
+			throws ServiceException {
+<span class="nc" id="L65">		Data data = null;</span>
+		try{
+<span class="nc bnc" id="L67" title="All 4 branches missed.">			if(pageNum &gt; 0 &amp;&amp; author_id &gt;= 0){</span>
+<span class="nc" id="L68">				List&lt;Post&gt; listPost = null; </span>
+<span class="nc" id="L69">				int totalPost = 0;</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">				if(pageNum &gt; 0){</span>
+					//get list post folow page number
+					//get total post follow condition
+<span class="nc" id="L73">					listPost =  this.postDAO.getAllPost(pageNum, author_id, null, true, isOwerUser);</span>
+<span class="nc" id="L74">					totalPost = this.postDAO.getAllPostSize(author_id, null, true, isOwerUser);</span>
+				}
+<span class="nc bnc" id="L76" title="All 2 branches missed.">				if(listPost != null){</span>
+<span class="nc" id="L77">					int totalPage = (int) Math.round(totalPost/Constraints.LIMIT_ROW + 0.5);</span>
+					//set list post to data object
+<span class="nc" id="L79">					data = new Data();</span>
+<span class="nc" id="L80">					data.setLimitRow(Constraints.LIMIT_ROW);</span>
+<span class="nc" id="L81">					data.setTotalPage(totalPage);</span>
+<span class="nc" id="L82">					data.setTotalRow(totalPost);</span>
+<span class="nc" id="L83">					data.setPageNum(pageNum);</span>
+<span class="nc" id="L84">					data.setListPost(listPost);</span>
+<span class="nc" id="L85">				}else{</span>
+					//if have no data match with condition.
+					//return all variable is zero
+<span class="nc" id="L88">					data = new Data();</span>
+<span class="nc" id="L89">					data.setListPost(new ArrayList&lt;Post&gt;());</span>
+<span class="nc" id="L90">					data.setTotalPage(0);</span>
+<span class="nc" id="L91">					data.setTotalRow(0);</span>
+<span class="nc" id="L92">					data.setPageNum(0);</span>
+<span class="nc" id="L93">					data.setLimitRow(0);</span>
+				}
+<span class="nc" id="L95">				return data;</span>
+			}
+<span class="nc" id="L97">			return null;</span>
+<span class="nc" id="L98">		}catch(DAOException ex){</span>
+<span class="nc" id="L99">			throw new ServiceException(ex.getMessage());</span>
+		}
+	}
+
+	/**
+	 *  get_all_post_for_user use for get all post in the database limit by 10 post per request
+	 *	
+	 *	@param	author_id : user id that owner post
+	 *  @param  pageNume: the number of page you want to get
+	 *
+	 *	@return List&lt;Post&gt;
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public Data getAllPost(int pageNum, int current_user_id, String description) throws ServiceException {
+<span class="nc" id="L115">		Data data = null;</span>
+		try{
+<span class="nc" id="L117">			List&lt;Post&gt; listPost = null; </span>
+<span class="nc" id="L118">			int totalPost = 0;</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">			if(pageNum &gt; 0){</span>
+				//get list post folow page number
+				//get total post follow condition
+<span class="nc" id="L122">				listPost =  this.postDAO.getAllPost(pageNum, current_user_id, description, false, false);</span>
+<span class="nc" id="L123">				totalPost = this.postDAO.getAllPostSize(current_user_id, description, false, false);</span>
+			}
+<span class="nc bnc" id="L125" title="All 2 branches missed.">			if(listPost != null){</span>
+<span class="nc" id="L126">				int totalPage = (int) Math.round(totalPost/Constraints.LIMIT_ROW + 0.5);</span>
+				//set value to data object
+<span class="nc" id="L128">				data = new Data();</span>
+<span class="nc" id="L129">				data.setLimitRow(Constraints.LIMIT_ROW);</span>
+<span class="nc" id="L130">				data.setTotalPage(totalPage);</span>
+<span class="nc" id="L131">				data.setTotalRow(totalPost);</span>
+<span class="nc" id="L132">				data.setPageNum(pageNum);</span>
+<span class="nc" id="L133">				data.setListPost(listPost);</span>
+<span class="nc" id="L134">			}else{</span>
+				//if have no data match with condition.
+				//return all variable is zero
+<span class="nc" id="L137">				data = new Data();</span>
+<span class="nc" id="L138">				data.setListPost(new ArrayList&lt;Post&gt;());</span>
+<span class="nc" id="L139">				data.setTotalPage(0);</span>
+<span class="nc" id="L140">				data.setTotalRow(0);</span>
+<span class="nc" id="L141">				data.setPageNum(0);</span>
+<span class="nc" id="L142">				data.setLimitRow(0);</span>
+			}
+<span class="nc" id="L144">			return data;</span>
+<span class="nc" id="L145">		}catch(DAOException ex){</span>
+<span class="nc" id="L146">			throw new ServiceException(ex.getMessage());</span>
+		}
+	}
+
+	/**
+	 *  deleteByTitle use for delete post by title in the database
+	 *	
+	 *	@param	title : title of post
+	 *
+	 *	@return void
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public void deleteByTitle(String title) throws ServiceException {
+		try{
+<span class="fc" id="L162">			this.postDAO.deleteByTitle(title);</span>
+<span class="pc" id="L163">		}catch(DAOException ex){</span>
+<span class="nc" id="L164">			throw new ServiceException(ex.getMessage());</span>
+		}
+		
+<span class="fc" id="L167">	}</span>
+
+	/**
+	 *  findByTitle use for find post by title in the database for unit test
+	 *	
+	 *	@param	title : title of post
+	 *
+	 *	@return Post
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public Post findByTitle(String title) throws ServiceException {
+		try{
+<span class="fc" id="L181">			return this.postDAO.findByTitle(title);</span>
+<span class="nc" id="L182">		}catch(DAOException ex){</span>
+<span class="nc" id="L183">			throw new ServiceException(ex.getMessage());</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

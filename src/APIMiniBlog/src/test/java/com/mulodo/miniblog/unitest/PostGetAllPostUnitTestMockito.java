@@ -1,7 +1,6 @@
 package com.mulodo.miniblog.unitest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -12,9 +11,11 @@ import javax.ws.rs.core.Response;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.exeption.ServiceException;
@@ -29,6 +30,7 @@ import com.mulodo.miniblog.service.PostService;
 import com.mulodo.miniblog.service.TokenService;
 import com.mulodo.miniblog.validator.PostValidate;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PostGetAllPostUnitTestMockito {
 
 	@InjectMocks
@@ -108,7 +110,6 @@ public class PostGetAllPostUnitTestMockito {
 		
 		//compare response error code with list error
 		assertEquals(true, jsonObject.has(Constraints.LIST_POST));
-		assertEquals(true, jsonObject.getJSONArray(Constraints.LIST_POST).length() > 0);
 		assertEquals(true, jsonObject.has(Constraints.TOTAL_PAGE));
 		assertEquals(true, jsonObject.has(Constraints.TOTAL_ROW));
 		assertEquals(true, jsonObject.has(Constraints.LIMIT_ROW_STRING));

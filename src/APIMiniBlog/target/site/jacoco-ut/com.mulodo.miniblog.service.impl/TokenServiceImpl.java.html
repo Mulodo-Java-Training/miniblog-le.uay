@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TokenServiceImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">APIMiniBlog</a> &gt; <a href="index.source.html" class="el_package">com.mulodo.miniblog.service.impl</a> &gt; <span class="el_source">TokenServiceImpl.java</span></div><h1>TokenServiceImpl.java</h1><pre class="source lang-java linenums">/* 
+ * TokenServiceImpl.java 
+ *  
+ * 1.0
+ * 
+ * 2015/02/02
+ *  
+ * Copyright (c) 2015 Le U Uay
+ * 
+ */
+package com.mulodo.miniblog.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.mulodo.miniblog.dao.TokenDAO;
+import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.model.Token;
+import com.mulodo.miniblog.model.User;
+import com.mulodo.miniblog.service.TokenService;
+
+/**
+ * The token service impl
+ * 
+ * @author UayLU
+ * 
+ */
+@Service
+<span class="fc" id="L31">public class TokenServiceImpl extends GenericServiceImpl&lt;Token&gt; implements TokenService{</span>
+
+	private TokenDAO tokenDAO;
+	
+	 /**
+	 *  setTokenDAO use to set datasource from applicationcontent.xml
+	 *	
+	 *	@param	tokenDAO : tokenDAO from datasource
+	 *
+	 *	@return void
+	 */
+	@Autowired
+	@Qualifier(&quot;tokenDAO&quot;)
+	public void setTokenDAO (TokenDAO tokenDAO){
+<span class="fc" id="L45">		this.tokenDAO = tokenDAO;</span>
+<span class="fc" id="L46">	}</span>
+	
+	/**
+	 *  delete_by_access_key use to call delete by access key function from tokendao
+	 *	
+	 *	@param	access_key : access_key in token table
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public Boolean deleteByAccessKey(String access_key) throws ServiceException {
+		try{
+<span class="nc bnc" id="L61" title="All 2 branches missed.">			if (access_key!= null){</span>
+<span class="nc" id="L62">				return this.tokenDAO.deleteByAccessKey(access_key);</span>
+			}else{
+<span class="nc" id="L64">				return false;</span>
+			}
+<span class="nc" id="L66">		}catch(DAOException ex){</span>
+<span class="nc" id="L67">			throw new ServiceException(ex.getMessage());</span>
+		}
+	}
+
+	/**
+	 *  find_by_access_key use to call find by access key function from tokendao
+	 *	
+	 *	@param	access_key : access_key in token table
+	 *
+	 *	@return Token
+	 *	
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public Token findByAccessKey(String access_key) throws ServiceException  {
+		try{
+<span class="nc bnc" id="L84" title="All 2 branches missed.">			if (access_key!= null){</span>
+<span class="nc" id="L85">				Token token = this.tokenDAO.findByAccessKey(access_key);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">				if(token != null){</span>
+<span class="nc" id="L87">					return token;</span>
+				}else{
+<span class="nc" id="L89">					return null;</span>
+				}
+			}else{
+<span class="nc" id="L92">				return null;</span>
+			}
+<span class="nc" id="L94">		}catch(DAOException ex){</span>
+<span class="nc" id="L95">			throw new ServiceException(ex.getMessage());</span>
+<span class="nc" id="L96">		}catch(Exception ex){</span>
+<span class="nc" id="L97">			throw new ServiceException(ex.getMessage());</span>
+		}
+	}
+
+	/**
+	 *  delete_by_user use to call delete by user function from tokendao
+	 *	
+	 *	@param	user : user that owner access_key in token table
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  ServiceException
+	 */
+	@Override
+	public Boolean deleteByUser(User user) throws ServiceException {
+		try{
+<span class="nc bnc" id="L114" title="All 2 branches missed.">			if (user!= null){</span>
+<span class="nc" id="L115">				return this.tokenDAO.deleteByUser(user);</span>
+			}else{
+<span class="nc" id="L117">				return false;</span>
+			}
+<span class="nc" id="L119">		}catch(DAOException ex){</span>
+<span class="nc" id="L120">			throw new ServiceException(ex.getMessage());</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

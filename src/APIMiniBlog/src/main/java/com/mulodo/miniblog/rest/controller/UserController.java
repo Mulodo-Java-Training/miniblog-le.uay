@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -41,6 +42,7 @@ import com.mulodo.miniblog.object.Data;
 import com.mulodo.miniblog.object.Meta;
 import com.mulodo.miniblog.service.TokenService;
 import com.mulodo.miniblog.service.UserService;
+import com.mulodo.miniblog.utils.ApplicationContextUtils;
 import com.mulodo.miniblog.utils.BuildJSON;
 import com.mulodo.miniblog.utils.EncrypUtils;
 import com.mulodo.miniblog.validator.UserValidate;
@@ -54,6 +56,7 @@ import com.mulodo.miniblog.validator.UserValidate;
 @Controller
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 public class UserController {
 
 	
@@ -110,6 +113,12 @@ public class UserController {
     		@FormParam("password") String password, @FormParam("firstname") String firstname,
     		@FormParam("lastname") String lastname, @FormParam("email") String email) {
 	
+		
+		System.out.println("username = "+username);
+		if(tokenService == null && userService == null){
+			setDataSource();
+		}
+		
 		JSONObject jsonObject = new JSONObject();
 		//validate data from client and add to meta
 		Meta meta = UserValidate.validateAddNew(username, firstname, lastname, password, email);
@@ -189,6 +198,10 @@ public class UserController {
     		@FormParam("lastname") String lastname, @FormParam("email") String email,
     		@FormParam("status") String status) {
 		
+		if(tokenService == null && userService == null){
+			setDataSource();
+		}
+		
 		JSONObject jsonObject = new JSONObject();
 		
 		//validate data from client and add to meta
@@ -266,6 +279,10 @@ public class UserController {
     public Response  findByName(@HeaderParam(Constraints.ACCESS_KEY) String access_key, 
     		@QueryParam("name") String name) {
 		
+		if(tokenService == null && userService == null){
+			setDataSource();
+		}
+		
 		JSONObject jsonObject = new JSONObject();
 		//validate data from client
 		Meta meta = UserValidate.validateFindUserByName(name);
@@ -314,6 +331,10 @@ public class UserController {
     @Path("getUserInfo")
     public Response  getUserInfo(@HeaderParam(Constraints.ACCESS_KEY) String access_key) {
 		
+		if(tokenService == null && userService == null){
+			setDataSource();
+		}
+		
 		JSONObject jsonObject = new JSONObject();
 		Data data = null;
 		try {
@@ -358,8 +379,14 @@ public class UserController {
 	@PermitAll
     @POST
     @Path("login")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response  login(@FormParam("username") String username, 
     		@FormParam("password") String password) {
+		
+		if(tokenService == null && userService == null){
+			setDataSource();
+		}
+		
 		
 		JSONObject jsonObject = new JSONObject();
 		//validate data frome client with uservalidate class
@@ -420,10 +447,15 @@ public class UserController {
 	@RolesAllowed("ADMIN")
     @PUT
     @Path("logout")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response  logout(@HeaderParam(Constraints.ACCESS_KEY) String access_key) {
 		
-		JSONObject jsonObject = new JSONObject();
+		if(tokenService == null && userService == null){
+			setDataSource();
+		}
 		
+		JSONObject jsonObject = new JSONObject();
+		System.out.println(" logout acc "+ access_key);
 		if(access_key != null){
 			try {
 				//get current token by access_key
@@ -466,6 +498,10 @@ public class UserController {
     public Response  chagnePassword(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
     		@FormParam("oldPassword") String oldPassword, @FormParam("newPassword") String newPassword) {
 		
+		if(tokenService == null && userService == null){
+			setDataSource();
+		}
+		
 		JSONObject jsonObject = new JSONObject();
 		//validate data from client
 		Meta meta = UserValidate.validateChangePassword(oldPassword, newPassword);
@@ -506,5 +542,10 @@ public class UserController {
 		}
 		
     	return Response.status(200).entity(jsonObject.toString()).build();
-    }   
+    }
+	
+	private void setDataSource(){
+		tokenService = ApplicationContextUtils.getTokenServiceDataSource();
+		userService = ApplicationContextUtils.getUserServiceDataSource();
+	}
 }

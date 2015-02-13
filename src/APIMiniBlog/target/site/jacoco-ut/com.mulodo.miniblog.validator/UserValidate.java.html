@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UserValidate.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">APIMiniBlog</a> &gt; <a href="index.source.html" class="el_package">com.mulodo.miniblog.validator</a> &gt; <span class="el_source">UserValidate.java</span></div><h1>UserValidate.java</h1><pre class="source lang-java linenums">/* 
+ * UserValidate.java 
+ *  
+ * 1.0
+ * 
+ * 2015/02/02
+ *  
+ * Copyright (c) 2015 Le U Uay
+ * 
+ */
+package com.mulodo.miniblog.validator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mulodo.miniblog.contraints.Constraints;
+import com.mulodo.miniblog.object.Message;
+import com.mulodo.miniblog.object.Meta;
+import com.mulodo.miniblog.utils.ValidatorUtils;
+
+/**
+ * The UserValidate use to validate user data
+ * 
+ * @author UayLU
+ * 
+ */
+<span class="nc" id="L27">public class UserValidate {</span>
+
+	/**
+	 *  validate_add_new use for validate add new data user
+	 *	
+	 *	@param	username : username of user
+	 *  @param  firstname : firstname of user
+	 *  @param  lastname : lastname of user
+	 *  @param  password : password of user
+	 *  @param  email : email of user
+	 *	
+	 *  @return Meta
+	 *	
+	 */
+	public static Meta validateAddNew(String username, String firstname, String lastname, 
+			String password, String email) {
+		
+		//List message contain error message validate
+<span class="nc" id="L45">		List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+<span class="nc" id="L46">		Boolean isValid = true;</span>
+		//check null empty or white space if string
+<span class="nc" id="L48">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(username);</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L51">			listMessage.add(new Message(Constraints.CODE_2001));</span>
+		}
+<span class="nc bnc" id="L53" title="All 2 branches missed.">		if(isValid){</span>
+			//check valid length of string
+<span class="nc" id="L55">			isValid = ValidatorUtils.isValidLength(username, Constraints.MIN_USERNAME, Constraints.MAX_USERNAME);</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">			if(!isValid){</span>
+				//check if have error, add message error to listmessage
+<span class="nc" id="L58">				listMessage.add(new Message(Constraints.CODE_2011));</span>
+			}
+		}
+		
+		//check null empty or white space if string
+<span class="nc" id="L63">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(password);</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L66">			listMessage.add(new Message(Constraints.CODE_2002));</span>
+		}
+<span class="nc bnc" id="L68" title="All 2 branches missed.">		if(isValid){</span>
+			//check valid length of string
+<span class="nc" id="L70">			isValid = ValidatorUtils.isValidLength(password, Constraints.MIN_PASSWORD, 0);</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">			if(!isValid){</span>
+				//check if have error, add message error to listmessage
+<span class="nc" id="L73">				listMessage.add(new Message(Constraints.CODE_2012));</span>
+			}
+		}
+		
+		//check null empty or white space if string
+<span class="nc" id="L78">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(lastname);</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L81">			listMessage.add(new Message(Constraints.CODE_2003));</span>
+<span class="nc" id="L82">		}else{</span>
+			//check valid length of string
+<span class="nc" id="L84">			isValid = ValidatorUtils.isValidLength(lastname, 1, 45);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">			if(!isValid){</span>
+				//check if have error, add message error to listmessage
+<span class="nc" id="L87">				listMessage.add(new Message(Constraints.CODE_2003));</span>
+			}
+		}
+		
+		//check null empty or white space if string
+<span class="nc" id="L92">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(firstname);</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L95">			listMessage.add(new Message(Constraints.CODE_2004));</span>
+<span class="nc" id="L96">		}else{</span>
+			//check valid length of string
+<span class="nc" id="L98">			isValid = ValidatorUtils.isValidLength(firstname, 1, 45);</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">			if(!isValid){</span>
+				//check if have error, add message error to listmessage
+<span class="nc" id="L101">				listMessage.add(new Message(Constraints.CODE_2004));</span>
+			}
+		}
+		
+		//check null empty or white space if string
+<span class="nc" id="L106">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(email);</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">		if(isValid){</span>
+<span class="nc" id="L108">			isValid = ValidatorUtils.isValidEmail(email);</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">			if(!isValid){</span>
+				//check if have error, add message error to listmessage
+<span class="nc" id="L111">				listMessage.add(new Message(Constraints.CODE_2005));</span>
+<span class="nc" id="L112">			}else{</span>
+				//check valid length of string
+<span class="nc" id="L114">				isValid = ValidatorUtils.isValidLength(email, 1, 100);</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">				if(!isValid){</span>
+					//check if have error, add message error to listmessage
+<span class="nc" id="L117">					listMessage.add(new Message(Constraints.CODE_2005));</span>
+				}
+			}
+			
+		}
+		
+<span class="nc bnc" id="L123" title="All 2 branches missed.">		if(!listMessage.isEmpty() ){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L125">			Meta meta = new Meta(Constraints.CODE_2000, listMessage);</span>
+<span class="nc" id="L126">			return meta;</span>
+		}
+<span class="nc" id="L128">		return null;</span>
+	}
+	
+	/**
+	 *  validate_update use for validate update data user
+	 *	
+	 *  @param  firstname : firstname of user
+	 *  @param  lastname : lastname of user
+	 *  @param  email : email of user
+	 *	
+	 *  @return Meta
+	 *	
+	 */
+	public static Meta validateUpdate(String firstname, String lastname, 
+					String email, String status, String password) {
+		
+		//List message contain error message validate
+<span class="nc" id="L145">		List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+<span class="nc" id="L146">		Boolean isValid = true;</span>
+		//check null empty or white space if string
+<span class="nc" id="L148">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(lastname);</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L151">			listMessage.add(new Message(Constraints.CODE_2003));</span>
+<span class="nc" id="L152">		} else{</span>
+			//check valid length of string
+<span class="nc" id="L154">			isValid = ValidatorUtils.isValidLength(lastname, 1, 45);</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">			if(!isValid){</span>
+				//check if have error, add message error to listmessage
+<span class="nc" id="L157">				listMessage.add(new Message(Constraints.CODE_2003));</span>
+			}
+		}
+		
+		//check null empty or white space if string
+<span class="nc" id="L162">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(firstname);</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L165">			listMessage.add(new Message(Constraints.CODE_2004));</span>
+<span class="nc" id="L166">		}else{</span>
+			//check valid length of string
+<span class="nc" id="L168">			isValid = ValidatorUtils.isValidLength(firstname, 1, 45);</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">			if(!isValid){</span>
+				//check if have error, add message error to listmessage
+<span class="nc" id="L171">				listMessage.add(new Message(Constraints.CODE_2004));</span>
+			}
+		}
+		
+<span class="nc bnc" id="L175" title="All 2 branches missed.">		if(email != null){</span>
+<span class="nc" id="L176">			isValid = ValidatorUtils.isValidEmail(email);</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">			if(!isValid){</span>
+				//check if have error, add message error to listmessage
+<span class="nc" id="L179">				listMessage.add(new Message(Constraints.CODE_2005));</span>
+			}
+		}
+		
+		//check null empty or white space if string
+<span class="nc" id="L184">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(password);</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L187">			listMessage.add(new Message(Constraints.CODE_2002));</span>
+		}
+<span class="nc bnc" id="L189" title="All 2 branches missed.">		if(isValid){</span>
+			//check valid length of string
+<span class="nc" id="L191">			isValid = ValidatorUtils.isValidLength(password, Constraints.MIN_PASSWORD, 0);</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">			if(!isValid){</span>
+				//check if have error, add message error to listmessage
+<span class="nc" id="L194">				listMessage.add(new Message(Constraints.CODE_2012));</span>
+			}
+		}
+		
+<span class="nc" id="L198">		isValid = ValidatorUtils.isStatusInteger(status);</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L201">			listMessage.add(new Message(Constraints.CODE_2015));</span>
+<span class="nc" id="L202">		}else{</span>
+			//check if have error, add message error to listmessage
+<span class="nc bnc" id="L204" title="All 4 branches missed.">			if(Integer.parseInt(status) != Constraints.USER_ACTIVE &amp;&amp; Integer.parseInt(status) != Constraints.USER_DEACTIVE){</span>
+<span class="nc" id="L205">				listMessage.add(new Message(Constraints.CODE_2015));</span>
+			}
+		}
+		
+<span class="nc bnc" id="L209" title="All 2 branches missed.">		if(!listMessage.isEmpty() ){</span>
+<span class="nc" id="L210">			Meta meta = new Meta(Constraints.CODE_2000, listMessage);</span>
+<span class="nc" id="L211">			return meta;</span>
+		}
+<span class="nc" id="L213">		return null;</span>
+	}
+		
+	/**
+	 *  validate_add_new use for validate add new data user
+	 *	
+	 *	@param	oldpassword : current password of user
+	 *  @param  newpassword : new password of user
+	 *	
+	 *  @return Meta
+	 *	
+	 */
+	public static Meta validateChangePassword(String oldpassword, String newpassword) {
+		
+		//List message contain error message validate
+<span class="nc" id="L228">		List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+<span class="nc" id="L229">		Boolean isValid = true;</span>
+		
+<span class="nc" id="L231">		isValid = true;</span>
+		//check null empty or white space if string
+<span class="nc" id="L233">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(oldpassword);</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L236">			listMessage.add(new Message(Constraints.CODE_2002));</span>
+		}
+		
+<span class="nc" id="L239">		isValid = true;</span>
+		//check null empty or white space if string
+<span class="nc" id="L241">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(newpassword);</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L244">			listMessage.add(new Message(Constraints.CODE_2013));</span>
+		}
+<span class="nc bnc" id="L246" title="All 2 branches missed.">		if(isValid){</span>
+			//check valid length of string
+<span class="nc" id="L248">			isValid = ValidatorUtils.isValidLength(newpassword, Constraints.MIN_PASSWORD, 0);</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">			if(!isValid){</span>
+				//check if have error, add message error to listmessage
+<span class="nc" id="L251">				listMessage.add(new Message(Constraints.CODE_2012));</span>
+			}
+		}
+		
+<span class="nc bnc" id="L255" title="All 2 branches missed.">		if(!listMessage.isEmpty() ){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L257">			Meta meta = new Meta(Constraints.CODE_2000, listMessage);</span>
+<span class="nc" id="L258">			return meta;</span>
+		}
+<span class="nc" id="L260">		return null;</span>
+	}
+	
+	/**
+	 *  validate_login use for login
+	 *	
+	 *	@param	username : username of user
+	 *  @param  password : password of user	
+	 *
+	 *  @return Meta
+	 *	
+	 */
+	public static Meta validateLogin(String username, String password){
+		
+		//List message contain error message validate
+<span class="nc" id="L275">		List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+<span class="nc" id="L276">		Boolean isValid = true;</span>
+		//check null empty or white space if string
+<span class="nc" id="L278">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(username);</span>
+<span class="nc bnc" id="L279" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L281">			listMessage.add(new Message(Constraints.CODE_2001));</span>
+		}
+		//check null empty or white space if string
+<span class="nc" id="L284">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(password);</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L287">			listMessage.add(new Message(Constraints.CODE_2002));</span>
+		}
+
+<span class="nc bnc" id="L290" title="All 2 branches missed.">		if(!listMessage.isEmpty() ){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L292">			Meta meta = new Meta(Constraints.CODE_2000, listMessage);</span>
+<span class="nc" id="L293">			return meta;</span>
+		}
+<span class="nc" id="L295">		return null;</span>
+	}
+	
+	
+	/**
+	 *  validate_find_user_infor use for validate data name from client
+	 *	
+	 *	@param	name : username, firstname or lastname of user
+	 *	
+	 *  @return Meta
+	 *	
+	 */
+	public static Meta validateFindUserByName(String name){
+		
+		//List message contain error message validate
+<span class="nc" id="L310">		List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+		
+<span class="nc" id="L312">		Boolean isValid = true;</span>
+		//check null empty or white space if string
+<span class="nc" id="L314">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(name);</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">		if(!isValid){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L317">			listMessage.add(new Message(Constraints.CODE_2014));</span>
+		}
+		
+
+<span class="nc bnc" id="L321" title="All 2 branches missed.">		if(!listMessage.isEmpty() ){</span>
+			//check if have error, add message error to listmessage
+<span class="nc" id="L323">			Meta meta = new Meta(Constraints.CODE_2000, listMessage);</span>
+<span class="nc" id="L324">			return meta;</span>
+		}
+<span class="nc" id="L326">		return null;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

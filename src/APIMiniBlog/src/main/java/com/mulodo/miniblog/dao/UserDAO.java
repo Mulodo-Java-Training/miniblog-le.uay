@@ -85,4 +85,17 @@ public interface UserDAO extends GenericDAO<User>{
 	 *  @exception  DAOException
 	 */
 	public Boolean deleteByUsername(String username) throws DAOException;
+
+	
+	/**
+	 *  findByUsername use to check find user by username in database
+	 *	
+	 *	@param	username : string username use to check
+	 *
+	 *	@return Boolean
+	 *	
+	 *	
+	 *  @exception  DAOException
+	 */
+	public User findByUsername(String username) throws DAOException;
 }
