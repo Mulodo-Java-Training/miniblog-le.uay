@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 
 import com.mulodo.miniblog.contraints.Constraints;
-import com.mulodo.miniblog.exeption.ServiceException;
 import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.model.User;
@@ -40,6 +39,7 @@ import com.mulodo.miniblog.object.Data;
 import com.mulodo.miniblog.object.Meta;
 import com.mulodo.miniblog.service.PostService;
 import com.mulodo.miniblog.service.TokenService;
+import com.mulodo.miniblog.utils.ApplicationContextUtils;
 import com.mulodo.miniblog.utils.BuildJSON;
 import com.mulodo.miniblog.validator.PostValidate;
 
@@ -105,6 +105,10 @@ public class PostController
     public Response addPost( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
     		@FormParam("title") String title, @FormParam("content") String content) {
 		
+		if(tokenService == null || postService == null){
+			setDataSource();
+		}
+		
 		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
 		//validate data from client and add to meta
@@ -119,6 +123,7 @@ public class PostController
 		if(access_key != null){
 			try {
 				//get user login by access_key of token
+				System.out.println("access "+access_key);
 				Token token = this.tokenService.findByAccessKey(access_key);
 				if(token != null){
 					//get user from token
@@ -138,8 +143,6 @@ public class PostController
 					//set success to response
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_206, 0), null);
 				}
-			}catch(ServiceException ex){
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 			}catch(Exception ex){
 				ex.printStackTrace();
 				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
@@ -163,6 +166,10 @@ public class PostController
     @Path("activeDeactive")
 	public Response activeDeactivePost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@FormParam("id") String id, @FormParam("status") String status){
+		
+		if(tokenService == null || postService == null){
+			setDataSource();
+		}
 		
 		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
@@ -203,8 +210,6 @@ public class PostController
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2501), null);
 				}
 			}
-		}catch(ServiceException ex){
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 		}catch(Exception ex){
 			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
@@ -230,6 +235,10 @@ public class PostController
 	public Response updatePost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@FormParam("id") String id, @FormParam("title") String title,
 			@FormParam("content") String content){
+		
+		if(tokenService == null || postService == null){
+			setDataSource();
+		}
 		
 		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
@@ -269,8 +278,6 @@ public class PostController
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2501), null);
 				}
 			}
-		}catch(ServiceException ex){
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 		}catch(Exception ex){
 			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
@@ -293,6 +300,10 @@ public class PostController
     @Path("delete/{id}")
 	public Response delete(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@PathParam("id") String id){
+		
+		if(tokenService == null || postService == null){
+			setDataSource();
+		}
 		
 		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
@@ -328,8 +339,6 @@ public class PostController
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2501), null);
 				}
 			}
-		}catch(ServiceException ex){
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 		}catch(Exception ex){
 			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
@@ -354,6 +363,10 @@ public class PostController
 	public Response getAllPost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@QueryParam("pageNum") String pageNum, @QueryParam("description") String description){
 		
+		if(tokenService == null || postService == null){
+			setDataSource();
+		}
+		
 		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
 		
@@ -372,8 +385,6 @@ public class PostController
 			//get all post of current user and like description(if not null)
 			data = this.postService.getAllPost(pageNumInt,token.getUser().getId(), description);
 			jsonObject = BuildJSON.buildReturn(meta, data);
-		}catch(ServiceException ex){
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 		}catch(Exception ex){
 			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
@@ -397,6 +408,10 @@ public class PostController
     @Path("getPostForUser")
 	public Response getAllPostForUser(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@QueryParam("pageNum") String pageNum, @QueryParam("user_id")  String user_id){
+		
+		if(tokenService == null || postService == null){
+			setDataSource();
+		}
 		
 		//declare jsonObject for build return data
 		JSONObject jsonObject = new JSONObject();
@@ -424,13 +439,20 @@ public class PostController
 			}
 			
 			jsonObject = BuildJSON.buildReturn(meta, data);
-		}catch(ServiceException ex){
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 		}catch(Exception ex){
 			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 		}
 		
 		return Response.status(200).entity(jsonObject.toString()).build();
+	}
+	
+	/**
+	 *  setDataSource: use for setting datasoure to tokeservice and userservice
+	 *	
+	 */
+	private void setDataSource(){
+		tokenService = ApplicationContextUtils.getTokenServiceDataSource();
+		postService = ApplicationContextUtils.getPostServiceDataSource();
 	}
 }

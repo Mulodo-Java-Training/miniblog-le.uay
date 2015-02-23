@@ -10,7 +10,7 @@
  */
 package com.mulodo.miniblog.dao;
 
-import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.model.User;
 
@@ -30,9 +30,9 @@ public interface TokenDAO extends GenericDAO<Token> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public Boolean deleteByAccessKey(String access_key) throws DAOException;
+	public Boolean deleteByAccessKey(String access_key) throws HandlerException;
 	
 	/**
 	 *  find_by_access_key use to find token exist in database
@@ -42,9 +42,9 @@ public interface TokenDAO extends GenericDAO<Token> {
 	 *	@return Token
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public Token findByAccessKey(String access_key) throws DAOException;
+	public Token findByAccessKey(String access_key) throws HandlerException;
 	
 	/**
 	 *  delete_by_user use to delete all token exist with specific user in database
@@ -54,7 +54,7 @@ public interface TokenDAO extends GenericDAO<Token> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public Boolean deleteByUser(User user) throws DAOException;
+	public Boolean deleteByUser(User user) throws HandlerException;
 }

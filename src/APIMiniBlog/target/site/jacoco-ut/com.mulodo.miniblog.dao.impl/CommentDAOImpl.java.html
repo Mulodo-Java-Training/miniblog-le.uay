@@ -27,7 +27,7 @@ import org.springframework.stereotype.Repository;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.CommentDAO;
-import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Comment;
 import com.mulodo.miniblog.model.User;
 
@@ -51,12 +51,12 @@ import com.mulodo.miniblog.model.User;
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@SuppressWarnings(&quot;unchecked&quot;)
 	@Override
 	public List&lt;Comment&gt; getAllCommentForPost(int post_id, Boolean isOwnerPost)
-			throws DAOException {
+			throws HandlerException {
 		try{
 <span class="nc" id="L61">	        session = this.sessionFactory.openSession();</span>
 	        
@@ -105,7 +105,7 @@ import com.mulodo.miniblog.model.User;
 	        }
 <span class="nc" id="L106">    	}catch(HibernateException ex){</span>
 <span class="nc" id="L107">    		ex.printStackTrace();</span>
-<span class="nc" id="L108">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L108">    		throw new HandlerException(ex.getMessage());</span>
 <span class="nc" id="L109">    	}finally {</span>
 <span class="nc" id="L110">    		   session.close();</span>
 <span class="nc" id="L111">    	}</span>
@@ -120,12 +120,12 @@ import com.mulodo.miniblog.model.User;
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@SuppressWarnings(&quot;unchecked&quot;)
 	@Override
 	public List&lt;Comment&gt; getAllCommentForUser(int user_id, Boolean isOwnerUser)
-			throws DAOException {
+			throws HandlerException {
 <span class="nc" id="L129">		System.out.println(&quot;user id &quot;+ user_id);</span>
 		
 		try{
@@ -181,7 +181,7 @@ import com.mulodo.miniblog.model.User;
 	        }
 <span class="nc" id="L182">    	}catch(HibernateException ex){</span>
 <span class="nc" id="L183">    		ex.printStackTrace();</span>
-<span class="nc" id="L184">    		throw new DAOException(ex.getMessage());</span>
+<span class="nc" id="L184">    		throw new HandlerException(ex.getMessage());</span>
 <span class="nc" id="L185">    	}finally {</span>
 <span class="nc" id="L186">    		   session.close();</span>
 <span class="nc" id="L187">    	}</span>

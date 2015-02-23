@@ -21,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.UserDAO;
-import com.mulodo.miniblog.exeption.DAOException;
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.User;
 import com.mulodo.miniblog.service.UserService;
 import com.mulodo.miniblog.utils.EncrypUtils;
@@ -59,17 +58,13 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
 	@Transactional
-	public Boolean isUserExits(String username) throws ServiceException {
-		try{
-			username = username.replaceAll(Constraints.REGEX_END_WHITESPACE, "");
-			return this.userDAO.isUserExits(username);
-		}catch(DAOException ex){
-			throw new ServiceException(ex.getMessage());
-		}
+	public Boolean isUserExits(String username) throws HandlerException {
+		username = username.replaceAll(Constraints.REGEX_END_WHITESPACE, "");
+		return this.userDAO.isUserExits(username);
 	}
 
 	/**
@@ -81,17 +76,13 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
 	@Transactional
-	public Boolean isEmailExits(String email, User user) throws ServiceException {
-		try{
-			email = email.replaceAll(Constraints.REGEX_END_WHITESPACE, "");
-			return this.userDAO.isEmailExits(email, user);
-		}catch(DAOException ex){
-			throw new ServiceException(ex.getMessage());
-		}
+	public Boolean isEmailExits(String email, User user) throws HandlerException {
+		email = email.replaceAll(Constraints.REGEX_END_WHITESPACE, "");
+		return this.userDAO.isEmailExits(email, user);
 	}
 
 	/**
@@ -103,21 +94,19 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 	 *	@return User
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
 	@Transactional
 	public User isValidLogin(String username, String password)
-			throws ServiceException {
+			throws HandlerException {
 		try{
 			username = username.replaceAll(Constraints.REGEX_END_WHITESPACE, "");
 			password = password.replaceAll(Constraints.REGEX_END_WHITESPACE, "");
 			password = EncrypUtils.encrypData(password);
 			return this.userDAO.isValidLogin(username,password);
 		}catch(NoSuchAlgorithmException ex){
-			throw new ServiceException(ex.getMessage());
-		}catch(DAOException ex){
-			throw new ServiceException(ex.getMessage());
+			throw new HandlerException(ex.getMessage());
 		}
 	}
 
@@ -129,15 +118,11 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 	 *	@return List<User>
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public List<User> findByName(String name) throws ServiceException {
-		try{
-			return this.userDAO.findByName(name);
-		}catch(DAOException ex){
-			throw new ServiceException(ex.getMessage());
-		}
+	public List<User> findByName(String name) throws HandlerException {
+		return this.userDAO.findByName(name);
 	}
 
 	
@@ -149,15 +134,11 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean deleteByUsername(String username) throws ServiceException {
-		try{
-			return this.userDAO.deleteByUsername(username);
-		}catch(DAOException ex){
-			throw new ServiceException(ex.getMessage());
-		}
+	public Boolean deleteByUsername(String username) throws HandlerException {
+		return this.userDAO.deleteByUsername(username);
 	}
 
 	/**
@@ -168,15 +149,13 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 	 *	@return User
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public User findByUsername(String username) throws ServiceException {
-		try{
-			return this.userDAO.findByUsername(username);
-		}catch(DAOException ex){
-			throw new ServiceException(ex.getMessage());
-		}
+	public User findByUsername(String username) throws HandlerException {
+	
+		return this.userDAO.findByUsername(username);
+		
 	}
 
 	

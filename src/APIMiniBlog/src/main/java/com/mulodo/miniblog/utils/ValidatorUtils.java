@@ -36,9 +36,6 @@ public final class ValidatorUtils {
 		return true;
 	}
 
-	public static Boolean compare(String password, String repassword) {
-		return password.equals(repassword);
-	}
 	
 	public static Boolean isPositiveInteger (String string){
 

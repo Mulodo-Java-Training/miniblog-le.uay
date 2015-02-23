@@ -12,7 +12,7 @@ package com.mulodo.miniblog.service;
 
 import java.util.List;
 
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Comment;
 
 /**
@@ -35,7 +35,7 @@ public interface CommentService extends GenericService<Comment>{
 	 *	
 	 *  @exception  ServiceException
 	 */
-	public List<Comment> getAllCommentForPost(int post_id, Boolean isOwnerPost) throws ServiceException;
+	public List<Comment> getAllCommentForPost(int post_id, Boolean isOwnerPost) throws HandlerException;
 	
 	/**
 	 *  get_all_comment_for_user use to call get all comment for user function in 
@@ -49,5 +49,5 @@ public interface CommentService extends GenericService<Comment>{
 	 *	
 	 *  @exception  ServiceException
 	 */
-	public List<Comment> getAllCommentForUser(int user_id, Boolean isOwnerUser) throws ServiceException;
+	public List<Comment> getAllCommentForUser(int user_id, Boolean isOwnerUser) throws HandlerException;
 }

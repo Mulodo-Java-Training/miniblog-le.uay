@@ -1,3 +1,13 @@
+/* 
+ * UserControllerUnitTest.java 
+ *  
+ * 1.0
+ * 
+ * 2015/02/09
+ *  
+ * Copyright (c) 2015 Le U Uay
+ * 
+ */
 package com.mulodo.miniblog.unitest;
 
 import static org.junit.Assert.*;
@@ -18,7 +28,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.mulodo.miniblog.contraints.Constraints;
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.model.User;
@@ -29,6 +39,12 @@ import com.mulodo.miniblog.service.PostService;
 import com.mulodo.miniblog.service.TokenService;
 import com.mulodo.miniblog.validator.PostValidate;
 
+/**
+ * The UserControllerUnitTest use create unit test of user controller
+ * 
+ * @author UayLU
+ * 
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class PostUpdateUnitTestMockito 
 {
@@ -51,7 +67,7 @@ public class PostUpdateUnitTestMockito
 	}
 	
 	@Test
-	public void testActiveDeactivePost() throws ServiceException{
+	public void testActiveDeactivePost() throws HandlerException{
 		
 		//==Create list error==
 		List<Integer> listError = new ArrayList<Integer>();

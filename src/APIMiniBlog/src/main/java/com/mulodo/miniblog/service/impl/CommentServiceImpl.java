@@ -17,8 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.mulodo.miniblog.dao.CommentDAO;
-import com.mulodo.miniblog.exeption.DAOException;
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Comment;
 import com.mulodo.miniblog.service.CommentService;
 
@@ -56,16 +55,13 @@ public class CommentServiceImpl extends GenericServiceImpl<Comment> implements C
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
 	public List<Comment> getAllCommentForPost(int post_id, Boolean isOwnerPost)
-			throws ServiceException {
-		try {
-			return this.commentDAO.getAllCommentForPost(post_id, isOwnerPost);
-		} catch (DAOException e) {
-			throw new ServiceException(e.getMessage());
-		}
+			throws HandlerException {
+		return this.commentDAO.getAllCommentForPost(post_id, isOwnerPost);
+		
 	}
 
 	/**
@@ -78,15 +74,12 @@ public class CommentServiceImpl extends GenericServiceImpl<Comment> implements C
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
 	public List<Comment> getAllCommentForUser(int user_id, Boolean isOwnerUser)
-			throws ServiceException {
-		try {
-			return this.commentDAO.getAllCommentForUser(user_id, isOwnerUser);
-		} catch (DAOException e) {
-			throw new ServiceException(e.getMessage());
-		}
+			throws HandlerException {
+		return this.commentDAO.getAllCommentForUser(user_id, isOwnerUser);
+		
 	}
 }

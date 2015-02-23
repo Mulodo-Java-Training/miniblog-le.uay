@@ -19,8 +19,11 @@ import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
+import org.jboss.resteasy.core.Dispatcher;
+import org.jboss.resteasy.mock.MockDispatcherFactory;
+import org.jboss.resteasy.mock.MockHttpRequest;
+import org.jboss.resteasy.mock.MockHttpResponse;
+import org.jboss.resteasy.plugins.server.resourcefactory.POJOResourceFactory;
 import org.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -31,6 +34,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.model.User;
+import com.mulodo.miniblog.rest.controller.PostController;
+import com.mulodo.miniblog.rest.controller.UserController;
 import com.mulodo.miniblog.service.PostService;
 import com.mulodo.miniblog.service.UserService;
 import com.mulodo.miniblog.utils.EncrypUtils;
@@ -44,10 +49,7 @@ import com.mulodo.miniblog.utils.EncrypUtils;
 @SuppressWarnings("deprecation")
 public class PostControllerUnitTest 
 {
-	
-	//declare root user url
-	private final String ROOT_POST_URL = "http://localhost:8080/APIMiniBlog/api/posts";
-	private final String ROOT_USER_URL = "http://localhost:8080/APIMiniBlog/api/users";
+
 	//declare ApplicationContext for getting bean from applicationContext.xml
 	private final static ApplicationContext appContext = 
 	    	  new ClassPathXmlApplicationContext("classpath:/WEB-INF/applicationContext.xml");
@@ -56,9 +58,11 @@ public class PostControllerUnitTest
 	private final static PostService postService = (PostService) appContext.getBean("postService");
 	private final static UserService userService = (UserService) appContext.getBean("userService");
 	
-	private ClientResponse<String> respone = null;
-	private ClientRequest clientRequest = null;
-	
+	private static Dispatcher dispatcher = MockDispatcherFactory.createDispatcher();
+	private static POJOResourceFactory noDefaults = new POJOResourceFactory(PostController.class);
+	private static Dispatcher dispatcherLogin = MockDispatcherFactory.createDispatcher();
+	private static POJOResourceFactory noDefaultsLogin = new POJOResourceFactory(UserController.class);
+	MockHttpResponse response = null;
 	
 	/**
 	 *  add_new post for unit testing addNew in postcontroller
@@ -71,10 +75,8 @@ public class PostControllerUnitTest
 	 */
 	@Test
 	public void add_new() throws Exception {
-		
-		clientRequest = new ClientRequest(ROOT_POST_URL+"/add");
-		String access_key = login("le.tung","abcd1234");
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
+
+		String access_key = login("le.tung","abcd1234");		
 		
 		//==Create list error==
 		List<Integer> listError = new ArrayList<Integer>();
@@ -86,14 +88,21 @@ public class PostControllerUnitTest
 		listError.add(Constraints.CODE_2505);
 		
 		///==validate post data== 
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "title=&content=");
+		MockHttpRequest requestValidateData = MockHttpRequest.post("/posts/add");
+		///==validate post data== 
+		requestValidateData.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestValidateData.content("title=&content=".getBytes());
+		requestValidateData.header(Constraints.ACCESS_KEY, access_key);
+		
+		//call method add
+		response = new MockHttpResponse();
+	    dispatcher.invoke(requestValidateData, response);
+	    
 		//post data to add user api
-		respone = clientRequest.post(String.class);
 		//compare status return with status in list error
-		assertEquals(Constraints.CODE_200, respone.getStatus());
+		assertEquals(Constraints.CODE_200, response.getStatus());
 		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		
@@ -108,17 +117,24 @@ public class PostControllerUnitTest
 		}
 		
 		//==add success==
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "title=Title for test&content=Content for test");
-		//post data to add user api
-		respone = clientRequest.post(String.class);
+		MockHttpRequest requestAddPostSuccess = MockHttpRequest.post("/posts/add");
+		///==validate post data== 
+		requestAddPostSuccess.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestAddPostSuccess.content("title=Title for test&content=Content for test".getBytes());
+		requestAddPostSuccess.header(Constraints.ACCESS_KEY, access_key);
+		
+		//call method add
+		response = new MockHttpResponse();
+	    dispatcher.invoke(requestAddPostSuccess, response);
+	
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
+		System.out.println(jsonObject);
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare status return with status add success
 		assertEquals(Constraints.CODE_206, jsonObject.get(Constraints.CODE));
-		assertEquals(Constraints.CODE_200, respone.getStatus());
+		assertEquals(Constraints.CODE_200, response.getStatus());
 		
 	}
 	
@@ -134,9 +150,7 @@ public class PostControllerUnitTest
 	@Test
 	public void update() throws Exception {
 		
-		clientRequest = new ClientRequest(ROOT_POST_URL+"/update");
 		String access_key = login("le.uay","abcd1234");
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
 		
 		//==Create list error==
 		List<Integer> listError = new ArrayList<Integer>();
@@ -148,14 +162,20 @@ public class PostControllerUnitTest
 		listError.add(Constraints.CODE_2508);
 		
 		///==validate post data== 
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "it=ab&title=&content=");
+		MockHttpRequest requestPostData = MockHttpRequest.put("/posts/update");
+		///==validate post data== 
+		requestPostData.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestPostData.content("id=ab&title=&content=".getBytes());
+		requestPostData.header(Constraints.ACCESS_KEY, access_key);
+	
 		//post data to add user api
-		respone = clientRequest.put(String.class);
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestPostData, response);
+		
 		//compare status return with status in list error
-		assertEquals(Constraints.CODE_200, respone.getStatus());
+		assertEquals(Constraints.CODE_200, response.getStatus());
 		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		
@@ -171,18 +191,23 @@ public class PostControllerUnitTest
 		
 		//==update success==
 		Post post = postService.findByTitle("Title 1 le.uay");
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "id="+post.getId()+"&title=Title for test&content=Content for test");
+		MockHttpRequest requestUpdateSuccess = MockHttpRequest.put("/posts/update");
+		///==validate post data== 
+		requestUpdateSuccess.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestUpdateSuccess.content(("id="+post.getId()+"&title=Title for test&content=Content for test").getBytes());
+		requestUpdateSuccess.header(Constraints.ACCESS_KEY, access_key);
+	
 		//post data to add user api
-		respone = clientRequest.put(String.class);
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestUpdateSuccess, response);
 		
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare status return with status add success
 		assertEquals(Constraints.CODE_207, jsonObject.get(Constraints.CODE));
-		assertEquals(Constraints.CODE_200, respone.getStatus());
+		assertEquals(Constraints.CODE_200, response.getStatus());
 		
 	}
 	
@@ -199,18 +224,22 @@ public class PostControllerUnitTest
 	@Test
 	public void delete() throws Exception {
 		
-		clientRequest = new ClientRequest(ROOT_POST_URL+"/delete/abcd");
 		String access_key = login("le.uay","abcd1234");
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
 
 		///==validate post data== 
 		
 		//post data to add user api
-		respone = clientRequest.delete(String.class);
+		MockHttpRequest requestValidateData = MockHttpRequest.delete("/posts/delete/abcd");
+		///==validate post data== 
+		requestValidateData.header(Constraints.ACCESS_KEY, access_key);
+	
+		//post data to add user api
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestValidateData, response);
 		//compare status return with status in list error
-		assertEquals(Constraints.CODE_200, respone.getStatus());
+		assertEquals(Constraints.CODE_200, response.getStatus());
 		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		
@@ -225,13 +254,16 @@ public class PostControllerUnitTest
 		}
 		
 		//==post is invalid in database==
-		clientRequest = new ClientRequest(ROOT_POST_URL+"/delete/10000");
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
+		MockHttpRequest requestInvalidPost = MockHttpRequest.delete("/posts/delete/10000");
+		///==validate post data== 
+		requestInvalidPost.header(Constraints.ACCESS_KEY, access_key);
+	
 		//post data to add user api
-		respone = clientRequest.delete(String.class);
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestInvalidPost, response);
 		
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare response error code with list error
@@ -247,13 +279,16 @@ public class PostControllerUnitTest
 		
 		//==validate permission of current login user on this post==
 		Post post = postService.findByTitle("Title 4 nguyen.tung");
-		clientRequest = new ClientRequest(ROOT_POST_URL+"/delete/"+post.getId());
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
+		MockHttpRequest requestPermissionPost = MockHttpRequest.delete("/posts/delete/"+post.getId());
+		///==validate post data== 
+		requestPermissionPost.header(Constraints.ACCESS_KEY, access_key);
+	
 		//post data to add user api
-		respone = clientRequest.delete(String.class);
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestPermissionPost, response);
 		
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare response error code with list error
@@ -268,13 +303,16 @@ public class PostControllerUnitTest
 		
 		//==delete success==
 		post = postService.findByTitle("Title 2 le.uay");
-		clientRequest = new ClientRequest(ROOT_POST_URL+"/delete/"+post.getId());
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
+		MockHttpRequest requestDeletePost = MockHttpRequest.delete("/posts/delete/"+post.getId());
+		///==validate post data== 
+		requestDeletePost.header(Constraints.ACCESS_KEY, access_key);
+	
 		//post data to add user api
-		respone = clientRequest.delete(String.class);
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestDeletePost, response);
 		
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare response error code with list error
@@ -295,9 +333,7 @@ public class PostControllerUnitTest
 	@Test
 	public void activeDeactive() throws Exception {
 		
-		clientRequest = new ClientRequest(ROOT_POST_URL+"/activeDeactive");
 		String access_key = login("le.uay","abcd1234");
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
 		
 		//==Create list error==
 		List<Integer> listError = new ArrayList<Integer>();
@@ -306,14 +342,19 @@ public class PostControllerUnitTest
 		listError.add(Constraints.CODE_2508);
 
 		//==validate post data== 
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "id=ab&status=");
+		MockHttpRequest requestValidateData = MockHttpRequest.put("/posts/activeDeactive");
+		///==validate post data== 
+		requestValidateData.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestValidateData.content("id=ab&status=-1".getBytes());
+		requestValidateData.header(Constraints.ACCESS_KEY, access_key);
+	
 		//post data to add user api
-		respone = clientRequest.put(String.class);
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestValidateData, response);
 		//compare status return with status in list error
-		assertEquals(Constraints.CODE_200, respone.getStatus());
+		assertEquals(Constraints.CODE_200, response.getStatus());
 		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		
@@ -329,12 +370,18 @@ public class PostControllerUnitTest
 		
 		//==post is invalid in database==		
 		//post data to add user api
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "id=10000&status=1");
-		respone = clientRequest.put(String.class);
+		MockHttpRequest requestInvalidaPost = MockHttpRequest.put("/posts/activeDeactive");
+		///==validate post data== 
+		requestInvalidaPost.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestInvalidaPost.content("id=10000&status=1".getBytes());
+		requestInvalidaPost.header(Constraints.ACCESS_KEY, access_key);
+	
+		//post data to add user api
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestInvalidaPost, response);
 		
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare response error code with list error
@@ -350,13 +397,18 @@ public class PostControllerUnitTest
 		
 		//==validate permission of current login user on this post==
 		Post post = postService.findByTitle("Title 4 nguyen.tung");
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "id="+post.getId()+"&status=1");
+		MockHttpRequest requestPermissionOnPost = MockHttpRequest.put("/posts/activeDeactive");
+		///==validate post data== 
+		requestPermissionOnPost.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestPermissionOnPost.content(("id="+post.getId()+"&status=1").getBytes());
+		requestPermissionOnPost.header(Constraints.ACCESS_KEY, access_key);
+	
 		//post data to add user api
-		respone = clientRequest.put(String.class);
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestPermissionOnPost, response);
 		
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare response error code with list error
@@ -371,14 +423,21 @@ public class PostControllerUnitTest
 		}
 		
 		//==deactive post "title 2 le.uay" of le.uay user==
-		post = postService.findByTitle("Title 2 le.uay");
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "id="+post.getId()+"&status=1");
+		post = postService.findByTitle("Title 3");
+		post = postService.findByTitle("Title 3 le.uay");
+		
+		MockHttpRequest requestDeactivePost = MockHttpRequest.put("/posts/activeDeactive");
+		///==validate post data== 
+		requestDeactivePost.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestDeactivePost.content(("id="+post.getId()+"&status=1").getBytes());
+		requestDeactivePost.header(Constraints.ACCESS_KEY, access_key);
+	
 		//post data to add user api
-		respone = clientRequest.put(String.class);
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestDeactivePost, response);
 		
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare response error code with list error
@@ -405,14 +464,17 @@ public class PostControllerUnitTest
 	
 
 		//==validate post data==
-		clientRequest = new ClientRequest(ROOT_POST_URL+"/getAllPost?pageNum=ab&description=");
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
+		MockHttpRequest requestValidateData = MockHttpRequest.get("/posts/getAllPost?pageNum=ab&description=");
+		///==validate post data== 
+		requestValidateData.header(Constraints.ACCESS_KEY, access_key);
+	
 		//post data to add user api
-		respone = clientRequest.get(String.class);
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestValidateData, response);
 		//compare status return with status in list error
-		assertEquals(Constraints.CODE_200, respone.getStatus());
+		assertEquals(Constraints.CODE_200, response.getStatus());
 		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		
@@ -427,20 +489,45 @@ public class PostControllerUnitTest
 		}
 		
 		//==get all post==
-		clientRequest = new ClientRequest(ROOT_POST_URL+"/getAllPost?pageNum=1&description=");
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
+		MockHttpRequest requestGetAllPost = MockHttpRequest.get("/posts/getAllPost?pageNum=1&description=");
+		///==validate post data== 
+		requestGetAllPost.header(Constraints.ACCESS_KEY, access_key);
+	
 		//post data to add user api
-		respone = clientRequest.get(String.class);
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestGetAllPost, response);
 		//compare status return with status in list error
-		assertEquals(Constraints.CODE_200, respone.getStatus());
+		assertEquals(Constraints.CODE_200, response.getStatus());
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.DATA);
 		
 		//compare response error code with list error
 		assertEquals(true, jsonObject.has(Constraints.LIST_POST));
 		assertEquals(true, jsonObject.getJSONArray(Constraints.LIST_POST).length() > 0);
+		assertEquals(true, jsonObject.has(Constraints.TOTAL_PAGE));
+		assertEquals(true, jsonObject.has(Constraints.TOTAL_ROW));
+		assertEquals(true, jsonObject.has(Constraints.LIMIT_ROW_STRING));
+		assertEquals(true, jsonObject.has(Constraints.PAGE_NUM));
+		
+		//==get all post==
+		MockHttpRequest requestGetNullPost = MockHttpRequest.get("/posts/getAllPost?pageNum=1&description=abcd");
+		///==validate post data== 
+		requestGetNullPost.header(Constraints.ACCESS_KEY, access_key);
+	
+		//post data to add user api
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestGetNullPost, response);
+		//compare status return with status in list error
+		assertEquals(Constraints.CODE_200, response.getStatus());
+		//get json object from response
+		jsonObject = new JSONObject(response.getContentAsString());
+		//get meta json object
+		jsonObject = jsonObject.getJSONObject(Constraints.DATA);
+		
+		//compare response error code with list error
+		assertEquals(true, jsonObject.has(Constraints.LIST_POST));
 		assertEquals(true, jsonObject.has(Constraints.TOTAL_PAGE));
 		assertEquals(true, jsonObject.has(Constraints.TOTAL_ROW));
 		assertEquals(true, jsonObject.has(Constraints.LIMIT_ROW_STRING));
@@ -469,14 +556,17 @@ public class PostControllerUnitTest
 		listError.add(Constraints.CODE_2508);
 		
 		//==validate post data==
-		clientRequest = new ClientRequest(ROOT_POST_URL+"/getPostForUser?pageNum=ab&user_id=cd");
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
+		MockHttpRequest requestValidateData = MockHttpRequest.get("/posts/getPostForUser?pageNum=ab&user_id=cd");
+		///==validate post data== 
+		requestValidateData.header(Constraints.ACCESS_KEY, access_key);
+	
 		//post data to add user api
-		respone = clientRequest.get(String.class);
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestValidateData, response);
 		//compare status return with status in list error
-		assertEquals(Constraints.CODE_200, respone.getStatus());
+		assertEquals(Constraints.CODE_200, response.getStatus());
 		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		
@@ -490,22 +580,71 @@ public class PostControllerUnitTest
 					.getJSONObject(i).get(Constraints.CODE)));
 		}
 		
-		//==get all post==
+		//==get all post for owner user==
 		User user = userService.findByUsername("le.uay");
-		clientRequest = new ClientRequest(ROOT_POST_URL+"/getPostForUser?pageNum=1&user_id="+ user.getId());
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
+		MockHttpRequest requestGetPostForOwnerUser = MockHttpRequest.get("/posts/getPostForUser?pageNum=1&user_id="+ user.getId());
+		///==validate post data== 
+		requestGetPostForOwnerUser.header(Constraints.ACCESS_KEY, access_key);
+	
 		//post data to add user api
-		respone = clientRequest.get(String.class);
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestGetPostForOwnerUser, response);
 		//compare status return with status in list error
-		assertEquals(Constraints.CODE_200, respone.getStatus());
+		assertEquals(Constraints.CODE_200, response.getStatus());
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.DATA);
 		
 		//compare response error code with list error
 		assertEquals(true, jsonObject.has(Constraints.LIST_POST));
 		assertEquals(true, jsonObject.getJSONArray(Constraints.LIST_POST).length() > 0);
+		assertEquals(true, jsonObject.has(Constraints.TOTAL_PAGE));
+		assertEquals(true, jsonObject.has(Constraints.TOTAL_ROW));
+		assertEquals(true, jsonObject.has(Constraints.LIMIT_ROW_STRING));
+		assertEquals(true, jsonObject.has(Constraints.PAGE_NUM));
+		
+		//==get all post for one user==
+		user = userService.findByUsername("le.huy");
+		MockHttpRequest requestGetPostForOneUser = MockHttpRequest.get("/posts/getPostForUser?pageNum=1&user_id="+ user.getId());
+		///==validate post data== 
+		requestGetPostForOneUser.header(Constraints.ACCESS_KEY, access_key);
+	
+		//post data to add user api
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestGetPostForOneUser, response);
+		//compare status return with status in list error
+		assertEquals(Constraints.CODE_200, response.getStatus());
+		//get json object from response
+		jsonObject = new JSONObject(response.getContentAsString());
+		//get meta json object
+		jsonObject = jsonObject.getJSONObject(Constraints.DATA);
+		
+		//compare response error code with list error
+		assertEquals(true, jsonObject.has(Constraints.LIST_POST));
+		assertEquals(true, jsonObject.getJSONArray(Constraints.LIST_POST).length() > 0);
+		assertEquals(true, jsonObject.has(Constraints.TOTAL_PAGE));
+		assertEquals(true, jsonObject.has(Constraints.TOTAL_ROW));
+		assertEquals(true, jsonObject.has(Constraints.LIMIT_ROW_STRING));
+		assertEquals(true, jsonObject.has(Constraints.PAGE_NUM));
+		
+		//==get all post==
+		MockHttpRequest requestGetNullPost = MockHttpRequest.get("/posts/getPostForUser?pageNum=6&user_id="+ user.getId());
+		///==validate post data== 
+		requestGetNullPost.header(Constraints.ACCESS_KEY, access_key);
+	
+		//post data to add user api
+		response = new MockHttpResponse();
+		dispatcher.invoke(requestGetNullPost, response);
+		//compare status return with status in list error
+		assertEquals(Constraints.CODE_200, response.getStatus());
+		//get json object from response
+		jsonObject = new JSONObject(response.getContentAsString());
+		//get meta json object
+		jsonObject = jsonObject.getJSONObject(Constraints.DATA);
+		
+		//compare response error code with list error
+		assertEquals(true, jsonObject.has(Constraints.LIST_POST));
 		assertEquals(true, jsonObject.has(Constraints.TOTAL_PAGE));
 		assertEquals(true, jsonObject.has(Constraints.TOTAL_ROW));
 		assertEquals(true, jsonObject.has(Constraints.LIMIT_ROW_STRING));
@@ -524,6 +663,8 @@ public class PostControllerUnitTest
 	 */
 	@BeforeClass
 	public static void  setUpData() throws Exception{
+		dispatcher.getRegistry().addResourceFactory(noDefaults);
+		dispatcherLogin.getRegistry().addResourceFactory(noDefaultsLogin);
 		
 		Calendar datePost = Calendar.getInstance();
 		Calendar dateUser = Calendar.getInstance();
@@ -652,17 +793,20 @@ public class PostControllerUnitTest
 	 *	
 	 */
 	private String login(String username, String password) throws Exception{
-		ClientRequest clientRequestLogin = new ClientRequest(ROOT_USER_URL+"/login");
-		clientRequestLogin.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "username="+username+"&password="+password);
+		
+		MockHttpRequest requestLogin = MockHttpRequest.post("/users/login");
+		requestLogin.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestLogin.content(("username="+username+"&password="+password).getBytes());
 		//post data to add user api
-		respone = clientRequestLogin.post(String.class);
+		response = new MockHttpResponse();
+		dispatcherLogin.invoke(requestLogin, response);
+	    
 		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//get access_key from login
-		String access_key = (String) respone.getHeaders().get(Constraints.ACCESS_KEY).get(0);
+		String access_key = (String) response.getOutputHeaders().getFirst(Constraints.ACCESS_KEY);
 		return access_key;
 	}
 }

@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 
 import com.mulodo.miniblog.contraints.Constraints;
-import com.mulodo.miniblog.exeption.ServiceException;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.model.User;
 import com.mulodo.miniblog.object.Data;
@@ -113,9 +112,7 @@ public class UserController {
     		@FormParam("password") String password, @FormParam("firstname") String firstname,
     		@FormParam("lastname") String lastname, @FormParam("email") String email) {
 	
-		
-		System.out.println("username = "+username);
-		if(tokenService == null && userService == null){
+		if(tokenService == null || userService == null){
 			setDataSource();
 		}
 		
@@ -161,15 +158,7 @@ public class UserController {
 			//cal user service to add data to database, return code success
 			this.userService.add(user);
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_200, 0), null);
-			return Response.status(200).entity(jsonObject.toString()).build();
-		} catch (NoSuchAlgorithmException ex){
-			ex.printStackTrace();
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);			
-		} catch (ServiceException e) {
-			e.printStackTrace();
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
 		}catch(Exception ex){
-			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
 		}
 		
@@ -198,7 +187,9 @@ public class UserController {
     		@FormParam("lastname") String lastname, @FormParam("email") String email,
     		@FormParam("status") String status) {
 		
-		if(tokenService == null && userService == null){
+		System.out.println("pass "+ password);
+		
+		if(tokenService == null || userService == null){
 			setDataSource();
 		}
 		
@@ -213,50 +204,44 @@ public class UserController {
 			return Response.status(200).entity(jsonObject.toString()).build();
 		}
 		try {
-			//get token from access_key 
-			Token token = this.tokenService.findByAccessKey(access_key);
-			if(token == null){
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_2008), null);
-				return Response.status(200).entity(jsonObject.toString()).build();
+			//get token from access_key
+			Token token = null;
+			if(access_key != null){
+				token = this.tokenService.findByAccessKey(access_key);
 			}
 			
-			//encryp password and check valid password with current user login
-			password = EncrypUtils.encrypData(password);
-			Boolean isValid = true;
-			isValid = token.getUser().getPassword().equals(password);
-			if(!isValid){
-				//if password did not match, return code error
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_2012), null);
-				return Response.status(Constraints.CODE_200).entity(jsonObject.toString()).build();
+			if(token != null){
+			
+				//encryp password and check valid password with current user login
+				password = EncrypUtils.encrypData(password);
+				Boolean isValid = true;
+				isValid = token.getUser().getPassword().equals(password);
+				if(!isValid){
+					//if password did not match, return code error
+					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_2012), null);
+					return Response.status(Constraints.CODE_200).entity(jsonObject.toString()).build();
+				}
+				//check exists email in database, exclusion current user's email in database
+				isValid = this.userService.isEmailExits(email.replaceAll(Constraints.REGEX_END_WHITESPACE, ""), token.getUser());
+				if(isValid){
+					//if exists email in database, return code error
+					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_2009), null);
+					return Response.status(200).entity(jsonObject.toString()).build();
+				}
+				//get user from token, and change data
+				User user = token.getUser();
+				user.setFirstname(firstname.replaceAll(Constraints.REGEX_END_WHITESPACE, ""));
+				user.setLastname(lastname.replaceAll(Constraints.REGEX_END_WHITESPACE, ""));
+				user.setEmail(email.replaceAll(Constraints.REGEX_END_WHITESPACE, ""));
+				user.setStatus(Integer.parseInt(status));
+				Calendar date = Calendar.getInstance();
+				user.setModified_at(date.getTime());
+				//cal user service to update
+				this.userService.update(user);
+				//return message success
+				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_201, 0), null);
 			}
-			//check exists email in database, exclusion current user's email in database
-			isValid = this.userService.isEmailExits(email.replaceAll(Constraints.REGEX_END_WHITESPACE, ""), token.getUser());
-			if(isValid){
-				//if exists email in database, return code error
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_2009), null);
-				return Response.status(200).entity(jsonObject.toString()).build();
-			}
-			//get user from token, and change data
-			User user = token.getUser();
-			user.setFirstname(firstname.replaceAll(Constraints.REGEX_END_WHITESPACE, ""));
-			user.setLastname(lastname.replaceAll(Constraints.REGEX_END_WHITESPACE, ""));
-			user.setEmail(email.replaceAll(Constraints.REGEX_END_WHITESPACE, ""));
-			user.setStatus(Integer.parseInt(status));
-			Calendar date = Calendar.getInstance();
-			user.setModified_at(date.getTime());
-			//cal user service to update
-			this.userService.update(user);
-			//return message success
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_201, 0), null);
-			return Response.status(Constraints.CODE_200).entity(jsonObject.toString()).build();
-		} catch (NoSuchAlgorithmException ex){
-			ex.printStackTrace();
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
 		}catch(Exception ex){
-			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
 		}
 	
@@ -279,7 +264,7 @@ public class UserController {
     public Response  findByName(@HeaderParam(Constraints.ACCESS_KEY) String access_key, 
     		@QueryParam("name") String name) {
 		
-		if(tokenService == null && userService == null){
+		if(tokenService == null || userService == null){
 			setDataSource();
 		}
 		
@@ -298,19 +283,12 @@ public class UserController {
 			listUser = this.userService.findByName(name);
 			data = new Data();
 			//set list user to data
-			if(listUser != null){
-				data.setListUser(listUser);
-			} else{
-				data.setListUser(new ArrayList<User>());
-			}
+			
+			data.setListUser(listUser);
 			//add data to jsonobject and return json to client
 			jsonObject = BuildJSON.buildReturn(meta, data);
 			
-		} catch (ServiceException ex) {
-			ex.printStackTrace();
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
 		}catch(Exception ex){
-			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
 		}
 	
@@ -331,7 +309,7 @@ public class UserController {
     @Path("getUserInfo")
     public Response  getUserInfo(@HeaderParam(Constraints.ACCESS_KEY) String access_key) {
 		
-		if(tokenService == null && userService == null){
+		if(tokenService == null || userService == null){
 			setDataSource();
 		}
 		
@@ -355,11 +333,7 @@ public class UserController {
 				jsonObject = BuildJSON.buildReturn(null, data);
 			}
 
-		} catch (ServiceException ex) {
-			ex.printStackTrace();
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
 		} catch(Exception ex){
-			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
 		}
 		//jsonObject.put("user", user);
@@ -383,7 +357,7 @@ public class UserController {
     public Response  login(@FormParam("username") String username, 
     		@FormParam("password") String password) {
 		
-		if(tokenService == null && userService == null){
+		if(tokenService == null || userService == null){
 			setDataSource();
 		}
 		
@@ -411,26 +385,15 @@ public class UserController {
 				token.setExpired_at(date.getTime());
 				token.setUser(user);
 				//add new token to database match with this user
-				Boolean result = this.tokenService.add(token);
+				this.tokenService.add(token);
 				
 				// if success, return access_key through header
-				if(result){
-					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_204, 0), null);
-					return Response.status(200).entity(jsonObject.toString()).header(Constraints.ACCESS_KEY, access_key).build();
-				}else{
-					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
-				}
+				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_204, 0), null);
+				return Response.status(200).entity(jsonObject.toString()).header(Constraints.ACCESS_KEY, access_key).build();
 			}else{
 				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_1001), null);
 			}
-		}catch(NoSuchAlgorithmException ex){
-			ex.printStackTrace();
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
-		}catch (ServiceException ex) {
-			ex.printStackTrace();
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
 		}catch(Exception ex){
-			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
 		}
 		
@@ -450,33 +413,30 @@ public class UserController {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response  logout(@HeaderParam(Constraints.ACCESS_KEY) String access_key) {
 		
-		if(tokenService == null && userService == null){
+		if(tokenService == null || userService == null){
 			setDataSource();
 		}
 		
 		JSONObject jsonObject = new JSONObject();
-		System.out.println(" logout acc "+ access_key);
-		if(access_key != null){
-			try {
-				//get current token by access_key
-				Token token = this.tokenService.findByAccessKey(access_key);
-				if(token != null && token.getAccess_key().equals(access_key)){
-					//if valid access_key, delete current access_key
-					Boolean isDelete = this.tokenService.deleteByAccessKey(access_key);
-					//if success, return message success
-					if(isDelete){
-						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_205, 0), null);
-					}else{
-						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
-					}
-				}
-			} catch (ServiceException e) {
-				e.printStackTrace();
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
-			}catch(Exception ex){
-				ex.printStackTrace();
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
+		Token token = null;
+		
+		try {
+		
+			//get current token by access_key
+			if(access_key != null){
+				token = this.tokenService.findByAccessKey(access_key);
 			}
+			
+			if(token != null){
+				//if valid access_key, delete current access_key
+				this.tokenService.deleteByAccessKey(access_key);
+				//if success, return message success
+
+				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_205, 0), null);
+			
+			}
+		}catch(Exception ex){
+			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
 		}
 		
     	return Response.status(200).entity(jsonObject.toString()).build();
@@ -498,7 +458,7 @@ public class UserController {
     public Response  chagnePassword(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
     		@FormParam("oldPassword") String oldPassword, @FormParam("newPassword") String newPassword) {
 		
-		if(tokenService == null && userService == null){
+		if(tokenService == null || userService == null){
 			setDataSource();
 		}
 		
@@ -511,39 +471,44 @@ public class UserController {
 			jsonObject = BuildJSON.buildReturn(meta, data);
 			return Response.status(200).entity(jsonObject.toString()).build();
 		}
-		if(access_key != null){	
-			try {
-				//get current user by access_key of token
-				Token token = this.tokenService.findByAccessKey(access_key);
-				if(token != null && token.getAccess_key().equals(access_key)){
-					//get user from token
-					User user = token.getUser();
-					//encryp old password and compare with password save in database
-					oldPassword = EncrypUtils.encrypData(oldPassword);
-					if(oldPassword.equals(user.getPassword())){
-						//if match, set new password to user and cal update in userservice to update
-						newPassword = EncrypUtils.encrypData(newPassword);
-						user.setPassword(newPassword);
-						userService.update(user);
-						//after success, delete all old token in database.
-						this.tokenService.deleteByUser(user);
-						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_203, 0), null);
-					}else{
-						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_2016), null);
-					}
-				}
-			}catch (ServiceException e) {
-				e.printStackTrace();
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
-			}catch(Exception ex){
-				ex.printStackTrace();
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
-			}
-		}
 		
+		try {
+			
+			Token token = null;
+			if(access_key != null){	
+				token = this.tokenService.findByAccessKey(access_key);
+			}
+		
+			//get current user by access_key of token
+			
+			if(token != null){
+				//get user from token
+				User user = token.getUser();
+				//encryp old password and compare with password save in database
+				oldPassword = EncrypUtils.encrypData(oldPassword);
+				if(oldPassword.equals(user.getPassword())){
+					//if match, set new password to user and cal update in userservice to update
+					newPassword = EncrypUtils.encrypData(newPassword);
+					user.setPassword(newPassword);
+					userService.update(user);
+					//after success, delete all old token in database.
+					this.tokenService.deleteByUser(user);
+					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_203, 0), null);
+				}else{
+					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_2016), null);
+				}
+			}
+		}catch(Exception ex){
+			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000, Constraints.CODE_9001), null);
+		}
     	return Response.status(200).entity(jsonObject.toString()).build();
     }
 	
+	
+	/**
+	 *  setDataSource: use for setting datasoure to tokeservice and userservice
+	 *	
+	 */
 	private void setDataSource(){
 		tokenService = ApplicationContextUtils.getTokenServiceDataSource();
 		userService = ApplicationContextUtils.getUserServiceDataSource();

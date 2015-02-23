@@ -102,24 +102,20 @@ public class UserValidate {
 			}
 		}
 		
-		//check null empty or white space if string
-		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(email);
-		if(isValid){
-			isValid = ValidatorUtils.isValidEmail(email);
+		isValid = ValidatorUtils.isValidEmail(email);
+		if(!isValid){
+			//check if have error, add message error to listmessage
+			listMessage.add(new Message(Constraints.CODE_2005));
+		}else{
+			//check valid length of string
+			isValid = ValidatorUtils.isValidLength(email, 1, 100);
 			if(!isValid){
 				//check if have error, add message error to listmessage
 				listMessage.add(new Message(Constraints.CODE_2005));
-			}else{
-				//check valid length of string
-				isValid = ValidatorUtils.isValidLength(email, 1, 100);
-				if(!isValid){
-					//check if have error, add message error to listmessage
-					listMessage.add(new Message(Constraints.CODE_2005));
-				}
 			}
-			
 		}
 		
+				
 		if(!listMessage.isEmpty() ){
 			//check if have error, add message error to listmessage
 			Meta meta = new Meta(Constraints.CODE_2000, listMessage);
@@ -199,11 +195,6 @@ public class UserValidate {
 		if(!isValid){
 			//check if have error, add message error to listmessage
 			listMessage.add(new Message(Constraints.CODE_2015));
-		}else{
-			//check if have error, add message error to listmessage
-			if(Integer.parseInt(status) != Constraints.USER_ACTIVE && Integer.parseInt(status) != Constraints.USER_DEACTIVE){
-				listMessage.add(new Message(Constraints.CODE_2015));
-			}
 		}
 		
 		if(!listMessage.isEmpty() ){

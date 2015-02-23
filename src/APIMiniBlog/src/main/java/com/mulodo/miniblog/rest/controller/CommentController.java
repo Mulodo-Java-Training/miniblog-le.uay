@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 
 import com.mulodo.miniblog.contraints.Constraints;
-import com.mulodo.miniblog.exeption.ServiceException;
 import com.mulodo.miniblog.model.Comment;
 import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.model.Token;
@@ -43,6 +42,8 @@ import com.mulodo.miniblog.object.Meta;
 import com.mulodo.miniblog.service.CommentService;
 import com.mulodo.miniblog.service.PostService;
 import com.mulodo.miniblog.service.TokenService;
+import com.mulodo.miniblog.service.UserService;
+import com.mulodo.miniblog.utils.ApplicationContextUtils;
 import com.mulodo.miniblog.utils.BuildJSON;
 import com.mulodo.miniblog.validator.CommentValidate;
 
@@ -108,6 +109,10 @@ public class CommentController {
     public Response addComment( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
     		@FormParam("post_id") String post_id, @FormParam("content") String content) {
 		
+		if(tokenService == null || postService == null || commentService == null  ){
+			setDataSource();
+		}
+		
 		JSONObject jsonObject = new JSONObject();
 		
 		Meta meta =  CommentValidate.validateAddNew(post_id, content);
@@ -124,7 +129,6 @@ public class CommentController {
 					
 					User user = token.getUser();
 					Calendar cal = Calendar.getInstance();
-					
 					Post post = this.postService.findOne(Integer.parseInt(post_id));
 					if(post == null){
 						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3007), null);
@@ -142,8 +146,6 @@ public class CommentController {
 					this.commentService.add(comment);
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_210, 0), null);
 				}
-			}catch(ServiceException ex){
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 			}catch(Exception ex){
 				ex.printStackTrace();
 				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
@@ -158,6 +160,10 @@ public class CommentController {
     public Response updateComment( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
     		@FormParam("comment_id") String comment_id, @FormParam("content") String content) {
 		
+		if(tokenService == null || postService == null || commentService == null  ){
+			setDataSource();
+		}
+		
 		JSONObject jsonObject = new JSONObject();
 		
 		Meta meta =  CommentValidate.validateUpdate(comment_id, content);
@@ -166,34 +172,33 @@ public class CommentController {
 			jsonObject = BuildJSON.buildReturn(meta, data);
 			return Response.status(200).entity(jsonObject.toString()).build();
 		}							
-		if(access_key != null){
-			try {
-			
-				Token token = this.tokenService.findByAccessKey(access_key);
-				if(token != null){
-					
-					Calendar cal = Calendar.getInstance();
-					
-					Comment comment = this.commentService.findOne(Integer.parseInt(comment_id));
-					if(comment == null){
-						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3006), null);
-						return Response.status(200).entity(jsonObject.toString()).build();
-					}
-					if(comment.getUser().getId() != token.getUser().getId()){
-						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3008), null);
-						return Response.status(200).entity(jsonObject.toString()).build();
-					}
-					comment.setContent(content);
-					comment.setModified_at(cal.getTime());
-					this.commentService.update(comment);
-					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_211, 0), null);
-				}
-			}catch(ServiceException ex){
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
-			}catch(Exception ex){
-				ex.printStackTrace();
-				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
+		
+		try {
+			Token token = null;
+			if(access_key != null){
+				token = this.tokenService.findByAccessKey(access_key);
 			}
+			if(token != null){
+				
+				Calendar cal = Calendar.getInstance();
+				
+				Comment comment = this.commentService.findOne(Integer.parseInt(comment_id));
+				if(comment == null){
+					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3006), null);
+					return Response.status(200).entity(jsonObject.toString()).build();
+				}
+				if(comment.getUser().getId() != token.getUser().getId()){
+					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3008), null);
+					return Response.status(200).entity(jsonObject.toString()).build();
+				}
+				comment.setContent(content);
+				comment.setModified_at(cal.getTime());
+				this.commentService.update(comment);
+				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_211, 0), null);
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 		}
 		return Response.status(200).entity(jsonObject.toString()).build();
     }
@@ -203,6 +208,10 @@ public class CommentController {
     @Path("delete/{id}")
 	public Response delete(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@PathParam("id") String id){
+		
+		if(tokenService == null || postService == null || commentService == null  ){
+			setDataSource();
+		}
 		
 		JSONObject jsonObject = new JSONObject();
 		
@@ -229,8 +238,6 @@ public class CommentController {
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3006), null);
 				}
 			}
-		}catch(ServiceException ex){
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 		}catch(Exception ex){
 			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
@@ -244,6 +251,10 @@ public class CommentController {
     @Path("getByPost")
 	public Response getAllCommentForPost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@QueryParam("post_id") String post_id){
+		
+		if(tokenService == null || postService == null || commentService == null  ){
+			setDataSource();
+		}
 		
 		JSONObject jsonObject = new JSONObject();
 		
@@ -267,8 +278,6 @@ public class CommentController {
 			data = new Data();
 			data.setListComment(listComment);
 			jsonObject = BuildJSON.buildReturn(meta, data);
-		}catch(ServiceException ex){
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 		}catch(Exception ex){
 			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
@@ -282,6 +291,10 @@ public class CommentController {
     @Path("getByUser")
 	public Response getAllCommentForUser(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@QueryParam("user_id") String user_id){
+		
+		if(tokenService == null || postService == null || commentService == null  ){
+			setDataSource();
+		}
 		
 		JSONObject jsonObject = new JSONObject();
 		
@@ -304,13 +317,21 @@ public class CommentController {
 			data = new Data();
 			data.setListComment(listComment);
 			jsonObject = BuildJSON.buildReturn(null, data);
-		}catch(ServiceException ex){
-			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 		}catch(Exception ex){
 			ex.printStackTrace();
 			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);
 		}
 		
 		return Response.status(200).entity(jsonObject.toString()).build();
+	}
+	
+	/**
+	 *  setDataSource: use for setting datasoure to tokeservice, userservice and postservice
+	 *	
+	 */
+	private void setDataSource(){
+		tokenService = ApplicationContextUtils.getTokenServiceDataSource();
+		postService = ApplicationContextUtils.getPostServiceDataSource();
+		commentService = ApplicationContextUtils.getCommentServiceDataSource();
 	}
 }

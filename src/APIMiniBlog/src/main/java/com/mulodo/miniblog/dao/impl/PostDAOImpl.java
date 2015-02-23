@@ -28,7 +28,7 @@ import org.springframework.stereotype.Repository;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.PostDAO;
-import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.model.User;
 
@@ -54,11 +54,11 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO
 	 *	@return List<Post>
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Post> getAllPost(int pageNum, int author_id, String description, Boolean isForUser, Boolean isOwnerUser) throws DAOException {
+	public List<Post> getAllPost(int pageNum, int author_id, String description, Boolean isForUser, Boolean isOwnerUser) throws HandlerException {
 		List<Post> listPost = null;
 		try{
 	        session = this.sessionFactory.openSession();
@@ -130,7 +130,7 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO
 	        }
     	}catch(HibernateException ex){
     		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
+    		throw new HandlerException(ex.getMessage());
     	}finally {
     		   session.close();
     	}
@@ -146,11 +146,11 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO
 	 *	@return int
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
 	public int getAllPostSize(int author_id, String description,
-			Boolean isForUser, Boolean isOwnerUser) throws DAOException {
+			Boolean isForUser, Boolean isOwnerUser) throws HandlerException {
 		try{
 	        session = this.sessionFactory.openSession();
 	        
@@ -183,7 +183,7 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO
 	        return totalPost;
     	}catch(HibernateException ex){
     		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
+    		throw new HandlerException(ex.getMessage());
     	}finally {
     		   session.close();
     	}
@@ -196,29 +196,29 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO
 	 *
 	 *	@return void
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public void deleteByTitle(String title) throws DAOException {
+	public void deleteByTitle(String title) throws HandlerException {
 		try{ 
  	        session = this.sessionFactory.openSession();
  	        tx = session.beginTransaction();
 			Criteria criteria = session.createCriteria(Post.class);
-			if(title != null){
-	        	criteria.add(Restrictions.eq("title",title));
-	        	if(!criteria.list().isEmpty()){
-		        	Post post = (Post) criteria.list().get(0);
-					session.delete(post);
-					logger.info("Post deleted successfully, post details="+post);
-	        	}
-	        	tx.commit();
-			}
+		
+        	criteria.add(Restrictions.eq("title",title));
+        	if(!criteria.list().isEmpty()){
+	        	Post post = (Post) criteria.list().get(0);
+				session.delete(post);
+				logger.info("Post deleted successfully, post details="+post);
+        	}
+        	tx.commit();
+		
 			   
      	}catch(HibernateException ex){
      		logger.info("Hibernate exception, Details="+ex.getMessage());
      		if(tx != null)	tx.rollback();
      		ex.printStackTrace();
-     		throw new DAOException(ex.getMessage());
+     		throw new HandlerException(ex.getMessage());
      	}finally {
      		session.close();
      	}
@@ -232,28 +232,32 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO
 	 *
 	 *	@return Post
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Post findByTitle(String title) throws DAOException {
+	public Post findByTitle(String title) throws HandlerException {
 		try{ 
  	        session = this.sessionFactory.openSession();
  	        tx = session.beginTransaction();
 			Criteria criteria = session.createCriteria(Post.class);
-			if(title != null){
-	        	criteria.add(Restrictions.eq("title",title));
-	        	Post post = (Post) criteria.list().get(0);
-				
-	 	        tx.commit();
-	 	        logger.info("Post deleted successfully, post details="+post);
-	 	        return post;
-			}
-			return null;
+			
+        	criteria.add(Restrictions.eq("title",title));
+        	Post post = null;
+        	if(criteria.list().isEmpty()){
+        		return null;
+        	}else{
+        		post = (Post) criteria.list().get(0);
+        	}
+      
+ 	        tx.commit();
+ 	        logger.info("Post find by title successfully, post details="+post);
+ 	        return post;
+			
      	}catch(HibernateException ex){
      		logger.info("Hibernate exception, Details="+ex.getMessage());
      		if(tx != null)	tx.rollback();
      		ex.printStackTrace();
-     		throw new DAOException(ex.getMessage());
+     		throw new HandlerException(ex.getMessage());
      	}finally {
      		session.close();
      	}

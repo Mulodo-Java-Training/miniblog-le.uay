@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ApplicationContextUtils.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">APIMiniBlog</a> &gt; <a href="index.source.html" class="el_package">com.mulodo.miniblog.utils</a> &gt; <span class="el_source">ApplicationContextUtils.java</span></div><h1>ApplicationContextUtils.java</h1><pre class="source lang-java linenums">package com.mulodo.miniblog.utils;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.mulodo.miniblog.service.CommentService;
+import com.mulodo.miniblog.service.PostService;
+import com.mulodo.miniblog.service.TokenService;
+import com.mulodo.miniblog.service.UserService;
+
+<span class="nc" id="L11">public class ApplicationContextUtils {</span>
+<span class="fc" id="L12">	private static ApplicationContext appContext = </span>
+<span class="fc" id="L13">	    	  new ClassPathXmlApplicationContext(&quot;classpath:/WEB-INF/applicationContext.xml&quot;);</span>
+	
+	public static TokenService getTokenServiceDataSource(){
+<span class="fc" id="L16">		return  (TokenService) appContext.getBean(&quot;tokenService&quot;);</span>
+	}
+	
+	public static UserService getUserServiceDataSource(){
+<span class="fc" id="L20">		return  (UserService) appContext.getBean(&quot;userService&quot;);</span>
+	}
+	
+	public static PostService getPostServiceDataSource(){
+<span class="fc" id="L24">		return  (PostService) appContext.getBean(&quot;postService&quot;);</span>
+	}
+	
+	public static CommentService getCommentServiceDataSource(){
+<span class="fc" id="L28">		return  (CommentService) appContext.getBean(&quot;commentService&quot;);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

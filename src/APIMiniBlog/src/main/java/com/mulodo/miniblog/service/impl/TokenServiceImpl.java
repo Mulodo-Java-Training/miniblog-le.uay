@@ -15,8 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.mulodo.miniblog.dao.TokenDAO;
-import com.mulodo.miniblog.exeption.DAOException;
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.model.User;
 import com.mulodo.miniblog.service.TokenService;
@@ -53,18 +52,15 @@ public class TokenServiceImpl extends GenericServiceImpl<Token> implements Token
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean deleteByAccessKey(String access_key) throws ServiceException {
-		try{
-			if (access_key!= null){
-				return this.tokenDAO.deleteByAccessKey(access_key);
-			}else{
-				return false;
-			}
-		}catch(DAOException ex){
-			throw new ServiceException(ex.getMessage());
+	public Boolean deleteByAccessKey(String access_key) throws HandlerException {
+
+		if (access_key!= null){
+			return this.tokenDAO.deleteByAccessKey(access_key);
+		}else{
+			return false;
 		}
 	}
 
@@ -76,10 +72,10 @@ public class TokenServiceImpl extends GenericServiceImpl<Token> implements Token
 	 *	@return Token
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Token findByAccessKey(String access_key) throws ServiceException  {
+	public Token findByAccessKey(String access_key) throws HandlerException  {
 		try{
 			if (access_key!= null){
 				Token token = this.tokenDAO.findByAccessKey(access_key);
@@ -91,10 +87,10 @@ public class TokenServiceImpl extends GenericServiceImpl<Token> implements Token
 			}else{
 				return null;
 			}
-		}catch(DAOException ex){
-			throw new ServiceException(ex.getMessage());
+		}catch(HandlerException ex){
+			throw new HandlerException(ex.getMessage());
 		}catch(Exception ex){
-			throw new ServiceException(ex.getMessage());
+			throw new HandlerException(ex.getMessage());
 		}
 	}
 
@@ -106,19 +102,17 @@ public class TokenServiceImpl extends GenericServiceImpl<Token> implements Token
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean deleteByUser(User user) throws ServiceException {
-		try{
-			if (user!= null){
-				return this.tokenDAO.deleteByUser(user);
-			}else{
-				return false;
-			}
-		}catch(DAOException ex){
-			throw new ServiceException(ex.getMessage());
+	public Boolean deleteByUser(User user) throws HandlerException {
+	
+		if (user!= null){
+			return this.tokenDAO.deleteByUser(user);
+		}else{
+			return false;
 		}
+		
 	}
 
 }

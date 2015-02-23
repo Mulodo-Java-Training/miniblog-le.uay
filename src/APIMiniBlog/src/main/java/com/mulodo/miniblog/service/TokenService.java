@@ -10,7 +10,7 @@
  */
 package com.mulodo.miniblog.service;
 
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.model.User;
 
@@ -30,9 +30,9 @@ public interface TokenService extends GenericService<Token>{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public Boolean deleteByAccessKey(String access_key) throws ServiceException ;
+	public Boolean deleteByAccessKey(String access_key) throws HandlerException ;
 	
 	/**
 	 *  find_by_access_key use to call find by access key function from tokendao
@@ -42,9 +42,9 @@ public interface TokenService extends GenericService<Token>{
 	 *	@return Token
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public Token findByAccessKey(String access_key) throws ServiceException ;
+	public Token findByAccessKey(String access_key) throws HandlerException ;
 	
 	/**
 	 *  delete_by_user use to call delete by user function from tokendao
@@ -54,7 +54,7 @@ public interface TokenService extends GenericService<Token>{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public Boolean deleteByUser(User user) throws ServiceException;
+	public Boolean deleteByUser(User user) throws HandlerException;
 }

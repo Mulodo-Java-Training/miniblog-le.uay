@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.mulodo.miniblog.dao.TokenDAO;
-import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.model.User;
 
@@ -42,32 +42,30 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean deleteByAccessKey(String access_key) throws DAOException {
+	public Boolean deleteByAccessKey(String access_key) throws HandlerException {
 		try{ 
  	        session = this.sessionFactory.openSession();
  	        tx = session.beginTransaction();
 			Criteria criteria = session.createCriteria(Token.class);
-			if(access_key != null){
-	        	criteria.add(Restrictions.eq("access_key",access_key));
-	        	if(criteria.list().isEmpty()){
-					return false;
-				}else{
-					Token token = (Token) criteria.list().get(0);
-					session.delete(token);
-		 	        tx.commit();
-		 	        logger.info("Token deleted successfully, token details="+token);
-		 	        return true;
-				}
+			
+        	criteria.add(Restrictions.eq("access_key",access_key));
+        	if(criteria.list().isEmpty()){
+				return false;
+			}else{
+				Token token = (Token) criteria.list().get(0);
+				session.delete(token);
+	 	        tx.commit();
+	 	        logger.info("Token deleted successfully, token details="+token);
+	 	        return true;
 			}
-			return false;
      	}catch(HibernateException ex){
-     		logger.info("Hibernate exception, Details="+ex.getMessage());
-     		if(tx != null)	tx.rollback();
-     		ex.printStackTrace();
-     		throw new DAOException(ex.getMessage());
+     		if(tx != null)	{
+     			tx.rollback();
+     		}
+     		throw new HandlerException(ex.getMessage());
      	}finally {
      		session.close();
      	}
@@ -81,30 +79,27 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO{
 	 *	@return Token
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Token findByAccessKey(String access_key) throws DAOException {
+	public Token findByAccessKey(String access_key) throws HandlerException {
 		try{ 
  	        session = this.sessionFactory.openSession();
  	        tx = session.beginTransaction();
 			Criteria criteria = session.createCriteria(Token.class);
-			if(access_key != null){
-	        	criteria.add(Restrictions.eq("access_key",access_key));
-	        	if(criteria.list().isEmpty()){
-					return null;
-				}else{
-					Token token = (Token) criteria.list().get(0);
-					logger.info("Token searching successfully, token details="+token);
-					return token;
-				}
+			
+        	criteria.add(Restrictions.eq("access_key",access_key));
+        	Token token = null;
+        	if(!criteria.list().isEmpty()){
+				token = (Token) criteria.list().get(0);
+				logger.info("Token searching successfully, token details="+token);
 			}
-			return null;
+        	return token;
      	}catch(HibernateException ex){
-     		logger.info("Hibernate exception, Details="+ex.getMessage());
-     		if(tx != null)	tx.rollback();
-     		ex.printStackTrace();
-     		throw new DAOException(ex.getMessage());
+     		if(tx != null) {
+     			tx.rollback();
+     		}
+     		throw new HandlerException(ex.getMessage());
      	}finally {
      		session.close();
      	}
@@ -118,10 +113,10 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean deleteByUser(User user) throws DAOException {
+	public Boolean deleteByUser(User user) throws HandlerException {
 		
 		try{ 
  	        session = this.sessionFactory.openSession();
@@ -132,10 +127,10 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO{
 			tx.commit();
  	        return true;
      	}catch(HibernateException ex){
-     		logger.info("Hibernate exception, Details="+ex.getMessage());
-     		if(tx != null)	tx.rollback();
-     		ex.printStackTrace();
-     		throw new DAOException(ex.getMessage());
+     		if(tx != null)	{
+     			tx.rollback();
+     		}
+     		throw new HandlerException(ex.getMessage());
      	}finally {
      		session.close();
      	}

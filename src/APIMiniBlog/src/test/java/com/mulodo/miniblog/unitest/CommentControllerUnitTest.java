@@ -11,6 +11,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
+import org.jboss.resteasy.core.Dispatcher;
+import org.jboss.resteasy.mock.MockDispatcherFactory;
+import org.jboss.resteasy.mock.MockHttpRequest;
+import org.jboss.resteasy.mock.MockHttpResponse;
+import org.jboss.resteasy.plugins.server.resourcefactory.POJOResourceFactory;
 import org.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -22,6 +27,8 @@ import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.model.Comment;
 import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.model.User;
+import com.mulodo.miniblog.rest.controller.CommentController;
+import com.mulodo.miniblog.rest.controller.UserController;
 import com.mulodo.miniblog.service.CommentService;
 import com.mulodo.miniblog.service.PostService;
 import com.mulodo.miniblog.service.UserService;
@@ -45,8 +52,11 @@ public class CommentControllerUnitTest
 	private final static PostService postService = (PostService) appContext.getBean("postService");
 	private final static UserService userService = (UserService) appContext.getBean("userService");
 	
-	private ClientResponse<String> respone = null;
-	private ClientRequest clientRequest = null;
+	private static Dispatcher dispatcher = MockDispatcherFactory.createDispatcher();
+	private static POJOResourceFactory noDefaults = new POJOResourceFactory(CommentController.class);
+	private static Dispatcher dispatcherLogin = MockDispatcherFactory.createDispatcher();
+	private static POJOResourceFactory noDefaultsLogin = new POJOResourceFactory(UserController.class);
+	MockHttpResponse response = null;
 	
 	/**
 	 *  addComment post for unit testing addComment in commentcontroller
@@ -60,9 +70,7 @@ public class CommentControllerUnitTest
 	@Test
 	public void addComment() throws Exception {
 		
-		clientRequest = new ClientRequest(ROOT_COMMENT_URL+"/add");
-		String access_key = login("le.tung","abcd1234");
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
+		String access_key = login_for_test("le.tung","abcd1234");
 		
 		//==Create list error==
 		List<Integer> listError = new ArrayList<Integer>();
@@ -71,15 +79,20 @@ public class CommentControllerUnitTest
 		listError.add(Constraints.CODE_3005);
 		listError.add(Constraints.CODE_3007);
 		
+		///==validate post data==
+		MockHttpRequest requestValidateData = MockHttpRequest.post("/comments/add");
 		///==validate post data== 
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "post_id=&content=");
-		//post data to add user api
-		respone = clientRequest.post(String.class);
+		requestValidateData.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestValidateData.content("post_id=&content=".getBytes());
+		requestValidateData.header(Constraints.ACCESS_KEY, access_key);
+		
+		//call method add
+		response = new MockHttpResponse();
+	    dispatcher.invoke(requestValidateData, response);
 		//compare status return with status in list error
-		assertEquals(Constraints.CODE_200, respone.getStatus());
+		assertEquals(Constraints.CODE_200, response.getStatus());
 		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		
@@ -95,12 +108,17 @@ public class CommentControllerUnitTest
 
 
 		//==check invalid post==
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "post_id=1000000&content=Content comment for test");
-		//post data to add user api
-		respone = clientRequest.post(String.class);
+		MockHttpRequest requestInvalidPost = MockHttpRequest.post("/comments/add");
+		///==validate post data== 
+		requestInvalidPost.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestInvalidPost.content("post_id=1000000&content=Content comment for test".getBytes());
+		requestInvalidPost.header(Constraints.ACCESS_KEY, access_key);
+		
+		//call method add
+		response = new MockHttpResponse();
+	    dispatcher.invoke(requestInvalidPost, response);
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare response error code with list error
@@ -116,12 +134,17 @@ public class CommentControllerUnitTest
 		
 		//==check inactive post==
 		Post post = postService.findByTitle("Title 2 le.uay");
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "post_id="+post.getId()+"&content=Content comment for test");
-		//post data to add user api
-		respone = clientRequest.post(String.class);
+		MockHttpRequest requestIsInactivePost = MockHttpRequest.post("/comments/add");
+		///==validate post data== 
+		requestIsInactivePost.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestIsInactivePost.content(("post_id="+post.getId()+"&content=Content comment for test").getBytes());
+		requestIsInactivePost.header(Constraints.ACCESS_KEY, access_key);
+		
+		//call method add
+		response = new MockHttpResponse();
+	    dispatcher.invoke(requestIsInactivePost, response);
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare response error code with list error
@@ -134,14 +157,20 @@ public class CommentControllerUnitTest
 					.getJSONObject(i).get(Constraints.CODE));
 		}
 		
-		//==check inactive post==
+		//==add comment to active post==
 		post = postService.findByTitle("Title 2 le.huy");
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "post_id="+post.getId()+"&content=Content comment for test");
-		//post data to add user api
-		respone = clientRequest.post(String.class);
+		MockHttpRequest requestIsActivePost = MockHttpRequest.post("/comments/add");
+		///==validate post data== 
+		requestIsActivePost.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestIsActivePost.content(("post_id="+post.getId()+"&content=Content comment for test").getBytes());
+		requestIsActivePost.header(Constraints.ACCESS_KEY, access_key);
+		
+		//call method add
+		response = new MockHttpResponse();
+	    dispatcher.invoke(requestIsActivePost, response);
 		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
+		jsonObject = new JSONObject(response.getContentAsString());
+
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//compare response error code with list error
@@ -149,94 +178,94 @@ public class CommentControllerUnitTest
 
 	}
 	
-	
-	/**
-	 *  updateComment post for unit testing updateComment in commentcontroller
-	 *	
-	 *	
-	 *  @return 
-	 *  
-	 *  @exception Exception
-	 *	
-	 */
-	@Test
-	public void updateComment() throws Exception {
-		
-		clientRequest = new ClientRequest(ROOT_COMMENT_URL+"/update");
-		String access_key = login("le.tung","abcd1234");
-		clientRequest.header(Constraints.ACCESS_KEY, access_key);
-		
-		//==Create list error==
-		List<Integer> listError = new ArrayList<Integer>();
-		listError.add(200);
-		listError.add(Constraints.CODE_3001);
-		listError.add(Constraints.CODE_3005);
-		listError.add(Constraints.CODE_3006);
-		
-		///==validate post data== 
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "comment_id=&content=");
-		//post data to add user api
-		respone = clientRequest.put(String.class);
-		//compare status return with status in list error
-		assertEquals(Constraints.CODE_200, respone.getStatus());
-		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
-		//get meta json object
-		jsonObject = jsonObject.getJSONObject(Constraints.META);
-		
-		//compare response error code with list error
-		assertEquals(Constraints.CODE_3000, jsonObject.get(Constraints.CODE));
-		assertNotNull(jsonObject.getJSONArray(Constraints.MESSAGES));
-		
-		//compare response error code with list error
-		for(int i = 0; i < jsonObject.getJSONArray(Constraints.MESSAGES).length(); i++){
-			assertEquals(true, listError.contains(jsonObject.getJSONArray(Constraints.MESSAGES)
-					.getJSONObject(i).get(Constraints.CODE)));
-		}
-
-
-		//==check invalid comment==
-		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "comment_id=10000&content=Comment for test");
-		//post data to add user api
-		respone = clientRequest.put(String.class);
-		//get json object from response
-		jsonObject = new JSONObject(respone.getEntity().toString());
-		//get meta json object
-		jsonObject = jsonObject.getJSONObject(Constraints.META);
-		//compare response error code with list error
-		assertEquals(Constraints.CODE_3000, jsonObject.get(Constraints.CODE));
-		assertNotNull(jsonObject.getJSONArray(Constraints.MESSAGES));
-		//compare response error code with list error
-		for(int i = 0; i < jsonObject.getJSONArray(Constraints.MESSAGES).length(); i++){
-			assertEquals(Constraints.CODE_3006, jsonObject.getJSONArray(Constraints.MESSAGES)
-					.getJSONObject(i).get(Constraints.CODE));
-		}
-		
-		//==check valid permission on comment==
-		Post post = postService.findByTitle("Title 1 nguyen.tung");
-		System.out.println("json post ="+new JSONObject(post));
-//		Set<Comment> setComment = post.getComments();
+//	
+//	/**
+//	 *  updateComment post for unit testing updateComment in commentcontroller
+//	 *	
+//	 *	
+//	 *  @return 
+//	 *  
+//	 *  @exception Exception
+//	 *	
+//	 */
+//	@Test
+//	public void updateComment() throws Exception {
+//		
+//		clientRequest = new ClientRequest(ROOT_COMMENT_URL+"/update");
+//		String access_key = login("le.tung","abcd1234");
+//		clientRequest.header(Constraints.ACCESS_KEY, access_key);
+//		
+//		//==Create list error==
+//		List<Integer> listError = new ArrayList<Integer>();
+//		listError.add(200);
+//		listError.add(Constraints.CODE_3001);
+//		listError.add(Constraints.CODE_3005);
+//		listError.add(Constraints.CODE_3006);
+//		
+//		///==validate post data== 
 //		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
-//				+ "comment_id=100000&content=");
+//				+ "comment_id=&content=");
 //		//post data to add user api
-//		respone = clientRequest.post(String.class);
+//		response = clientRequest.put(String.class);
+//		//compare status return with status in list error
+//		assertEquals(Constraints.CODE_200, response.getStatus());
 //		//get json object from response
-//		jsonObject = new JSONObject(respone.getEntity().toString());
+//		JSONObject jsonObject = new JSONObject(response.getContentAsString());
 //		//get meta json object
 //		jsonObject = jsonObject.getJSONObject(Constraints.META);
+//		
 //		//compare response error code with list error
 //		assertEquals(Constraints.CODE_3000, jsonObject.get(Constraints.CODE));
 //		assertNotNull(jsonObject.getJSONArray(Constraints.MESSAGES));
 //		
 //		//compare response error code with list error
 //		for(int i = 0; i < jsonObject.getJSONArray(Constraints.MESSAGES).length(); i++){
-//			assertEquals(Constraints.CODE_3007, jsonObject.getJSONArray(Constraints.MESSAGES)
+//			assertEquals(true, listError.contains(jsonObject.getJSONArray(Constraints.MESSAGES)
+//					.getJSONObject(i).get(Constraints.CODE)));
+//		}
+//
+//
+//		//==check invalid comment==
+//		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
+//				+ "comment_id=10000&content=Comment for test");
+//		//post data to add user api
+//		response = clientRequest.put(String.class);
+//		//get json object from response
+//		jsonObject = new JSONObject(response.getContentAsString());
+//		//get meta json object
+//		jsonObject = jsonObject.getJSONObject(Constraints.META);
+//		//compare response error code with list error
+//		assertEquals(Constraints.CODE_3000, jsonObject.get(Constraints.CODE));
+//		assertNotNull(jsonObject.getJSONArray(Constraints.MESSAGES));
+//		//compare response error code with list error
+//		for(int i = 0; i < jsonObject.getJSONArray(Constraints.MESSAGES).length(); i++){
+//			assertEquals(Constraints.CODE_3006, jsonObject.getJSONArray(Constraints.MESSAGES)
 //					.getJSONObject(i).get(Constraints.CODE));
 //		}
-	}
-	
+//		
+//		//==check valid permission on comment==
+//		Post post = postService.findByTitle("Title 1 nguyen.tung");
+//		System.out.println("json post ="+new JSONObject(post));
+////		Set<Comment> setComment = post.getComments();
+////		clientRequest.body(MediaType.APPLICATION_FORM_URLENCODED,""
+////				+ "comment_id=100000&content=");
+////		//post data to add user api
+////		response = clientRequest.post(String.class);
+////		//get json object from response
+////		jsonObject = new JSONObject(response.getContentAsString());
+////		//get meta json object
+////		jsonObject = jsonObject.getJSONObject(Constraints.META);
+////		//compare response error code with list error
+////		assertEquals(Constraints.CODE_3000, jsonObject.get(Constraints.CODE));
+////		assertNotNull(jsonObject.getJSONArray(Constraints.MESSAGES));
+////		
+////		//compare response error code with list error
+////		for(int i = 0; i < jsonObject.getJSONArray(Constraints.MESSAGES).length(); i++){
+////			assertEquals(Constraints.CODE_3007, jsonObject.getJSONArray(Constraints.MESSAGES)
+////					.getJSONObject(i).get(Constraints.CODE));
+////		}
+//	}
+//	
 	
 	/**
 	 *  setUpData user for unit testing  usercontroller
@@ -249,6 +278,8 @@ public class CommentControllerUnitTest
 	 */
 	@BeforeClass
 	public static void  setUpData() throws Exception{
+		dispatcher.getRegistry().addResourceFactory(noDefaults);
+		dispatcherLogin.getRegistry().addResourceFactory(noDefaultsLogin);
 		
 		Calendar datePost = Calendar.getInstance();
 		Calendar dateUser = Calendar.getInstance();
@@ -408,18 +439,20 @@ public class CommentControllerUnitTest
 	 *  @exception Exception
 	 *	
 	 */
-	private String login(String username, String password) throws Exception{
-		ClientRequest clientRequestLogin = new ClientRequest(ROOT_USER_URL+"/login");
-		clientRequestLogin.body(MediaType.APPLICATION_FORM_URLENCODED,""
-				+ "username="+username+"&password="+password);
+	private String login_for_test(String username, String password) throws Exception{
+		MockHttpRequest requestLogin = MockHttpRequest.post("/users/login");
+		requestLogin.contentType(MediaType.APPLICATION_FORM_URLENCODED);
+		requestLogin.content(("username="+username+"&password="+password).getBytes());
 		//post data to add user api
-		respone = clientRequestLogin.post(String.class);
+		response = new MockHttpResponse();
+		dispatcherLogin.invoke(requestLogin, response);
+	    
 		//get json object from response
-		JSONObject jsonObject = new JSONObject(respone.getEntity().toString());
+		JSONObject jsonObject = new JSONObject(response.getContentAsString());
 		//get meta json object
 		jsonObject = jsonObject.getJSONObject(Constraints.META);
 		//get access_key from login
-		String access_key = (String) respone.getHeaders().get(Constraints.ACCESS_KEY).get(0);
+		String access_key = (String) response.getOutputHeaders().getFirst(Constraints.ACCESS_KEY);
 		return access_key;
 	}
 }

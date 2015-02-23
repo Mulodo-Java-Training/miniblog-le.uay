@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 
 import com.mulodo.miniblog.contraints.Constraints;
-import com.mulodo.miniblog.exeption.ServiceException;
 import com.mulodo.miniblog.model.Comment;
 import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.model.Token;
@@ -43,6 +42,8 @@ import com.mulodo.miniblog.object.Meta;
 import com.mulodo.miniblog.service.CommentService;
 import com.mulodo.miniblog.service.PostService;
 import com.mulodo.miniblog.service.TokenService;
+import com.mulodo.miniblog.service.UserService;
+import com.mulodo.miniblog.utils.ApplicationContextUtils;
 import com.mulodo.miniblog.utils.BuildJSON;
 import com.mulodo.miniblog.validator.CommentValidate;
 
@@ -55,7 +56,7 @@ import com.mulodo.miniblog.validator.CommentValidate;
 @Controller
 @Path(&quot;/comments&quot;)
 @Produces(MediaType.APPLICATION_JSON)
-<span class="fc" id="L58">public class CommentController {</span>
+<span class="fc" id="L59">public class CommentController {</span>
 	
 	private PostService postService;
 	
@@ -73,8 +74,8 @@ import com.mulodo.miniblog.validator.CommentValidate;
 	@Autowired
 	@Qualifier(&quot;postService&quot;)
 	public void setPostService(PostService ps){
-<span class="fc" id="L76">		this.postService = ps;</span>
-<span class="fc" id="L77">	}</span>
+<span class="fc" id="L77">		this.postService = ps;</span>
+<span class="fc" id="L78">	}</span>
 	
 	/**
 	 *  setPostService use to set datasource from applicationcontent.xml
@@ -86,8 +87,8 @@ import com.mulodo.miniblog.validator.CommentValidate;
 	@Autowired
 	@Qualifier(&quot;tokenService&quot;)
 	public void setTokenService(TokenService ts){
-<span class="fc" id="L89">		this.tokenService = ts;</span>
-<span class="fc" id="L90">	}</span>
+<span class="fc" id="L90">		this.tokenService = ts;</span>
+<span class="fc" id="L91">	}</span>
 	
 	/**
 	 *  setCommentService use to set datasource from applicationcontent.xml
@@ -99,8 +100,8 @@ import com.mulodo.miniblog.validator.CommentValidate;
 	@Autowired
 	@Qualifier(&quot;commentService&quot;)
 	public void setCommentService(CommentService cs){
-<span class="fc" id="L102">		this.commentService = cs;</span>
-<span class="fc" id="L103">	}</span>
+<span class="fc" id="L103">		this.commentService = cs;</span>
+<span class="fc" id="L104">	}</span>
 	
 	@RolesAllowed(&quot;ADMIN&quot;)
     @POST
@@ -108,48 +109,49 @@ import com.mulodo.miniblog.validator.CommentValidate;
     public Response addComment( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
     		@FormParam(&quot;post_id&quot;) String post_id, @FormParam(&quot;content&quot;) String content) {
 		
-<span class="nc" id="L111">		JSONObject jsonObject = new JSONObject();</span>
-		
-<span class="nc" id="L113">		Meta meta =  CommentValidate.validateAddNew(post_id, content);</span>
-<span class="nc" id="L114">		Data data = null;</span>
-<span class="nc bnc" id="L115" title="All 2 branches missed.">		if(meta != null){</span>
-<span class="nc" id="L116">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L117">			return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="pc bpc" id="L112" title="5 of 6 branches missed.">		if(tokenService == null || postService == null || commentService == null  ){</span>
+<span class="fc" id="L113">			setDataSource();</span>
 		}
-<span class="nc bnc" id="L119" title="All 2 branches missed.">		if(access_key != null){</span>
+		
+<span class="fc" id="L116">		JSONObject jsonObject = new JSONObject();</span>
+		
+<span class="fc" id="L118">		Meta meta =  CommentValidate.validateAddNew(post_id, content);</span>
+<span class="fc" id="L119">		Data data = null;</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">		if(meta != null){</span>
+<span class="fc" id="L121">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L122">			return Response.status(200).entity(jsonObject.toString()).build();</span>
+		}
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">		if(access_key != null){</span>
 			try {
 			
-<span class="nc" id="L122">				Token token = this.tokenService.findByAccessKey(access_key);</span>
-<span class="nc bnc" id="L123" title="All 2 branches missed.">				if(token != null){</span>
+<span class="fc" id="L127">				Token token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">				if(token != null){</span>
 					
-<span class="nc" id="L125">					User user = token.getUser();</span>
-<span class="nc" id="L126">					Calendar cal = Calendar.getInstance();</span>
-					
-<span class="nc" id="L128">					Post post = this.postService.findOne(Integer.parseInt(post_id));</span>
-<span class="nc bnc" id="L129" title="All 2 branches missed.">					if(post == null){</span>
-<span class="nc" id="L130">						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3007), null);</span>
-<span class="nc" id="L131">						return Response.status(200).entity(jsonObject.toString()).build();</span>
-<span class="nc bnc" id="L132" title="All 2 branches missed.">					}else if(post.getStatus() == Constraints.POST_INACTIVE){</span>
-<span class="nc" id="L133">						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3007), null);</span>
-<span class="nc" id="L134">						return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L130">					User user = token.getUser();</span>
+<span class="fc" id="L131">					Calendar cal = Calendar.getInstance();</span>
+<span class="fc" id="L132">					Post post = this.postService.findOne(Integer.parseInt(post_id));</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">					if(post == null){</span>
+<span class="fc" id="L134">						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3007), null);</span>
+<span class="fc" id="L135">						return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">					}else if(post.getStatus() == Constraints.POST_INACTIVE){</span>
+<span class="fc" id="L137">						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3007), null);</span>
+<span class="fc" id="L138">						return Response.status(200).entity(jsonObject.toString()).build();</span>
 					}
-<span class="nc" id="L136">					Comment comment = new Comment();</span>
-<span class="nc" id="L137">					comment.setContent(content);</span>
-<span class="nc" id="L138">					comment.setCreated_at(cal.getTime());</span>
-<span class="nc" id="L139">					comment.setModified_at(cal.getTime());</span>
-<span class="nc" id="L140">					comment.setPost(post);</span>
-<span class="nc" id="L141">					comment.setUser(user);</span>
-<span class="nc" id="L142">					this.commentService.add(comment);</span>
-<span class="nc" id="L143">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_210, 0), null);</span>
+<span class="fc" id="L140">					Comment comment = new Comment();</span>
+<span class="fc" id="L141">					comment.setContent(content);</span>
+<span class="fc" id="L142">					comment.setCreated_at(cal.getTime());</span>
+<span class="fc" id="L143">					comment.setModified_at(cal.getTime());</span>
+<span class="fc" id="L144">					comment.setPost(post);</span>
+<span class="fc" id="L145">					comment.setUser(user);</span>
+<span class="fc" id="L146">					this.commentService.add(comment);</span>
+<span class="fc" id="L147">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_210, 0), null);</span>
 				}
-<span class="nc" id="L145">			}catch(ServiceException ex){</span>
-<span class="nc" id="L146">				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
-<span class="nc" id="L147">			}catch(Exception ex){</span>
-<span class="nc" id="L148">				ex.printStackTrace();</span>
-<span class="nc" id="L149">				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+<span class="pc" id="L149">			}catch(Exception ex){</span>
+<span class="nc" id="L150">				ex.printStackTrace();</span>
+<span class="nc" id="L151">				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
 			}
 		}
-<span class="nc" id="L152">		return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L154">		return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 	
 	@RolesAllowed(&quot;ADMIN&quot;)
@@ -158,44 +160,47 @@ import com.mulodo.miniblog.validator.CommentValidate;
     public Response updateComment( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
     		@FormParam(&quot;comment_id&quot;) String comment_id, @FormParam(&quot;content&quot;) String content) {
 		
-<span class="nc" id="L161">		JSONObject jsonObject = new JSONObject();</span>
-		
-<span class="nc" id="L163">		Meta meta =  CommentValidate.validateUpdate(comment_id, content);</span>
-<span class="nc" id="L164">		Data data = null;</span>
-<span class="nc bnc" id="L165" title="All 2 branches missed.">		if(meta != null){</span>
-<span class="nc" id="L166">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L167">			return Response.status(200).entity(jsonObject.toString()).build();</span>
-		}							
-<span class="nc bnc" id="L169" title="All 2 branches missed.">		if(access_key != null){</span>
-			try {
-			
-<span class="nc" id="L172">				Token token = this.tokenService.findByAccessKey(access_key);</span>
-<span class="nc bnc" id="L173" title="All 2 branches missed.">				if(token != null){</span>
-					
-<span class="nc" id="L175">					Calendar cal = Calendar.getInstance();</span>
-					
-<span class="nc" id="L177">					Comment comment = this.commentService.findOne(Integer.parseInt(comment_id));</span>
-<span class="nc bnc" id="L178" title="All 2 branches missed.">					if(comment == null){</span>
-<span class="nc" id="L179">						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3006), null);</span>
-<span class="nc" id="L180">						return Response.status(200).entity(jsonObject.toString()).build();</span>
-					}
-<span class="nc bnc" id="L182" title="All 2 branches missed.">					if(comment.getUser().getId() != token.getUser().getId()){</span>
-<span class="nc" id="L183">						jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3008), null);</span>
-<span class="nc" id="L184">						return Response.status(200).entity(jsonObject.toString()).build();</span>
-					}
-<span class="nc" id="L186">					comment.setContent(content);</span>
-<span class="nc" id="L187">					comment.setModified_at(cal.getTime());</span>
-<span class="nc" id="L188">					this.commentService.update(comment);</span>
-<span class="nc" id="L189">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_211, 0), null);</span>
-				}
-<span class="nc" id="L191">			}catch(ServiceException ex){</span>
-<span class="nc" id="L192">				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
-<span class="nc" id="L193">			}catch(Exception ex){</span>
-<span class="nc" id="L194">				ex.printStackTrace();</span>
-<span class="nc" id="L195">				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
-			}
+<span class="nc bnc" id="L163" title="All 6 branches missed.">		if(tokenService == null || postService == null || commentService == null  ){</span>
+<span class="nc" id="L164">			setDataSource();</span>
 		}
-<span class="nc" id="L198">		return Response.status(200).entity(jsonObject.toString()).build();</span>
+		
+<span class="nc" id="L167">		JSONObject jsonObject = new JSONObject();</span>
+		
+<span class="nc" id="L169">		Meta meta =  CommentValidate.validateUpdate(comment_id, content);</span>
+<span class="nc" id="L170">		Data data = null;</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">		if(meta != null){</span>
+<span class="nc" id="L172">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L173">			return Response.status(200).entity(jsonObject.toString()).build();</span>
+		}							
+		
+		try {
+<span class="nc" id="L177">			Token token = null;</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">			if(access_key != null){</span>
+<span class="nc" id="L179">				token = this.tokenService.findByAccessKey(access_key);</span>
+			}
+<span class="nc bnc" id="L181" title="All 2 branches missed.">			if(token != null){</span>
+				
+<span class="nc" id="L183">				Calendar cal = Calendar.getInstance();</span>
+				
+<span class="nc" id="L185">				Comment comment = this.commentService.findOne(Integer.parseInt(comment_id));</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">				if(comment == null){</span>
+<span class="nc" id="L187">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3006), null);</span>
+<span class="nc" id="L188">					return Response.status(200).entity(jsonObject.toString()).build();</span>
+				}
+<span class="nc bnc" id="L190" title="All 2 branches missed.">				if(comment.getUser().getId() != token.getUser().getId()){</span>
+<span class="nc" id="L191">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3008), null);</span>
+<span class="nc" id="L192">					return Response.status(200).entity(jsonObject.toString()).build();</span>
+				}
+<span class="nc" id="L194">				comment.setContent(content);</span>
+<span class="nc" id="L195">				comment.setModified_at(cal.getTime());</span>
+<span class="nc" id="L196">				this.commentService.update(comment);</span>
+<span class="nc" id="L197">				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_211, 0), null);</span>
+			}
+<span class="nc" id="L199">		}catch(Exception ex){</span>
+<span class="nc" id="L200">			ex.printStackTrace();</span>
+<span class="nc" id="L201">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+		}
+<span class="nc" id="L203">		return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 	
 	@RolesAllowed(&quot;ADMIN&quot;)
@@ -204,39 +209,41 @@ import com.mulodo.miniblog.validator.CommentValidate;
 	public Response delete(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@PathParam(&quot;id&quot;) String id){
 		
-<span class="nc" id="L207">		JSONObject jsonObject = new JSONObject();</span>
+<span class="nc bnc" id="L212" title="All 6 branches missed.">		if(tokenService == null || postService == null || commentService == null  ){</span>
+<span class="nc" id="L213">			setDataSource();</span>
+		}
 		
-<span class="nc" id="L209">		Meta meta = CommentValidate.validateDelete(id);</span>
-<span class="nc" id="L210">		Data data = null;</span>
-<span class="nc bnc" id="L211" title="All 2 branches missed.">		if(meta != null){</span>
-<span class="nc" id="L212">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L213">			return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="nc" id="L216">		JSONObject jsonObject = new JSONObject();</span>
+		
+<span class="nc" id="L218">		Meta meta = CommentValidate.validateDelete(id);</span>
+<span class="nc" id="L219">		Data data = null;</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">		if(meta != null){</span>
+<span class="nc" id="L221">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L222">			return Response.status(200).entity(jsonObject.toString()).build();</span>
 		}
 		try{
-<span class="nc" id="L216">			Token token = null;</span>
-<span class="nc bnc" id="L217" title="All 2 branches missed.">			if(access_key != null){</span>
-<span class="nc" id="L218">				token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="nc" id="L225">			Token token = null;</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">			if(access_key != null){</span>
+<span class="nc" id="L227">				token = this.tokenService.findByAccessKey(access_key);</span>
 			}
-<span class="nc bnc" id="L220" title="All 2 branches missed.">			if(token != null){</span>
-<span class="nc" id="L221">				int commentId = Integer.parseInt(id);</span>
-<span class="nc" id="L222">				Comment comment = this.commentService.findOne(commentId);</span>
-<span class="nc bnc" id="L223" title="All 4 branches missed.">				if(comment != null &amp;&amp; comment.getUser().getId() == token.getUser().getId()){</span>
-<span class="nc" id="L224">					this.postService.delete(commentId);</span>
-<span class="nc" id="L225">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_212, 0), null);</span>
-<span class="nc bnc" id="L226" title="All 4 branches missed.">				}else if (comment != null &amp;&amp; comment.getUser().getId() != token.getUser().getId()) {</span>
-<span class="nc" id="L227">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3008), null);</span>
-<span class="nc" id="L228">				}else{</span>
-<span class="nc" id="L229">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3006), null);</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">			if(token != null){</span>
+<span class="nc" id="L230">				int commentId = Integer.parseInt(id);</span>
+<span class="nc" id="L231">				Comment comment = this.commentService.findOne(commentId);</span>
+<span class="nc bnc" id="L232" title="All 4 branches missed.">				if(comment != null &amp;&amp; comment.getUser().getId() == token.getUser().getId()){</span>
+<span class="nc" id="L233">					this.postService.delete(commentId);</span>
+<span class="nc" id="L234">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_212, 0), null);</span>
+<span class="nc bnc" id="L235" title="All 4 branches missed.">				}else if (comment != null &amp;&amp; comment.getUser().getId() != token.getUser().getId()) {</span>
+<span class="nc" id="L236">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3008), null);</span>
+<span class="nc" id="L237">				}else{</span>
+<span class="nc" id="L238">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000, Constraints.CODE_3006), null);</span>
 				}
 			}
-<span class="nc" id="L232">		}catch(ServiceException ex){</span>
-<span class="nc" id="L233">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
-<span class="nc" id="L234">		}catch(Exception ex){</span>
-<span class="nc" id="L235">			ex.printStackTrace();</span>
-<span class="nc" id="L236">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+<span class="nc" id="L241">		}catch(Exception ex){</span>
+<span class="nc" id="L242">			ex.printStackTrace();</span>
+<span class="nc" id="L243">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
 		}
 		
-<span class="nc" id="L239">		return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="nc" id="L246">		return Response.status(200).entity(jsonObject.toString()).build();</span>
 	}	
 	
 	@RolesAllowed(&quot;ADMIN&quot;)
@@ -245,36 +252,38 @@ import com.mulodo.miniblog.validator.CommentValidate;
 	public Response getAllCommentForPost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@QueryParam(&quot;post_id&quot;) String post_id){
 		
-<span class="nc" id="L248">		JSONObject jsonObject = new JSONObject();</span>
-		
-<span class="nc" id="L250">		Meta meta = CommentValidate.validateGetAllCommentForPost(post_id);</span>
-<span class="nc" id="L251">		Data data = null;</span>
-<span class="nc bnc" id="L252" title="All 2 branches missed.">		if(meta != null){</span>
-<span class="nc" id="L253">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L254">			return Response.status(200).entity(jsonObject.toString()).build();</span>
-		}	
-		try{
-<span class="nc" id="L257">			Token token = this.tokenService.findByAccessKey(access_key);</span>
-			
-<span class="nc" id="L259">			Post post = this.postService.findOne(Integer.parseInt(post_id));</span>
-<span class="nc" id="L260">			List&lt;Comment&gt; listComment = null;</span>
-<span class="nc bnc" id="L261" title="All 2 branches missed.">			if(post.getUser().getId() == token.getUser().getId()){</span>
-<span class="nc" id="L262">				listComment = this.commentService.getAllCommentForPost(Integer.parseInt(post_id), true);</span>
-<span class="nc" id="L263">			}else{</span>
-<span class="nc" id="L264">				listComment = this.commentService.getAllCommentForPost(Integer.parseInt(post_id), false);</span>
-			}
-			
-<span class="nc" id="L267">			data = new Data();</span>
-<span class="nc" id="L268">			data.setListComment(listComment);</span>
-<span class="nc" id="L269">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L270">		}catch(ServiceException ex){</span>
-<span class="nc" id="L271">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
-<span class="nc" id="L272">		}catch(Exception ex){</span>
-<span class="nc" id="L273">			ex.printStackTrace();</span>
-<span class="nc" id="L274">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+<span class="nc bnc" id="L255" title="All 6 branches missed.">		if(tokenService == null || postService == null || commentService == null  ){</span>
+<span class="nc" id="L256">			setDataSource();</span>
 		}
 		
-<span class="nc" id="L277">		return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="nc" id="L259">		JSONObject jsonObject = new JSONObject();</span>
+		
+<span class="nc" id="L261">		Meta meta = CommentValidate.validateGetAllCommentForPost(post_id);</span>
+<span class="nc" id="L262">		Data data = null;</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">		if(meta != null){</span>
+<span class="nc" id="L264">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L265">			return Response.status(200).entity(jsonObject.toString()).build();</span>
+		}	
+		try{
+<span class="nc" id="L268">			Token token = this.tokenService.findByAccessKey(access_key);</span>
+			
+<span class="nc" id="L270">			Post post = this.postService.findOne(Integer.parseInt(post_id));</span>
+<span class="nc" id="L271">			List&lt;Comment&gt; listComment = null;</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">			if(post.getUser().getId() == token.getUser().getId()){</span>
+<span class="nc" id="L273">				listComment = this.commentService.getAllCommentForPost(Integer.parseInt(post_id), true);</span>
+<span class="nc" id="L274">			}else{</span>
+<span class="nc" id="L275">				listComment = this.commentService.getAllCommentForPost(Integer.parseInt(post_id), false);</span>
+			}
+			
+<span class="nc" id="L278">			data = new Data();</span>
+<span class="nc" id="L279">			data.setListComment(listComment);</span>
+<span class="nc" id="L280">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L281">		}catch(Exception ex){</span>
+<span class="nc" id="L282">			ex.printStackTrace();</span>
+<span class="nc" id="L283">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+		}
+		
+<span class="nc" id="L286">		return Response.status(200).entity(jsonObject.toString()).build();</span>
 	}
 	
 	@RolesAllowed(&quot;ADMIN&quot;)
@@ -283,35 +292,47 @@ import com.mulodo.miniblog.validator.CommentValidate;
 	public Response getAllCommentForUser(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
 			@QueryParam(&quot;user_id&quot;) String user_id){
 		
-<span class="nc" id="L286">		JSONObject jsonObject = new JSONObject();</span>
-		
-<span class="nc" id="L288">		Meta meta = CommentValidate.validateGetAllCommentForUser(user_id);</span>
-<span class="nc" id="L289">		Data data = null;</span>
-<span class="nc bnc" id="L290" title="All 2 branches missed.">		if(meta != null){</span>
-<span class="nc" id="L291">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L292">			return Response.status(200).entity(jsonObject.toString()).build();</span>
-		}	
-		try{
-<span class="nc" id="L295">			Token token = this.tokenService.findByAccessKey(access_key);</span>
-			
-<span class="nc" id="L297">			int userIdDao = Integer.parseInt(user_id);</span>
-<span class="nc" id="L298">			List&lt;Comment&gt; listComment = null;</span>
-<span class="nc bnc" id="L299" title="All 2 branches missed.">			if(token.getUser().getId() == userIdDao){</span>
-<span class="nc" id="L300">				listComment = this.commentService.getAllCommentForUser(token.getUser().getId(), true);</span>
-<span class="nc" id="L301">			}else{</span>
-<span class="nc" id="L302">				listComment = this.commentService.getAllCommentForUser(token.getUser().getId(), false);</span>
-			}
-<span class="nc" id="L304">			data = new Data();</span>
-<span class="nc" id="L305">			data.setListComment(listComment);</span>
-<span class="nc" id="L306">			jsonObject = BuildJSON.buildReturn(null, data);</span>
-<span class="nc" id="L307">		}catch(ServiceException ex){</span>
-<span class="nc" id="L308">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
-<span class="nc" id="L309">		}catch(Exception ex){</span>
-<span class="nc" id="L310">			ex.printStackTrace();</span>
-<span class="nc" id="L311">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+<span class="nc bnc" id="L295" title="All 6 branches missed.">		if(tokenService == null || postService == null || commentService == null  ){</span>
+<span class="nc" id="L296">			setDataSource();</span>
 		}
 		
-<span class="nc" id="L314">		return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="nc" id="L299">		JSONObject jsonObject = new JSONObject();</span>
+		
+<span class="nc" id="L301">		Meta meta = CommentValidate.validateGetAllCommentForUser(user_id);</span>
+<span class="nc" id="L302">		Data data = null;</span>
+<span class="nc bnc" id="L303" title="All 2 branches missed.">		if(meta != null){</span>
+<span class="nc" id="L304">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L305">			return Response.status(200).entity(jsonObject.toString()).build();</span>
+		}	
+		try{
+<span class="nc" id="L308">			Token token = this.tokenService.findByAccessKey(access_key);</span>
+			
+<span class="nc" id="L310">			int userIdDao = Integer.parseInt(user_id);</span>
+<span class="nc" id="L311">			List&lt;Comment&gt; listComment = null;</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">			if(token.getUser().getId() == userIdDao){</span>
+<span class="nc" id="L313">				listComment = this.commentService.getAllCommentForUser(token.getUser().getId(), true);</span>
+<span class="nc" id="L314">			}else{</span>
+<span class="nc" id="L315">				listComment = this.commentService.getAllCommentForUser(token.getUser().getId(), false);</span>
+			}
+<span class="nc" id="L317">			data = new Data();</span>
+<span class="nc" id="L318">			data.setListComment(listComment);</span>
+<span class="nc" id="L319">			jsonObject = BuildJSON.buildReturn(null, data);</span>
+<span class="nc" id="L320">		}catch(Exception ex){</span>
+<span class="nc" id="L321">			ex.printStackTrace();</span>
+<span class="nc" id="L322">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
+		}
+		
+<span class="nc" id="L325">		return Response.status(200).entity(jsonObject.toString()).build();</span>
 	}
+	
+	/**
+	 *  setDataSource: use for setting datasoure to tokeservice, userservice and postservice
+	 *	
+	 */
+	private void setDataSource(){
+<span class="fc" id="L333">		tokenService = ApplicationContextUtils.getTokenServiceDataSource();</span>
+<span class="fc" id="L334">		postService = ApplicationContextUtils.getPostServiceDataSource();</span>
+<span class="fc" id="L335">		commentService = ApplicationContextUtils.getCommentServiceDataSource();</span>
+<span class="fc" id="L336">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

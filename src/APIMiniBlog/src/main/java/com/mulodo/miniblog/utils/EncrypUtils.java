@@ -25,10 +25,6 @@ import com.mulodo.miniblog.contraints.Constraints;
 public class EncrypUtils {
 	public final static String encrypData(String str) throws NoSuchAlgorithmException{
 		
-		if(str == null || str.isEmpty()){
-			return null;
-		}
-		
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		
 		md.update(str.getBytes());
@@ -51,9 +47,8 @@ public class EncrypUtils {
 	public final static String buildAccessKey(String username, String password) throws NoSuchAlgorithmException{
 		
 		Calendar date = Calendar.getInstance();
-		if(username != null && password!= null){
-			return encrypData(Constraints.SECRET_KEY+username+password+date.getTime());
-		}
-		return null; 
+		
+		return encrypData(Constraints.SECRET_KEY+username+password+date.getTime());
+		 
 	}
 }

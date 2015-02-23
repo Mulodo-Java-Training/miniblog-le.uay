@@ -27,7 +27,7 @@ import org.springframework.stereotype.Repository;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.CommentDAO;
-import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Comment;
 import com.mulodo.miniblog.model.User;
 
@@ -51,12 +51,12 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Comment> getAllCommentForPost(int post_id, Boolean isOwnerPost)
-			throws DAOException {
+			throws HandlerException {
 		try{
 	        session = this.sessionFactory.openSession();
 	        
@@ -105,7 +105,7 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
 	        }
     	}catch(HibernateException ex){
     		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
+    		throw new HandlerException(ex.getMessage());
     	}finally {
     		   session.close();
     	}
@@ -120,12 +120,12 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Comment> getAllCommentForUser(int user_id, Boolean isOwnerUser)
-			throws DAOException {
+			throws HandlerException {
 		System.out.println("user id "+ user_id);
 		
 		try{
@@ -181,7 +181,7 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
 	        }
     	}catch(HibernateException ex){
     		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
+    		throw new HandlerException(ex.getMessage());
     	}finally {
     		   session.close();
     	}

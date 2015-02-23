@@ -10,7 +10,7 @@
  */
 package com.mulodo.miniblog.service;
 
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.object.Data;
 
@@ -30,9 +30,9 @@ public interface PostService extends GenericService<Post>{
 	 *
 	 *	@return List<Post>
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public Data getAllPost(int pageNum, int current_user_id, String description) throws ServiceException;
+	public Data getAllPost(int pageNum, int current_user_id, String description) throws HandlerException;
 	
 	
 	/**
@@ -43,9 +43,9 @@ public interface PostService extends GenericService<Post>{
 	 *
 	 *	@return List<Post>
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public Data getAllPostForUser(int pageNum, int author_id, Boolean isOwnerUser) throws ServiceException;
+	public Data getAllPostForUser(int pageNum, int author_id, Boolean isOwnerUser) throws HandlerException;
 
 	/**
 	 *  deleteByTitle use for delete post by title in the database for unit test
@@ -54,9 +54,9 @@ public interface PostService extends GenericService<Post>{
 	 *
 	 *	@return void
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public void deleteByTitle(String title) throws ServiceException;
+	public void deleteByTitle(String title) throws HandlerException;
 
 	/**
 	 *  findByTitle use for find post by title in the database for unit test
@@ -65,7 +65,7 @@ public interface PostService extends GenericService<Post>{
 	 *
 	 *	@return Post
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public Post findByTitle(String title) throws ServiceException;
+	public Post findByTitle(String title) throws HandlerException;
 }

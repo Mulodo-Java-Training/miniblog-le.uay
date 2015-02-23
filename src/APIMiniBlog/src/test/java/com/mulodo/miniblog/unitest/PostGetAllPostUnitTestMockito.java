@@ -18,7 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.mulodo.miniblog.contraints.Constraints;
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.model.User;
@@ -31,7 +31,8 @@ import com.mulodo.miniblog.service.TokenService;
 import com.mulodo.miniblog.validator.PostValidate;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PostGetAllPostUnitTestMockito {
+public class PostGetAllPostUnitTestMockito 
+{
 
 	@InjectMocks
 	private PostController postController;
@@ -51,7 +52,7 @@ public class PostGetAllPostUnitTestMockito {
 	}
 	
 	@Test
-	public void testActiveDeactivePost() throws ServiceException{
+	public void testActiveDeactivePost() throws HandlerException{
 
 		//==Create list error==
 		List<Integer> listError = new ArrayList<Integer>();

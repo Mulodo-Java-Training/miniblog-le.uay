@@ -10,14 +10,11 @@
  */
 package com.mulodo.miniblog.service.impl;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mulodo.miniblog.dao.GenericDAO;
-import com.mulodo.miniblog.exeption.DAOException;
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.service.GenericService;
 
 /**
@@ -27,7 +24,7 @@ import com.mulodo.miniblog.service.GenericService;
  * 
  */
 @Service
-<span class="fc" id="L30">public abstract class GenericServiceImpl&lt;T&gt; implements GenericService&lt;T&gt;{</span>
+<span class="fc" id="L27">public abstract class GenericServiceImpl&lt;T&gt; implements GenericService&lt;T&gt;{</span>
 
 
     protected GenericDAO&lt;T&gt; genericDAO;
@@ -40,8 +37,8 @@ import com.mulodo.miniblog.service.GenericService;
 	 *	@return void
 	 */
     public void setGenericDAO(GenericDAO&lt;T&gt; genericDAO) {
-<span class="fc" id="L43">		this.genericDAO = genericDAO;</span>
-<span class="fc" id="L44">	}</span>
+<span class="fc" id="L40">		this.genericDAO = genericDAO;</span>
+<span class="fc" id="L41">	}</span>
     
     /**
 	 *  add use to call add function in genericdao
@@ -51,16 +48,11 @@ import com.mulodo.miniblog.service.GenericService;
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean add(T entity) throws ServiceException {
-		try{
-<span class="fc" id="L59">			return this.genericDAO.add(entity);</span>
-			 
-<span class="nc" id="L61">		}catch(DAOException ex){</span>
-<span class="nc" id="L62">			throw new ServiceException(ex.getMessage());</span>
-		}
+	public Boolean add(T entity) throws HandlerException {
+<span class="fc" id="L55">		return this.genericDAO.add(entity);</span>
 	}
 
 	/**
@@ -71,15 +63,11 @@ import com.mulodo.miniblog.service.GenericService;
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean update(T entity) throws ServiceException {
-		try{
-<span class="nc" id="L79">			return this.genericDAO.update(entity);</span>
-<span class="nc" id="L80">		}catch(DAOException ex){</span>
-<span class="nc" id="L81">			throw new ServiceException(ex.getMessage());</span>
-		}
+	public Boolean update(T entity) throws HandlerException {
+<span class="fc" id="L70">		return this.genericDAO.update(entity);</span>
 	}
 
 	/**
@@ -90,15 +78,11 @@ import com.mulodo.miniblog.service.GenericService;
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean delete(int id) throws ServiceException {
-		try{
-<span class="nc" id="L98">			return this.genericDAO.delete(id);</span>
-<span class="nc" id="L99">		}catch(DAOException ex){</span>
-<span class="nc" id="L100">			throw new ServiceException(ex.getMessage());</span>
-		}
+	public Boolean delete(int id) throws HandlerException {		
+<span class="fc" id="L85">		return this.genericDAO.delete(id);</span>
 	}
 
 	/**
@@ -109,39 +93,14 @@ import com.mulodo.miniblog.service.GenericService;
 	 *	@return T
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */   
 	@Override
     @Transactional
-	public T findOne(int id) throws ServiceException {
-		try{
-<span class="nc" id="L118">			return this.genericDAO.findOne(id);</span>
-<span class="nc" id="L119">		}catch(DAOException ex){</span>
-<span class="nc" id="L120">			throw new ServiceException(ex.getMessage());</span>
-<span class="nc" id="L121">		}catch(Exception ex){</span>
-<span class="nc" id="L122">			System.out.println(&quot;acd&quot;);</span>
-<span class="nc" id="L123">			throw new ServiceException(ex.getMessage());</span>
-		}
+	public T findOne(int id) throws HandlerException {
+<span class="fc" id="L101">		return this.genericDAO.findOne(id);</span>
 	}
 
-	/**
- 	 *  findOne use to call findOne function in genericdao 
- 	 *	
- 	 *	@param	table : table of entity match with entity in model package
- 	 *
- 	 *	@return List&lt;T&gt;
- 	 *	
- 	 *	
- 	 *  @exception  ServiceException
- 	 */ 
-	@Override
-	public List&lt;T&gt; findAll(String tableName) throws ServiceException {
-		try{
-<span class="nc" id="L140">			return this.genericDAO.findAll(tableName);</span>
-<span class="nc" id="L141">		}catch(DAOException ex){</span>
-<span class="nc" id="L142">			throw new ServiceException(ex.getMessage());</span>
-		}
-	}
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

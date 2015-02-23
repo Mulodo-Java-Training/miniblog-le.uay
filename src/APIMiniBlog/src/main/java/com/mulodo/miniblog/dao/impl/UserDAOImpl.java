@@ -10,6 +10,7 @@
  */
 package com.mulodo.miniblog.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Repository;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.UserDAO;
-import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.User;
 
 /**
@@ -40,51 +41,6 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 	
 	
 	/**
-	 *  findAll use to find all user exist in database
-	 *	
-	 *	@param	tableName : table need for find
-	 *
-	 *	@return List<T>
-	 *	
-	 *	
-	 *  @exception  DAOException
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	 public List<User> findAll(String tableName) throws DAOException{
-		try{			
-	        session = this.sessionFactory.openSession();
-	        tx = session.beginTransaction();
-	        Criteria criteria = session.createCriteria(User.class)
-	        		.setProjection(Projections.projectionList()
-	        			      .add(Projections.property("id"), "id")
-	        			      .add(Projections.property("username"), "username")
-	        			      .add(Projections.property("firstname"), "firstname")
-	        			      .add(Projections.property("lastname"), "lastname")
-	        			      .add(Projections.property("created_at"), "created_at")
-	        			      .add(Projections.property("modified_at"), "modified_at")
-	        			      .add(Projections.property("email"), "email")
-	        			      .add(Projections.property("status"), "status"))
-	        			    .setResultTransformer(Transformers.aliasToBean(User.class));
-	        logger.info("Get list user loaded successfully, user details");
-	        tx.commit();
-	        if(!criteria.list().isEmpty()){
-	        	return criteria.list();
-	        }else{
-	        	return null;
-	        }
-    	}catch(ObjectNotFoundException ex){
-    		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
-    	}catch(HibernateException ex){
-    		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
-    	}finally {
-    		   session.close();
-    	}	
-	}
-	
-	/**
 	 *  isUserExits use to check exist user in database
 	 *	
 	 *	@param	username : string username use to check
@@ -92,10 +48,10 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean isUserExits(String username) throws DAOException {
+	public Boolean isUserExits(String username) throws HandlerException {
 		try{
 			
 	        session = this.sessionFactory.openSession();
@@ -112,17 +68,10 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 	        User user = (User) criteria.list().get(0);
 	        logger.info("Check user successfully,  details="+user.getId());
 	        tx.commit();
-	        if(user.getId() != 0 && user.getUsername().equals(username)){
-	        	return true;
-	        }else{
-	        	return false;
-	        }
-    	}catch(ObjectNotFoundException ex){
-    		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
+	        return user.getId() != 0 && user.getUsername().equals(username);
+	   
     	}catch(HibernateException ex){
-    		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
+    		throw new HandlerException(ex.getMessage());
     	}finally {
     		   session.close();
     	}
@@ -137,10 +86,10 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean isEmailExits(String email, User user) throws DAOException {
+	public Boolean isEmailExits(String email, User user) throws HandlerException {
 		
 		try{
 			
@@ -156,26 +105,13 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 	        	return false;
 	        }
 	        User userDB = (User) criteria.list().get(0);
-
-
-	        tx.commit();
-	        if(userDB.getId() != 0 && userDB.getEmail().equals(email)){
-	        	logger.info("Email check successfully, email details="+userDB.getEmail());
-	        	if(user != null && user.getId() == userDB.getId()){
-	        		return false;
-	        	}else{
-	        		return true;
-	        	}
-	        }else{
-	        	return false;
-	        }
 	        
-    	}catch(ObjectNotFoundException ex){
-    		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
+	        tx.commit();
+        	return !(user != null && user.getId() == userDB.getId());
+	        
     	}catch(HibernateException ex){
     		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
+    		throw new HandlerException(ex.getMessage());
     	}finally {
     		   session.close();
     	}
@@ -190,39 +126,30 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 	 *	@return User
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public User isValidLogin(String username, String password) throws DAOException{
+	public User isValidLogin(String username, String password) throws HandlerException{
 		try{
-			
+			User user = null;
+			 
 	        session = this.sessionFactory.openSession();
 	        tx = session.beginTransaction();
-	        Criteria criteria = session.createCriteria(User.class);
+	        Criteria criteria = session.createCriteria(User.class);	        
 	        
-	        if(username != null && password != null){
-	        	criteria.add(Restrictions.eq("username",username));
-	        	criteria.add(Restrictions.eq("password",password));
+        	criteria.add(Restrictions.eq("username",username));
+        	criteria.add(Restrictions.eq("password",password));
+	        
+	        if(!criteria.list().isEmpty()){
+	        	user = (User) criteria.list().get(0);
+	        	logger.info("Person loaded successfully, Person details="+user);		        
 	        }
-	        
-	        
-	        if(criteria.list().isEmpty()){
-	        	return null;
-	        }
-	        User user = (User) criteria.list().get(0);
-	        logger.info("Person loaded successfully, Person details="+user);
+	       
 	        tx.commit();
-	        if(user.getUsername().equals(username) && user.getPassword().equals(password)){
-	        	return user;
-	        }else{
-	        	return null;
-	        }
-		}catch(ObjectNotFoundException ex){
-			ex.printStackTrace();
-			throw new DAOException(ex.getMessage());
+	        return user;
 		}catch(HibernateException ex){
-			ex.printStackTrace();
-			throw new DAOException(ex.getMessage());
+			tx.rollback();
+			throw new HandlerException(ex.getMessage());
 		}finally {
 			   session.close();
 		}
@@ -236,48 +163,40 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 	 *	@return List<User>
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<User> findByName(String name) throws DAOException {
+	public List<User> findByName(String name) throws HandlerException {
 		try{
 	        session = this.sessionFactory.openSession();
 	        
 	        Criteria criteria = session.createCriteria(User.class);
-	        if(name != null){
-	        	criteria.add(Restrictions.disjunction()
-		        			.add(Restrictions.like("username", "%"+name+"%"))
-		        			.add(Restrictions.like("firstname","%"+name+"%"))
-		        			.add(Restrictions.like("lastname","%"+name+"%")))
-		        		.add(Restrictions.eq("status",Constraints.USER_ACTIVE))
-	        			.setProjection(Projections.projectionList()
-	        			      .add(Projections.property("id"), "id")
-	        			      .add(Projections.property("username"), "username")
-	        			      .add(Projections.property("firstname"), "firstname")
-	        			      .add(Projections.property("lastname"), "lastname")
-	        			      .add(Projections.property("status"), "status")
-	        			      .add(Projections.property("email"), "email"))
-	        			.setResultTransformer(Transformers.aliasToBean(User.class));
-	        }
 	        
-
-	        
-//	        criteria.setFirstResult((pageNum - 1)* Constraints.LIMIT_ROW);
-//	        criteria.setMaxResults(Constraints.LIMIT_ROW);
-	        
+        	criteria.add(Restrictions.disjunction()
+	        			.add(Restrictions.like("username", "%"+name+"%"))
+	        			.add(Restrictions.like("firstname","%"+name+"%"))
+	        			.add(Restrictions.like("lastname","%"+name+"%")))
+	        		.add(Restrictions.eq("status",Constraints.USER_ACTIVE))
+        			.setProjection(Projections.projectionList()
+        			      .add(Projections.property("id"), "id")
+        			      .add(Projections.property("username"), "username")
+        			      .add(Projections.property("firstname"), "firstname")
+        			      .add(Projections.property("lastname"), "lastname")
+        			      .add(Projections.property("status"), "status")
+        			      .add(Projections.property("email"), "email"))
+        			.setResultTransformer(Transformers.aliasToBean(User.class));
+        
+	        List<User> usersList = new ArrayList<User>();
 	        if(!criteria.list().isEmpty()){
-		        List<User> usersList = criteria.list();
+		        usersList = criteria.list();
 		        for(User us : usersList){
 		            logger.info("Person List::"+us);
 		        }
-		        return usersList;
-	        }else{
-	        	return null;
 	        }
+	        return usersList;
     	}catch(HibernateException ex){
-    		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
+    		throw new HandlerException(ex.getMessage());
     	}finally {
     		   session.close();
     	}
@@ -292,32 +211,29 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean deleteByUsername(String username) throws DAOException {
+	public Boolean deleteByUsername(String username) throws HandlerException {
 		try{ 
  	        session = this.sessionFactory.openSession();
  	        tx = session.beginTransaction();
 			Criteria criteria = session.createCriteria(User.class);
-			if(username != null){
-	        	criteria.add(Restrictions.eq("username",username));
-	        	if(criteria.list().isEmpty()){
-					return false;
-				}else{
-					User user = (User) criteria.list().get(0);
-					session.delete(user);
-		 	        tx.commit();
-		 	        logger.info("User deleted successfully, user details="+user);
-		 	        return true;
-				}
+			
+        	criteria.add(Restrictions.eq("username",username));
+        	if(criteria.list().isEmpty()){
+				return false;
+			}else{
+				User user = (User) criteria.list().get(0);
+				session.delete(user);
+	 	        tx.commit();
+	 	        logger.info("User deleted successfully, user details="+user);
+	 	        return true;
 			}
-			return false;
+
      	}catch(HibernateException ex){
-     		logger.info("Hibernate exception, Details="+ex.getMessage());
-     		if(tx != null)	tx.rollback();
-     		ex.printStackTrace();
-     		throw new DAOException(ex.getMessage());
+ 			tx.rollback();
+     		throw new HandlerException(ex.getMessage());
      	}finally {
      		session.close();
      	}
@@ -332,31 +248,27 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public User findByUsername(String username) throws DAOException {
+	public User findByUsername(String username) throws HandlerException {
+		User user = null;
+		
 		try{ 
  	        session = this.sessionFactory.openSession();
  	        tx = session.beginTransaction();
 			Criteria criteria = session.createCriteria(User.class);
-			if(username != null){
-	        	criteria.add(Restrictions.eq("username",username));
-	        	if(criteria.list().isEmpty()){
-					return null;
-				}else{
-					User user = (User) criteria.list().get(0);
-		 	        tx.commit();
-		 	        logger.info("Find user successfully, user details="+user);
-		 	        return user;
-				}
+        	criteria.add(Restrictions.eq("username",username));
+        	if(!criteria.list().isEmpty()){
+        		user = (User) criteria.list().get(0);
+	 	        tx.commit();
+	 	        logger.info("Find user successfully, user details="+user);
 			}
-			return null;
+			return user;
      	}catch(HibernateException ex){
      		logger.info("Hibernate exception, Details="+ex.getMessage());
-     		if(tx != null)	tx.rollback();
-     		ex.printStackTrace();
-     		throw new DAOException(ex.getMessage());
+ 			tx.rollback();
+     		throw new HandlerException(ex.getMessage());
      	}finally {
      		session.close();
      	}

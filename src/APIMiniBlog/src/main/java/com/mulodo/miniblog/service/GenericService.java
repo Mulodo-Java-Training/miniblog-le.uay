@@ -10,9 +10,7 @@
  */
 package com.mulodo.miniblog.service;
 
-import java.util.List;
-
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 
 /**
  * The generic of comment service
@@ -30,9 +28,9 @@ public interface GenericService<T> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	 public Boolean add(T entity) throws ServiceException;
+	 public Boolean add(T entity) throws HandlerException;
 
 	 /**
 	 *  update use to call update function in genericdao 
@@ -42,9 +40,9 @@ public interface GenericService<T> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-     public Boolean update(T entity) throws ServiceException;
+     public Boolean update(T entity) throws HandlerException;
 
 	 /**
 	 *  delete use to call delete function in genericdao 
@@ -54,9 +52,9 @@ public interface GenericService<T> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-     public Boolean delete(int id) throws ServiceException;
+     public Boolean delete(int id) throws HandlerException;
 
 	 /**
 	 *  findOne use to call findOne function in genericdao 
@@ -66,20 +64,9 @@ public interface GenericService<T> {
 	 *	@return T
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */    
-     public T findOne(int id) throws ServiceException;
+     public T findOne(int id) throws HandlerException;
 
-     /**
- 	 *  findOne use to call findOne function in genericdao 
- 	 *	
- 	 *	@param	table : table of entity match with entity in model package
- 	 *
- 	 *	@return List<T>
- 	 *	
- 	 *	
- 	 *  @exception  ServiceException
- 	 */ 
-     public List<T> findAll(String tableName) throws ServiceException;
 	
 }

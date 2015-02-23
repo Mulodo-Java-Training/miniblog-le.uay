@@ -25,36 +25,31 @@ import com.mulodo.miniblog.contraints.Constraints;
 <span class="nc" id="L25">public class EncrypUtils {</span>
 	public final static String encrypData(String str) throws NoSuchAlgorithmException{
 		
-<span class="pc bpc" id="L28" title="2 of 4 branches missed.">		if(str == null || str.isEmpty()){</span>
-<span class="nc" id="L29">			return null;</span>
-		}
+<span class="fc" id="L28">		MessageDigest md = MessageDigest.getInstance(&quot;SHA-256&quot;);</span>
 		
-<span class="fc" id="L32">		MessageDigest md = MessageDigest.getInstance(&quot;SHA-256&quot;);</span>
-		
-<span class="fc" id="L34">		md.update(str.getBytes());</span>
-<span class="fc" id="L35">        byte[] mdbytes = md.digest();</span>
+<span class="fc" id="L30">		md.update(str.getBytes());</span>
+<span class="fc" id="L31">        byte[] mdbytes = md.digest();</span>
  
         //convert the byte to hex format method 1
-<span class="fc" id="L38">        StringBuffer sb = new StringBuffer();</span>
-<span class="fc bfc" id="L39" title="All 2 branches covered.">        for (int i = 0; i &lt; mdbytes.length; i++) {</span>
-<span class="fc" id="L40">          sb.append(Integer.toString((mdbytes[i] &amp; 0xff) + 0x100, 16).substring(1));</span>
+<span class="fc" id="L34">        StringBuffer sb = new StringBuffer();</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        for (int i = 0; i &lt; mdbytes.length; i++) {</span>
+<span class="fc" id="L36">          sb.append(Integer.toString((mdbytes[i] &amp; 0xff) + 0x100, 16).substring(1));</span>
         }
  
        //convert the byte to hex format method 2
-<span class="fc" id="L44">        StringBuffer hexString = new StringBuffer();</span>
-<span class="fc bfc" id="L45" title="All 2 branches covered.">    	for (int i=0;i&lt;mdbytes.length;i++) {</span>
-<span class="fc" id="L46">    	  hexString.append(Integer.toHexString(0xFF &amp; mdbytes[i]));</span>
+<span class="fc" id="L40">        StringBuffer hexString = new StringBuffer();</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">    	for (int i=0;i&lt;mdbytes.length;i++) {</span>
+<span class="fc" id="L42">    	  hexString.append(Integer.toHexString(0xFF &amp; mdbytes[i]));</span>
     	}
-<span class="fc" id="L48">    	return hexString.toString();</span>
+<span class="fc" id="L44">    	return hexString.toString();</span>
 	}
 	
 	public final static String buildAccessKey(String username, String password) throws NoSuchAlgorithmException{
 		
-<span class="nc" id="L53">		Calendar date = Calendar.getInstance();</span>
-<span class="nc bnc" id="L54" title="All 4 branches missed.">		if(username != null &amp;&amp; password!= null){</span>
-<span class="nc" id="L55">			return encrypData(Constraints.SECRET_KEY+username+password+date.getTime());</span>
-		}
-<span class="nc" id="L57">		return null; </span>
+<span class="fc" id="L49">		Calendar date = Calendar.getInstance();</span>
+		
+<span class="fc" id="L51">		return encrypData(Constraints.SECRET_KEY+username+password+date.getTime());</span>
+		 
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

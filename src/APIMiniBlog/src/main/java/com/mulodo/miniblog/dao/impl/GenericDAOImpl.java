@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
 
 import com.mulodo.miniblog.dao.GenericDAO;
-import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.HandlerException;
 
 /**
  * The abstract class of generic dao impl
@@ -50,10 +50,10 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
     @Override
-    public Boolean add(T entity) throws DAOException {
+    public Boolean add(T entity) throws HandlerException {
 		try{
 	        session = this.sessionFactory.openSession();
 	        tx = session.beginTransaction();
@@ -65,7 +65,7 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T> {
     		if(tx != null)	tx.rollback();
     		logger.info("Hibernate exception, Details="+ex.getMessage());
     		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
+    		throw new HandlerException(ex.getMessage());
     	}finally {
     		   session.close();
     	}
@@ -79,10 +79,10 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
     @Override
-    public Boolean update(T entity) throws DAOException {
+    public Boolean update(T entity) throws HandlerException {
     	try{
 	        session = this.sessionFactory.openSession();
 	        tx = session.beginTransaction();
@@ -94,7 +94,7 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T> {
     		logger.info("Hibernate exception, Details="+ex.getMessage());
     		tx.rollback();
     		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
+    		throw new HandlerException(ex.getMessage());
     	}finally {
     		   session.close();
     	}
@@ -108,11 +108,11 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-    public Boolean delete(int id) throws DAOException {
+    public Boolean delete(int id) throws HandlerException {
     	 try{
     		 
     		this.genericType = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(), GenericDAOImpl.class); 
@@ -126,10 +126,12 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T> {
  	        logger.info("Entity deleted successfully, Entity details="+p);
  	        return true;
      	}catch(HibernateException ex){
-     		if(tx != null)	tx.rollback();
+     		if(tx != null)	{
+     			tx.rollback();
+     		}
      		logger.info("Hibernate exception, Details="+ex.getMessage());
      		ex.printStackTrace();
-     		throw new DAOException(ex.getMessage());
+     		throw new HandlerException(ex.getMessage());
      	}finally {
      		session.close();
      	}
@@ -143,11 +145,11 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T> {
 	 *	@return T
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public T findOne(int id) throws DAOException {
+	public T findOne(int id) throws HandlerException {
 		try{
 			this.genericType = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(), GenericDAOImpl.class);
 	        session = this.sessionFactory.openSession();
@@ -158,35 +160,18 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T> {
 	        }
 	        tx.commit();
 	        return p;
-    	}catch(ObjectNotFoundException ex){
-    		logger.info("Hibernate exception, Details="+ex.getMessage());
-    		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
     	}catch(HibernateException ex){
+    		if(tx != null){
+    			tx.rollback();
+    		}
     		logger.info("Hibernate exception, Details="+ex.getMessage());
     		ex.printStackTrace();
-    		throw new DAOException(ex.getMessage());
+    		throw new HandlerException(ex.getMessage());
     	}finally {
     		   session.close();
     	}
 	}
 
-	/**
-	 *  findAll use to find all entity exist in database
-	 *	
-	 *	@param	tableName : table need for find
-	 *
-	 *	@return List<T>
-	 *	
-	 *	
-	 *  @exception  DAOException
-	 */
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<T> findAll(String tableName) throws DAOException {
-		session = sessionFactory.getCurrentSession();
-		List<T> list= session.createQuery("from "+tableName).list();
-		return list;
-    }
+
     
 }

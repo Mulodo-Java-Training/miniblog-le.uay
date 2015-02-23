@@ -12,7 +12,7 @@ package com.mulodo.miniblog.dao;
 
 import java.util.List;
 
-import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Post;
 
 /**
@@ -33,9 +33,9 @@ public interface PostDAO extends GenericDAO<Post>{
 	 *	@return List<Post>
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public List<Post> getAllPost(int pageNum, int author_id, String description, Boolean isForUser, Boolean isOwnerUser) throws DAOException;
+	public List<Post> getAllPost(int pageNum, int author_id, String description, Boolean isForUser, Boolean isOwnerUser) throws HandlerException;
 	
 	/**
 	 *  get_all_post_size use to get size of post with owner user from database
@@ -46,9 +46,9 @@ public interface PostDAO extends GenericDAO<Post>{
 	 *	@return int
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public int getAllPostSize(int author_id, String description, Boolean isForUser, Boolean isOwnerUser) throws DAOException;
+	public int getAllPostSize(int author_id, String description, Boolean isForUser, Boolean isOwnerUser) throws HandlerException;
 
 	
 	/**
@@ -58,9 +58,9 @@ public interface PostDAO extends GenericDAO<Post>{
 	 *
 	 *	@return void
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public void deleteByTitle(String title) throws DAOException;
+	public void deleteByTitle(String title) throws HandlerException;
 
 	/**
 	 *  findByTitle use for find post by title in the database for unit test
@@ -69,7 +69,7 @@ public interface PostDAO extends GenericDAO<Post>{
 	 *
 	 *	@return Post
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public Post findByTitle(String title) throws DAOException;
+	public Post findByTitle(String title) throws HandlerException;
 }

@@ -17,8 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.mulodo.miniblog.dao.CommentDAO;
-import com.mulodo.miniblog.exeption.DAOException;
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Comment;
 import com.mulodo.miniblog.service.CommentService;
 
@@ -29,7 +28,7 @@ import com.mulodo.miniblog.service.CommentService;
  * 
  */
 @Service
-<span class="fc" id="L32">public class CommentServiceImpl extends GenericServiceImpl&lt;Comment&gt; implements CommentService{</span>
+<span class="fc" id="L31">public class CommentServiceImpl extends GenericServiceImpl&lt;Comment&gt; implements CommentService{</span>
 	
 	private CommentDAO commentDAO;
 	
@@ -43,8 +42,8 @@ import com.mulodo.miniblog.service.CommentService;
 	@Autowired
 	@Qualifier(&quot;commentDAO&quot;)
 	public void setCommentDAO(CommentDAO cd){
-<span class="fc" id="L46">		this.commentDAO = cd;</span>
-<span class="fc" id="L47">	}</span>
+<span class="fc" id="L45">		this.commentDAO = cd;</span>
+<span class="fc" id="L46">	}</span>
 
 	/**
 	 *  get_all_comment_for_post use to call get all comment for post function in 
@@ -56,16 +55,13 @@ import com.mulodo.miniblog.service.CommentService;
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
 	public List&lt;Comment&gt; getAllCommentForPost(int post_id, Boolean isOwnerPost)
-			throws ServiceException {
-		try {
-<span class="nc" id="L65">			return this.commentDAO.getAllCommentForPost(post_id, isOwnerPost);</span>
-<span class="nc" id="L66">		} catch (DAOException e) {</span>
-<span class="nc" id="L67">			throw new ServiceException(e.getMessage());</span>
-		}
+			throws HandlerException {
+<span class="nc" id="L63">		return this.commentDAO.getAllCommentForPost(post_id, isOwnerPost);</span>
+		
 	}
 
 	/**
@@ -78,16 +74,13 @@ import com.mulodo.miniblog.service.CommentService;
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
 	@Override
 	public List&lt;Comment&gt; getAllCommentForUser(int user_id, Boolean isOwnerUser)
-			throws ServiceException {
-		try {
-<span class="nc" id="L87">			return this.commentDAO.getAllCommentForUser(user_id, isOwnerUser);</span>
-<span class="nc" id="L88">		} catch (DAOException e) {</span>
-<span class="nc" id="L89">			throw new ServiceException(e.getMessage());</span>
-		}
+			throws HandlerException {
+<span class="nc" id="L82">		return this.commentDAO.getAllCommentForUser(user_id, isOwnerUser);</span>
+		
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -12,7 +12,7 @@ package com.mulodo.miniblog.dao;
 
 import java.util.List;
 
-import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.User;
 
 /**
@@ -31,9 +31,9 @@ public interface UserDAO extends GenericDAO<User>{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public Boolean isUserExits(String username) throws DAOException;
+	public Boolean isUserExits(String username) throws HandlerException;
 	
 	/**
 	 *  isEmailExits use to check exist email in database
@@ -44,9 +44,9 @@ public interface UserDAO extends GenericDAO<User>{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public Boolean isEmailExits(String email, User user) throws DAOException;
+	public Boolean isEmailExits(String email, User user) throws HandlerException;
 	
 	/**
 	 *  isValidLogin check valid login
@@ -57,9 +57,9 @@ public interface UserDAO extends GenericDAO<User>{
 	 *	@return User
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public User isValidLogin(String username, String password) throws DAOException;
+	public User isValidLogin(String username, String password) throws HandlerException;
 	
 	/**
 	 *  findByName use for find user in database
@@ -69,9 +69,9 @@ public interface UserDAO extends GenericDAO<User>{
 	 *	@return List<User>
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public List<User> findByName(String name) throws DAOException;
+	public List<User> findByName(String name) throws HandlerException;
 	
 
 	/**
@@ -82,9 +82,9 @@ public interface UserDAO extends GenericDAO<User>{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public Boolean deleteByUsername(String username) throws DAOException;
+	public Boolean deleteByUsername(String username) throws HandlerException;
 
 	
 	/**
@@ -95,7 +95,7 @@ public interface UserDAO extends GenericDAO<User>{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public User findByUsername(String username) throws DAOException;
+	public User findByUsername(String username) throws HandlerException;
 }

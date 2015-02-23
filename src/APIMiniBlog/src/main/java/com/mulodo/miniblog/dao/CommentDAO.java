@@ -12,7 +12,7 @@ package com.mulodo.miniblog.dao;
 
 import java.util.List;
 
-import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Comment;
 
 /**
@@ -32,9 +32,9 @@ public interface CommentDAO extends GenericDAO<Comment>{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public List<Comment> getAllCommentForPost(int post_id, Boolean isOwnerPost) throws DAOException;
+	public List<Comment> getAllCommentForPost(int post_id, Boolean isOwnerPost) throws HandlerException;
 	
 	/**
 	 *  getAllCommentForUser use to get all comment for user
@@ -45,7 +45,7 @@ public interface CommentDAO extends GenericDAO<Comment>{
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-	public List<Comment> getAllCommentForUser(int user_id, Boolean isOwnerUser) throws DAOException;
+	public List<Comment> getAllCommentForUser(int user_id, Boolean isOwnerUser) throws HandlerException;
 }

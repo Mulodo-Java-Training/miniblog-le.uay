@@ -28,7 +28,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.mulodo.miniblog.contraints.Constraints;
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.object.Meta;
 import com.mulodo.miniblog.service.TokenService;
@@ -82,7 +82,7 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 						requestContext.abortWith(Response.status(200).entity(jsonObject.toString()).header(Constraints.ACCESS_KEY, access_key).build()); 
 						return;
 					}
-				} catch (ServiceException e) {
+				} catch (HandlerException e) {
 					jsonObject = new JSONObject();
 					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
 					e.printStackTrace();
@@ -132,7 +132,7 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 								tokenTemp.setExpired_at(cal_expired_at.getTime());
 								this.tokenService.update(tokenTemp);
 							}
-						} catch (ServiceException e) {
+						} catch (HandlerException e) {
 							e.printStackTrace();
 							jsonObject = new JSONObject();
 							jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000, Constraints.CODE_9001), null);
@@ -156,7 +156,7 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 		}
 	}
 	
-	private Token isValidToken(String access_key) throws ServiceException{
+	private Token isValidToken(String access_key) throws HandlerException{
 			Token token = tokenService.findByAccessKey(access_key);
 			if(token != null && ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(token.getAccess_key())){
 				return token;

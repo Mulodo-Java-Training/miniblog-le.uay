@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.mulodo.miniblog.dao.TokenDAO;
-import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.model.User;
 
@@ -42,35 +42,33 @@ import com.mulodo.miniblog.model.User;
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean deleteByAccessKey(String access_key) throws DAOException {
+	public Boolean deleteByAccessKey(String access_key) throws HandlerException {
 		try{ 
-<span class="nc" id="L50"> 	        session = this.sessionFactory.openSession();</span>
-<span class="nc" id="L51"> 	        tx = session.beginTransaction();</span>
-<span class="nc" id="L52">			Criteria criteria = session.createCriteria(Token.class);</span>
-<span class="nc bnc" id="L53" title="All 2 branches missed.">			if(access_key != null){</span>
-<span class="nc" id="L54">	        	criteria.add(Restrictions.eq(&quot;access_key&quot;,access_key));</span>
-<span class="nc bnc" id="L55" title="All 2 branches missed.">	        	if(criteria.list().isEmpty()){</span>
-<span class="nc" id="L56">					return false;</span>
-				}else{
-<span class="nc" id="L58">					Token token = (Token) criteria.list().get(0);</span>
-<span class="nc" id="L59">					session.delete(token);</span>
-<span class="nc" id="L60">		 	        tx.commit();</span>
-<span class="nc" id="L61">		 	        logger.info(&quot;Token deleted successfully, token details=&quot;+token);</span>
-<span class="nc" id="L62">		 	        return true;</span>
-				}
+<span class="fc" id="L50"> 	        session = this.sessionFactory.openSession();</span>
+<span class="fc" id="L51"> 	        tx = session.beginTransaction();</span>
+<span class="fc" id="L52">			Criteria criteria = session.createCriteria(Token.class);</span>
+			
+<span class="fc" id="L54">        	criteria.add(Restrictions.eq(&quot;access_key&quot;,access_key));</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        	if(criteria.list().isEmpty()){</span>
+<span class="nc" id="L56">				return false;</span>
+			}else{
+<span class="fc" id="L58">				Token token = (Token) criteria.list().get(0);</span>
+<span class="fc" id="L59">				session.delete(token);</span>
+<span class="fc" id="L60">	 	        tx.commit();</span>
+<span class="fc" id="L61">	 	        logger.info(&quot;Token deleted successfully, token details=&quot;+token);</span>
+<span class="fc" id="L62">	 	        return true;</span>
 			}
-<span class="nc" id="L65">			return false;</span>
-<span class="nc" id="L66">     	}catch(HibernateException ex){</span>
-<span class="nc" id="L67">     		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
-<span class="nc bnc" id="L68" title="All 2 branches missed.">     		if(tx != null)	tx.rollback();</span>
-<span class="nc" id="L69">     		ex.printStackTrace();</span>
-<span class="nc" id="L70">     		throw new DAOException(ex.getMessage());</span>
-<span class="nc" id="L71">     	}finally {</span>
-<span class="nc" id="L72">     		session.close();</span>
-<span class="nc" id="L73">     	}</span>
+<span class="nc" id="L64">     	}catch(HibernateException ex){</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">     		if(tx != null)	{</span>
+<span class="nc" id="L66">     			tx.rollback();</span>
+     		}
+<span class="nc" id="L68">     		throw new HandlerException(ex.getMessage());</span>
+<span class="nc" id="L69">     	}finally {</span>
+<span class="pc" id="L70">     		session.close();</span>
+<span class="nc" id="L71">     	}</span>
 	}
 
 	/**
@@ -81,33 +79,30 @@ import com.mulodo.miniblog.model.User;
 	 *	@return Token
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Token findByAccessKey(String access_key) throws DAOException {
+	public Token findByAccessKey(String access_key) throws HandlerException {
 		try{ 
-<span class="nc" id="L89"> 	        session = this.sessionFactory.openSession();</span>
-<span class="nc" id="L90"> 	        tx = session.beginTransaction();</span>
-<span class="nc" id="L91">			Criteria criteria = session.createCriteria(Token.class);</span>
-<span class="nc bnc" id="L92" title="All 2 branches missed.">			if(access_key != null){</span>
-<span class="nc" id="L93">	        	criteria.add(Restrictions.eq(&quot;access_key&quot;,access_key));</span>
-<span class="nc bnc" id="L94" title="All 2 branches missed.">	        	if(criteria.list().isEmpty()){</span>
-<span class="nc" id="L95">					return null;</span>
-				}else{
-<span class="nc" id="L97">					Token token = (Token) criteria.list().get(0);</span>
-<span class="nc" id="L98">					logger.info(&quot;Token searching successfully, token details=&quot;+token);</span>
-<span class="nc" id="L99">					return token;</span>
-				}
+<span class="fc" id="L87"> 	        session = this.sessionFactory.openSession();</span>
+<span class="fc" id="L88"> 	        tx = session.beginTransaction();</span>
+<span class="fc" id="L89">			Criteria criteria = session.createCriteria(Token.class);</span>
+			
+<span class="fc" id="L91">        	criteria.add(Restrictions.eq(&quot;access_key&quot;,access_key));</span>
+<span class="fc" id="L92">        	Token token = null;</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        	if(!criteria.list().isEmpty()){</span>
+<span class="fc" id="L94">				token = (Token) criteria.list().get(0);</span>
+<span class="fc" id="L95">				logger.info(&quot;Token searching successfully, token details=&quot;+token);</span>
 			}
-<span class="nc" id="L102">			return null;</span>
-<span class="nc" id="L103">     	}catch(HibernateException ex){</span>
-<span class="nc" id="L104">     		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
-<span class="nc bnc" id="L105" title="All 2 branches missed.">     		if(tx != null)	tx.rollback();</span>
-<span class="nc" id="L106">     		ex.printStackTrace();</span>
-<span class="nc" id="L107">     		throw new DAOException(ex.getMessage());</span>
-<span class="nc" id="L108">     	}finally {</span>
-<span class="nc" id="L109">     		session.close();</span>
-<span class="nc" id="L110">     	}</span>
+<span class="fc" id="L97">        	return token;</span>
+<span class="nc" id="L98">     	}catch(HibernateException ex){</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">     		if(tx != null) {</span>
+<span class="nc" id="L100">     			tx.rollback();</span>
+     		}
+<span class="nc" id="L102">     		throw new HandlerException(ex.getMessage());</span>
+<span class="nc" id="L103">     	}finally {</span>
+<span class="pc" id="L104">     		session.close();</span>
+<span class="nc" id="L105">     	}</span>
 	}
 
 	/**
@@ -118,27 +113,27 @@ import com.mulodo.miniblog.model.User;
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
 	@Override
-	public Boolean deleteByUser(User user) throws DAOException {
+	public Boolean deleteByUser(User user) throws HandlerException {
 		
 		try{ 
-<span class="nc" id="L127"> 	        session = this.sessionFactory.openSession();</span>
-<span class="nc" id="L128"> 	        tx = session.beginTransaction();</span>
-<span class="nc" id="L129"> 	        Query query = session.createQuery(&quot;delete Token where user_id = :user_id&quot;);</span>
-<span class="nc" id="L130"> 	        query.setParameter(&quot;user_id&quot;, user.getId());</span>
-<span class="nc" id="L131">			query.executeUpdate();</span>
-<span class="nc" id="L132">			tx.commit();</span>
-<span class="nc" id="L133"> 	        return true;</span>
-<span class="nc" id="L134">     	}catch(HibernateException ex){</span>
-<span class="nc" id="L135">     		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
-<span class="nc bnc" id="L136" title="All 2 branches missed.">     		if(tx != null)	tx.rollback();</span>
-<span class="nc" id="L137">     		ex.printStackTrace();</span>
-<span class="nc" id="L138">     		throw new DAOException(ex.getMessage());</span>
-<span class="nc" id="L139">     	}finally {</span>
-<span class="nc" id="L140">     		session.close();</span>
-<span class="nc" id="L141">     	}</span>
+<span class="fc" id="L122"> 	        session = this.sessionFactory.openSession();</span>
+<span class="fc" id="L123"> 	        tx = session.beginTransaction();</span>
+<span class="fc" id="L124"> 	        Query query = session.createQuery(&quot;delete Token where user_id = :user_id&quot;);</span>
+<span class="fc" id="L125"> 	        query.setParameter(&quot;user_id&quot;, user.getId());</span>
+<span class="fc" id="L126">			query.executeUpdate();</span>
+<span class="fc" id="L127">			tx.commit();</span>
+<span class="fc" id="L128"> 	        return true;</span>
+<span class="nc" id="L129">     	}catch(HibernateException ex){</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">     		if(tx != null)	{</span>
+<span class="nc" id="L131">     			tx.rollback();</span>
+     		}
+<span class="nc" id="L133">     		throw new HandlerException(ex.getMessage());</span>
+<span class="nc" id="L134">     	}finally {</span>
+<span class="pc" id="L135">     		session.close();</span>
+<span class="nc" id="L136">     	}</span>
 	}
 
 }

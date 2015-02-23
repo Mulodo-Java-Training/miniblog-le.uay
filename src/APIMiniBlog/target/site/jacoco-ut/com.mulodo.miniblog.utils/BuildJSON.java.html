@@ -25,41 +25,41 @@ import com.mulodo.miniblog.object.Meta;
 <span class="nc" id="L25">public class BuildJSON {</span>
 
 	public final static JSONObject buildReturn(Meta meta, Data data){
-<span class="nc" id="L28">		JSONObject metaJSON = null;</span>
-<span class="nc" id="L29">		JSONObject dataJSON = null;</span>
+<span class="fc" id="L28">		JSONObject metaJSON = null;</span>
+<span class="fc" id="L29">		JSONObject dataJSON = null;</span>
 		
-<span class="nc bnc" id="L31" title="All 2 branches missed.">		if(meta != null){</span>
-<span class="nc" id="L32">			metaJSON = new JSONObject(meta);</span>
-<span class="nc bnc" id="L33" title="All 4 branches missed.">			if(meta.getMessages().isEmpty() ||meta.getMessages().get(0).getCode() == 0 ){</span>
-<span class="nc" id="L34">				metaJSON.remove(Constraints.MESSAGES);</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">		if(meta != null){</span>
+<span class="fc" id="L32">			metaJSON = new JSONObject(meta);</span>
+<span class="pc bpc" id="L33" title="1 of 4 branches missed.">			if(meta.getMessages().isEmpty() ||meta.getMessages().get(0).getCode() == 0 ){</span>
+<span class="fc" id="L34">				metaJSON.remove(Constraints.MESSAGES);</span>
 			}
 		}
 		
-<span class="nc bnc" id="L38" title="All 2 branches missed.">		if(data != null){</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">		if(data != null){</span>
 			
-<span class="nc" id="L40">			dataJSON= new JSONObject(data);</span>
-<span class="nc" id="L41">			boolean isValid = false;</span>
+<span class="fc" id="L40">			dataJSON= new JSONObject(data);</span>
+<span class="fc" id="L41">			boolean isValid = false;</span>
 				
-<span class="nc bnc" id="L43" title="All 2 branches missed.">			if(dataJSON.has(&quot;listPost&quot;)){</span>
-<span class="nc" id="L44">				isValid = true;</span>
-<span class="nc bnc" id="L45" title="All 2 branches missed.">			}else if(dataJSON.has(&quot;listUser&quot;)){</span>
-<span class="nc" id="L46">				isValid = true;</span>
-<span class="nc bnc" id="L47" title="All 2 branches missed.">			}else if(dataJSON.has(&quot;listComment&quot;)){</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">			if(dataJSON.has(&quot;listPost&quot;)){</span>
+<span class="fc" id="L44">				isValid = true;</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">			}else if(dataJSON.has(&quot;listUser&quot;)){</span>
+<span class="fc" id="L46">				isValid = true;</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">			}else if(dataJSON.has(&quot;listComment&quot;)){</span>
 <span class="nc" id="L48">				isValid = true;</span>
 			}
 			
-<span class="nc bnc" id="L51" title="All 2 branches missed.">			if(!isValid){</span>
-<span class="nc" id="L52">				dataJSON.remove(Constraints.LIMIT_ROW_STRING);</span>
-<span class="nc" id="L53">				dataJSON.remove(Constraints.PAGE_NUM);</span>
-<span class="nc" id="L54">				dataJSON.remove(Constraints.TOTAL_PAGE);</span>
-<span class="nc" id="L55">				dataJSON.remove(Constraints.TOTAL_ROW);</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">			if(!isValid){</span>
+<span class="fc" id="L52">				dataJSON.remove(Constraints.LIMIT_ROW_STRING);</span>
+<span class="fc" id="L53">				dataJSON.remove(Constraints.PAGE_NUM);</span>
+<span class="fc" id="L54">				dataJSON.remove(Constraints.TOTAL_PAGE);</span>
+<span class="fc" id="L55">				dataJSON.remove(Constraints.TOTAL_ROW);</span>
 			}
 			
 		}
-<span class="nc" id="L59">		JSONObject result = new JSONObject();</span>
-<span class="nc" id="L60">		result.put(Constraints.META, metaJSON);</span>
-<span class="nc" id="L61">		result.put(Constraints.DATA, dataJSON);</span>
-<span class="nc" id="L62">		return result;</span>
+<span class="fc" id="L59">		JSONObject result = new JSONObject();</span>
+<span class="fc" id="L60">		result.put(Constraints.META, metaJSON);</span>
+<span class="fc" id="L61">		result.put(Constraints.DATA, dataJSON);</span>
+<span class="fc" id="L62">		return result;</span>
 	}
 	
 }

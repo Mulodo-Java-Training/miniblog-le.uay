@@ -12,7 +12,7 @@ package com.mulodo.miniblog.dao;
 
 import java.util.List;
 
-import com.mulodo.miniblog.exeption.DAOException;
+import com.mulodo.miniblog.exeption.HandlerException;
 
 /**
  * The interface of generic dao
@@ -30,9 +30,9 @@ public interface GenericDAO<T> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-    public Boolean add(T entity) throws DAOException;
+    public Boolean add(T entity) throws HandlerException;
 
     /**
 	 *  update use to update new information of entity to database
@@ -42,9 +42,9 @@ public interface GenericDAO<T> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-    public Boolean update(T entity) throws DAOException;
+    public Boolean update(T entity) throws HandlerException;
 
     /**
 	 *  delete use to delete entity exist in database
@@ -54,9 +54,9 @@ public interface GenericDAO<T> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-    public Boolean delete(int id) throws DAOException;
+    public Boolean delete(int id) throws HandlerException;
     
     /**
 	 *  findOne use to find one entity exist in database
@@ -66,20 +66,8 @@ public interface GenericDAO<T> {
 	 *	@return T
 	 *	
 	 *	
-	 *  @exception  DAOException
+	 *  @exception  HandlerException
 	 */
-    public T findOne(int id) throws DAOException;
-
-    /**
-	 *  findAll use to find all entity exist in database
-	 *	
-	 *	@param	tableName : table need for find
-	 *
-	 *	@return List<T>
-	 *	
-	 *	
-	 *  @exception  DAOException
-	 */
-    public List<T> findAll(String tableName) throws DAOException;
+    public T findOne(int id) throws HandlerException;
 
 }

@@ -12,7 +12,7 @@ package com.mulodo.miniblog.service;
 
 import java.util.List;
 
-import com.mulodo.miniblog.exeption.ServiceException;
+import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.User;
 
 /**
@@ -31,9 +31,9 @@ public interface UserService extends GenericService<User> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public Boolean isUserExits(String username) throws ServiceException;
+	public Boolean isUserExits(String username) throws HandlerException;
 	
 	/**
 	 *  is_email_exits use to check exist email in database
@@ -44,9 +44,9 @@ public interface UserService extends GenericService<User> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public Boolean isEmailExits(String email, User user) throws ServiceException;
+	public Boolean isEmailExits(String email, User user) throws HandlerException;
 	
 	/**
 	 *  is_valid_login check valid login
@@ -57,9 +57,9 @@ public interface UserService extends GenericService<User> {
 	 *	@return User
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public User isValidLogin(String username, String password) throws ServiceException;
+	public User isValidLogin(String username, String password) throws HandlerException;
 	
 	/**
 	 *  find_by_name use for find user in database
@@ -69,9 +69,9 @@ public interface UserService extends GenericService<User> {
 	 *	@return List<User>
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public List<User> findByName(String name) throws ServiceException;
+	public List<User> findByName(String name) throws HandlerException;
 	
 	/**
 	 *  deleteByUsername use to check delete user by username in database
@@ -81,9 +81,9 @@ public interface UserService extends GenericService<User> {
 	 *	@return Boolean
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public Boolean deleteByUsername(String username) throws ServiceException;
+	public Boolean deleteByUsername(String username) throws HandlerException;
 	
 	/**
 	 *  findByUsername use to check find user by username in database
@@ -93,7 +93,7 @@ public interface UserService extends GenericService<User> {
 	 *	@return User
 	 *	
 	 *	
-	 *  @exception  ServiceException
+	 *  @exception  HandlerException
 	 */
-	public User findByUsername(String username) throws ServiceException;
+	public User findByUsername(String username) throws HandlerException;
 }
