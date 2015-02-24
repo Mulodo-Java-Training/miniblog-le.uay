@@ -76,22 +76,7 @@ public class TokenServiceImpl extends GenericServiceImpl<Token> implements Token
     @Override
     public Token findByAccessKey(String access_key) throws HandlerException
     {
-        try {
-            if (access_key != null) {
-                Token token = this.tokenDAO.findByAccessKey(access_key);
-                if (token != null) {
-                    return token;
-                } else {
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        } catch (HandlerException ex) {
-            throw new HandlerException(ex.getMessage());
-        } catch (Exception ex) {
-            throw new HandlerException(ex.getMessage());
-        }
+        return this.tokenDAO.findByAccessKey(access_key);
     }
 
     /**

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mulodo.miniblog.unitest.CommentControllerUnitTest" time="2.216" tests="5" errors="0" skipped="0" failures="0">
+<testsuite name="com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest" time="0.643" tests="1" errors="1" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home/jre/lib"/>
@@ -61,9 +61,12 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="getAllCommentForPost" classname="com.mulodo.miniblog.unitest.CommentControllerUnitTest" time="1.043"/>
-  <testcase name="getAllCommentForUser" classname="com.mulodo.miniblog.unitest.CommentControllerUnitTest" time="0.185"/>
-  <testcase name="addComment" classname="com.mulodo.miniblog.unitest.CommentControllerUnitTest" time="0.267"/>
-  <testcase name="updateComment" classname="com.mulodo.miniblog.unitest.CommentControllerUnitTest" time="0.411"/>
-  <testcase name="deleteComment" classname="com.mulodo.miniblog.unitest.CommentControllerUnitTest" time="0.31"/>
+  <testcase name="testAccessDeniedWithNullAccessKey" classname="com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest" time="0.643">
+    <error message="No matching handler method found for servlet request: path &apos;/users/add&apos;, method &apos;POST&apos;, parameters map[[empty]]" type="org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException">org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException: No matching handler method found for servlet request: path '/users/add', method 'POST', parameters map[[empty]]
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter$ServletHandlerMethodResolver.resolveHandlerMethod(AnnotationMethodHandlerAdapter.java:646)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:431)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:424)
+	at com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest.testAccessDeniedWithNullAccessKey(SecurityInterceptorUnitTest.java:68)
+</error>
+  </testcase>
 </testsuite>

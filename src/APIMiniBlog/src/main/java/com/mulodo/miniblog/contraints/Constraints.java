@@ -64,6 +64,7 @@ public final class Constraints
     public static final int POST_ACTIVE = 1;
     public static final int POST_INACTIVE = 0;
     public static final String LIST_POST = "listPost";
+    public static final String LIST_COMMENT = "listComment";
 
     // Comment error
     public static final int CODE_3000 = 3000;

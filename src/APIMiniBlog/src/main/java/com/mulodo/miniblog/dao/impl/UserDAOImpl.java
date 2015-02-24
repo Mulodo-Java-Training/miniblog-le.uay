@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.ObjectNotFoundException;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -249,18 +248,15 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
 
         try {
             session = this.sessionFactory.openSession();
-            tx = session.beginTransaction();
             Criteria criteria = session.createCriteria(User.class);
             criteria.add(Restrictions.eq("username", username));
             if (!criteria.list().isEmpty()) {
                 user = (User) criteria.list().get(0);
-                tx.commit();
                 logger.info("Find user successfully, user details=" + user);
             }
             return user;
         } catch (HibernateException ex) {
             logger.info("Hibernate exception, Details=" + ex.getMessage());
-            tx.rollback();
             throw new HandlerException(ex.getMessage());
         } finally {
             session.close();

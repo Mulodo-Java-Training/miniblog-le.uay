@@ -24,8 +24,9 @@ import javax.ws.rs.ext.Provider;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.json.JSONObject;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.exeption.HandlerException;
@@ -40,66 +41,78 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
  */
 @Provider
 @ServerInterceptor
+@ContextConfiguration
+(
+  {
+   "file:src/main/webapp/WEB-INF/applicationContext.xml"
+  }
+)
 public class SecurityInterceptor implements javax.ws.rs.container.ContainerRequestFilter
 {
+    
 
     JSONObject jsonObject = null;
 
-    private ApplicationContext appContext = new ClassPathXmlApplicationContext(
-            "classpath:/WEB-INF/applicationContext.xml");
-
-    private TokenService tokenService = (TokenService) appContext.getBean("tokenService");
-
+    private TokenService tokenService;
+    
+    /**
+     * setTokenService use to set datasource from applicationcontent.xml
+     *
+     * @param ts
+     *            : TokenService from datasource
+     * @return void
+     */
+    @Autowired
+    @Qualifier("tokenService")
+    public void setTokenService(TokenService ts)
+    {
+        this.tokenService = ts;
+    }
+    
+    private ResourceMethodInvoker methodInvoker;
+    private Method method;
+    
     @Override
     public void filter(ContainerRequestContext requestContext)
     {
 
-        System.out.println("interceptor");
-
-        ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) requestContext
+        System.out.println("interceptor" ); 
+        
+        methodInvoker = (ResourceMethodInvoker) requestContext
                 .getProperty("org.jboss.resteasy.core.ResourceMethodInvoker");
-        Method method = methodInvoker.getMethod();
+        method = methodInvoker.getMethod();
 
         String access_key = getTokenHeader(requestContext);
 
         String matcherURL = requestContext.getUriInfo().getPath();
-        if (access_key != null) {
-            if (ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(access_key)
-                    && matcherURL.equals("/users/login")) {
-                Token token;
-                try {
-                    token = isValidToken(access_key);
-                    Calendar cal = Calendar.getInstance();
-                    if (token != null && cal.getTime().compareTo(token.getExpired_at()) <= 0) {
-                        Calendar cal_expired_at = Calendar.getInstance();
-                        cal_expired_at.add(Calendar.HOUR_OF_DAY, 1);
-                        token.setExpired_at(cal_expired_at.getTime());
+        Token token = null;
+        try {
+            if (access_key != null) {
+                token = isValidToken(access_key);
+            }
+            if (token != null && matcherURL.equals("/users/login")) {
 
-                        this.tokenService.update(token);
-                        jsonObject = new JSONObject();
-                        jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,
-                                Constraints.CODE_1003), null);
-                        requestContext.abortWith(Response.status(200).entity(jsonObject.toString())
-                                .header(Constraints.ACCESS_KEY, access_key).build());
-                        return;
-                    }
-                } catch (HandlerException e) {
+                Calendar cal = Calendar.getInstance();
+                if (token != null && cal.getTime().compareTo(token.getExpired_at()) <= 0) {
+                    Calendar cal_expired_at = Calendar.getInstance();
+                    cal_expired_at.add(Calendar.HOUR_OF_DAY, 1);
+                    token.setExpired_at(cal_expired_at.getTime());
+
+                    this.tokenService.update(token);
                     jsonObject = new JSONObject();
                     jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,
-                            Constraints.CODE_9001), null);
-                    e.printStackTrace();
-                    requestContext.abortWith(Response.status(Constraints.CODE_1000)
-                            .entity(jsonObject.toString()).build());
-                    return;
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,
-                            Constraints.CODE_9001), null);
-                    requestContext.abortWith(Response.status(500).entity(jsonObject.toString())
-                            .build());
+                            Constraints.CODE_1003), null);
+                    requestContext.abortWith(Response.status(200).entity(jsonObject.toString())
+                            .header(Constraints.ACCESS_KEY, access_key).build());
                     return;
                 }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,
+                    Constraints.CODE_9001), null);
+            requestContext.abortWith(Response.status(500).entity(jsonObject.toString()).build());
+            return;
         }
 
         // Access allowed for all
@@ -119,49 +132,40 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
                 // method.getAnnotation(RolesAllowed.class);
                 // Set<String> rolesSet = new
                 // HashSet<String>(Arrays.asList(rolesAnnotation.value()));
-
-                if (access_key != null && ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(access_key)) {
-                    Token tokenTemp;
-                    try {
+                Token tokenTemp = null;
+                try {
+                    if (access_key != null && ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(access_key)) {                           
                         tokenTemp = isValidToken(access_key);
-                        Calendar cal = Calendar.getInstance();
-                        if (tokenTemp == null || !tokenTemp.getAccess_key().equals(access_key)
-                                || cal.getTime().compareTo(tokenTemp.getExpired_at()) > 0) {
-                            jsonObject = new JSONObject();
-                            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,
-                                    Constraints.CODE_1002), null);
-                            requestContext.abortWith(Response.status(401)
-                                    .entity(jsonObject.toString()).build());
-                            return;
-                        } else {
-
-                            Calendar cal_expired_at = Calendar.getInstance();
-                            cal_expired_at.add(Calendar.HOUR_OF_DAY, 1);
-                            tokenTemp.setExpired_at(cal_expired_at.getTime());
-                            this.tokenService.update(tokenTemp);
-                        }
-                    } catch (HandlerException e) {
-                        e.printStackTrace();
+                    } else {
                         jsonObject = new JSONObject();
                         jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,
-                                Constraints.CODE_9001), null);
-                        requestContext.abortWith(Response.status(500).entity(jsonObject.toString())
-                                .build());
-                        return;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        jsonObject = new JSONObject();
-                        jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,
-                                Constraints.CODE_9001), null);
-                        requestContext.abortWith(Response.status(500).entity(jsonObject.toString())
+                                Constraints.CODE_1002), null);
+                        requestContext.abortWith(Response.status(401).entity(jsonObject.toString())
                                 .build());
                         return;
                     }
-                } else {
+                    Calendar cal = Calendar.getInstance();
+                    if (tokenTemp == null || !tokenTemp.getAccess_key().equals(access_key)
+                            || cal.getTime().compareTo(tokenTemp.getExpired_at()) > 0) {
+                        jsonObject = new JSONObject();
+                        jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,
+                                Constraints.CODE_1002), null);
+                        requestContext.abortWith(Response.status(401)
+                                .entity(jsonObject.toString()).build());
+                        return;
+                    } else {
+
+                        Calendar cal_expired_at = Calendar.getInstance();
+                        cal_expired_at.add(Calendar.HOUR_OF_DAY, 1);
+                        tokenTemp.setExpired_at(cal_expired_at.getTime());
+                        this.tokenService.update(tokenTemp);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                     jsonObject = new JSONObject();
                     jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,
-                            Constraints.CODE_1002), null);
-                    requestContext.abortWith(Response.status(401).entity(jsonObject.toString())
+                            Constraints.CODE_9001), null);
+                    requestContext.abortWith(Response.status(500).entity(jsonObject.toString())
                             .build());
                     return;
                 }
@@ -172,17 +176,15 @@ public class SecurityInterceptor implements javax.ws.rs.container.ContainerReque
 
     private Token isValidToken(String access_key) throws HandlerException
     {
-        Token token = tokenService.findByAccessKey(access_key);
-        if (token != null && ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(token.getAccess_key())) {
-            return token;
-        } else {
-            return null;
-        }
+        return tokenService.findByAccessKey(access_key);
     }
 
     private String getTokenHeader(ContainerRequestContext requestContext)
     {
         // Get request headers
+        if(requestContext.getHeaders().isEmpty()){
+            return null;
+        }
         Boolean isValidToken = requestContext.getHeaders().containsKey(Constraints.ACCESS_KEY);
         if (isValidToken) {
             List<String> headers = requestContext.getHeaders().get(Constraints.ACCESS_KEY);

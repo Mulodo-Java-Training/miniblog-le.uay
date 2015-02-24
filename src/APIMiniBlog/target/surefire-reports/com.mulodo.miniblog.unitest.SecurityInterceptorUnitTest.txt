@@ -1,0 +1,11 @@
+-------------------------------------------------------------------------------
+Test set: com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.643 sec <<< FAILURE! - in com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest
+testAccessDeniedWithNullAccessKey(com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest)  Time elapsed: 0.643 sec  <<< ERROR!
+org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException: No matching handler method found for servlet request: path '/users/add', method 'POST', parameters map[[empty]]
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter$ServletHandlerMethodResolver.resolveHandlerMethod(AnnotationMethodHandlerAdapter.java:646)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:431)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:424)
+	at com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest.testAccessDeniedWithNullAccessKey(SecurityInterceptorUnitTest.java:68)
+

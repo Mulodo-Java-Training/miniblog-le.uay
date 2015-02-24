@@ -10,8 +10,6 @@
  */
 package com.mulodo.miniblog.dao;
 
-import java.util.List;
-
 import com.mulodo.miniblog.exeption.HandlerException;
 
 /**

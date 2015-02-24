@@ -10,6 +10,7 @@
  */
 package com.mulodo.miniblog.rest.controller;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -38,6 +39,7 @@ import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.model.User;
 import com.mulodo.miniblog.object.Data;
+import com.mulodo.miniblog.object.Message;
 import com.mulodo.miniblog.object.Meta;
 import com.mulodo.miniblog.service.CommentService;
 import com.mulodo.miniblog.service.PostService;
@@ -242,7 +244,7 @@ public class CommentController
                 int commentId = Integer.parseInt(id);
                 Comment comment = this.commentService.findOne(commentId);
                 if (comment != null && comment.getUser().getId() == token.getUser().getId()) {
-                    this.postService.delete(commentId);
+                    this.commentService.delete(commentId);
                     jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_212, 0), null);
                 } else if (comment != null && comment.getUser().getId() != token.getUser().getId()) {
                     jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,
@@ -254,7 +256,7 @@ public class CommentController
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,
+            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,
                     Constraints.CODE_9001), null);
         }
 
@@ -285,6 +287,11 @@ public class CommentController
 
             Post post = this.postService.findOne(Integer.parseInt(post_id));
             List<Comment> listComment = null;
+            if(post == null){
+                meta = new Meta(Constraints.CODE_3000, Constraints.CODE_3007);
+                jsonObject = BuildJSON.buildReturn(meta, data); 
+                return Response.status(200).entity(jsonObject.toString()).build();
+            }
             if (post.getUser().getId() == token.getUser().getId()) {
                 listComment = this.commentService.getAllCommentForPost(Integer.parseInt(post_id),
                         true);
@@ -327,9 +334,9 @@ public class CommentController
         try {
             Token token = this.tokenService.findByAccessKey(access_key);
 
-            int userIdDao = Integer.parseInt(user_id);
+            int userIdDAO = Integer.parseInt(user_id);
             List<Comment> listComment = null;
-            if (token.getUser().getId() == userIdDao) {
+            if (token.getUser().getId() == userIdDAO) {
                 listComment = this.commentService.getAllCommentForUser(token.getUser().getId(),
                         true);
             } else {

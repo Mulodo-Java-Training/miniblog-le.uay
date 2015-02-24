@@ -10,10 +10,7 @@
  */
 package com.mulodo.miniblog.dao.impl;
 
-import java.util.List;
-
 import org.hibernate.HibernateException;
-import org.hibernate.ObjectNotFoundException;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
@@ -153,17 +150,12 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T>
             this.genericType = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(),
                     GenericDAOImpl.class);
             session = this.sessionFactory.openSession();
-            tx = session.beginTransaction();
             T p = (T) session.get(this.genericType, id);
             if (p != null) {
                 logger.info("Entity loaded successfully, Entity details=" + p);
             }
-            tx.commit();
             return p;
         } catch (HibernateException ex) {
-            if (tx != null) {
-                tx.rollback();
-            }
             logger.info("Hibernate exception, Details=" + ex.getMessage());
             ex.printStackTrace();
             throw new HandlerException(ex.getMessage());

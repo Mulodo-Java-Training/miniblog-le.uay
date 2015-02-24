@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.PostDAO;
 import com.mulodo.miniblog.exeption.HandlerException;
-import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.object.Data;
 import com.mulodo.miniblog.service.PostService;

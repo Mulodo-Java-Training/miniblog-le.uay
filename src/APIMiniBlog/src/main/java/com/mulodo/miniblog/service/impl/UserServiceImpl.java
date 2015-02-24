@@ -10,7 +10,6 @@
  */
 package com.mulodo.miniblog.service.impl;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,14 +97,10 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
     @Transactional
     public User isValidLogin(String username, String password) throws HandlerException
     {
-        try {
-            username = username.replaceAll(Constraints.REGEX_END_WHITESPACE, "");
-            password = password.replaceAll(Constraints.REGEX_END_WHITESPACE, "");
-            password = EncrypUtils.encrypData(password);
-            return this.userDAO.isValidLogin(username, password);
-        } catch (NoSuchAlgorithmException ex) {
-            throw new HandlerException(ex.getMessage());
-        }
+        username = username.replaceAll(Constraints.REGEX_END_WHITESPACE, "");
+        password = password.replaceAll(Constraints.REGEX_END_WHITESPACE, "");
+        password = EncrypUtils.encrypData(password);
+        return this.userDAO.isValidLogin(username, password);
     }
 
     /**

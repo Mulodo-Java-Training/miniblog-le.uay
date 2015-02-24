@@ -83,4 +83,18 @@ public class CommentServiceImpl extends GenericServiceImpl<Comment> implements C
         return this.commentDAO.getAllCommentForUser(user_id, isOwnerUser);
 
     }
+
+    /**
+     * findByTitle use for find comment by content in the database for unit test
+     *
+     * @param content
+     *            : content of comment
+     * @return Comment
+     * @exception HandlerException
+     */
+    @Override
+    public Comment findByContent(String content) throws HandlerException
+    {
+        return this.commentDAO.findByContent(content);
+    }
 }

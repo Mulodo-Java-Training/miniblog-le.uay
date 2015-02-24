@@ -83,7 +83,6 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO
     {
         try {
             session = this.sessionFactory.openSession();
-            tx = session.beginTransaction();
             Criteria criteria = session.createCriteria(Token.class);
 
             criteria.add(Restrictions.eq("access_key", access_key));
@@ -94,9 +93,6 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO
             }
             return token;
         } catch (HibernateException ex) {
-            if (tx != null) {
-                tx.rollback();
-            }
             throw new HandlerException(ex.getMessage());
         } finally {
             session.close();

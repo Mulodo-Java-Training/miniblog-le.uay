@@ -27,8 +27,11 @@ import org.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.model.User;
@@ -41,18 +44,24 @@ import com.mulodo.miniblog.utils.EncrypUtils;
  * 
  * @author UayLU
  */
+@ContextConfiguration
+(
+  {
+   "file:src/main/webapp/WEB-INF/applicationContext.xml"
+  }
+)
 public class UserControllerUnitTest
 {
 
     // declare ApplicationContext for getting bean from applicationContext.xml
     private final static ApplicationContext appContext = new ClassPathXmlApplicationContext(
             "classpath:/WEB-INF/applicationContext.xml");
-    // set seesion bean in applicationContext.xml to userservice
+    //     set seesion bean in applicationContext.xml to userservice
     private final static UserService userService = (UserService) appContext.getBean("userService");
     private static Dispatcher dispatcher = MockDispatcherFactory.createDispatcher();
     private static POJOResourceFactory noDefaults = new POJOResourceFactory(UserController.class);
     MockHttpResponse response = null;
-
+    
     /**
      * add_new user for unit testing addNew in usercontroller
      *

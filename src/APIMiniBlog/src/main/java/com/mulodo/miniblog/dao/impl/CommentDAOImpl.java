@@ -78,9 +78,10 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
             }
 
             criteria.addOrder(Order.desc("created_at"));
-
+            
+            List<Comment> listComments = new ArrayList<Comment>();
             if (!criteria.list().isEmpty()) {
-                List<Comment> listComments = new ArrayList<Comment>();
+                
                 List<Object[]> result = criteria.list();
                 Comment comment = null;
                 for (Iterator<Object[]> it = result.iterator(); it.hasNext();) {
@@ -98,10 +99,8 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
                 for (Comment cm : listComments) {
                     logger.info("Post in get all post :" + cm.getId());
                 }
-                return listComments;
-            } else {
-                return null;
             }
+            return listComments;
         } catch (HibernateException ex) {
             ex.printStackTrace();
             throw new HandlerException(ex.getMessage());
@@ -125,7 +124,6 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
     public List<Comment> getAllCommentForUser(int user_id, Boolean isOwnerUser)
             throws HandlerException
     {
-        System.out.println("user id " + user_id);
 
         try {
             session = this.sessionFactory.openSession();
@@ -156,8 +154,9 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
 
             criteria.addOrder(Order.desc("created_at"));
 
+            List<Comment> listComments = new ArrayList<Comment>();
             if (!criteria.list().isEmpty()) {
-                List<Comment> listComments = new ArrayList<Comment>();
+                
                 List<Object[]> result = criteria.list();
                 System.out.println("size " + criteria.list().size());
                 Comment comment = null;
@@ -173,12 +172,43 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
                     listComments.add(comment);
                     logger.info("Comment in get all commente for user :" + comment.getId());
                 }
-                return listComments;
-            } else {
-                return null;
             }
+            return listComments;
         } catch (HibernateException ex) {
             ex.printStackTrace();
+            throw new HandlerException(ex.getMessage());
+        } finally {
+            session.close();
+        }
+    }
+    
+    /**
+     * findByContent use for find comment by content in the database for unit test
+     *
+     * @param content
+     *            : content of comment
+     * @return Comment
+     * @exception HandlerException
+     */
+    @Override
+    public Comment findByContent(String content) throws HandlerException 
+    {
+        Comment comment = null;
+
+        try {
+            session = this.sessionFactory.openSession();
+            tx = session.beginTransaction();
+            Criteria criteria = session.createCriteria(Comment.class);
+            criteria.add(Restrictions.eq("content", content));
+            if (!criteria.list().isEmpty()) {
+                comment = (Comment) criteria.list().get(0);
+                tx.commit();
+                logger.info("Find user successfully, user details=" + comment);
+            }
+            return comment;
+        } catch (HibernateException ex) {
+            logger.info("Hibernate exception, Details=" + ex.getMessage());
+            tx.rollback();
             throw new HandlerException(ex.getMessage());
         } finally {
             session.close();

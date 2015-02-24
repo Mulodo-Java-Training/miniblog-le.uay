@@ -33,6 +33,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.test.context.ContextConfiguration;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.model.Token;

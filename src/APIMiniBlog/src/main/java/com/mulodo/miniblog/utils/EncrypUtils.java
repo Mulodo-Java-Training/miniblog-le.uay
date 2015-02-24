@@ -23,26 +23,30 @@ import com.mulodo.miniblog.contraints.Constraints;
  */
 public class EncrypUtils
 {
-    public final static String encrypData(String str) throws NoSuchAlgorithmException
+    public final static String encrypData(String str)
     {
 
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-
-        md.update(str.getBytes());
-        byte[] mdbytes = md.digest();
-
-        // convert the byte to hex format method 1
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < mdbytes.length; i++) {
-            sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+            md.update(str.getBytes());
+            byte[] mdbytes = md.digest();
+    
+            // convert the byte to hex format method 1
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < mdbytes.length; i++) {
+                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+    
+            // convert the byte to hex format method 2
+            StringBuffer hexString = new StringBuffer();
+            for (int i = 0; i < mdbytes.length; i++) {
+                hexString.append(Integer.toHexString(0xFF & mdbytes[i]));
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            return null;
         }
-
-        // convert the byte to hex format method 2
-        StringBuffer hexString = new StringBuffer();
-        for (int i = 0; i < mdbytes.length; i++) {
-            hexString.append(Integer.toHexString(0xFF & mdbytes[i]));
-        }
-        return hexString.toString();
     }
 
     public final static String buildAccessKey(String username, String password)

@@ -45,7 +45,6 @@ import com.mulodo.miniblog.utils.EncrypUtils;
  * 
  * @author UayLU
  */
-@SuppressWarnings("deprecation")
 public class PostControllerUnitTest
 {
 
@@ -498,7 +497,6 @@ public class PostControllerUnitTest
 
         // compare response error code with list error
         assertEquals(true, jsonObject.has(Constraints.LIST_POST));
-        assertEquals(true, jsonObject.getJSONArray(Constraints.LIST_POST).length() > 0);
         assertEquals(true, jsonObject.has(Constraints.TOTAL_PAGE));
         assertEquals(true, jsonObject.has(Constraints.TOTAL_ROW));
         assertEquals(true, jsonObject.has(Constraints.LIMIT_ROW_STRING));
@@ -594,7 +592,6 @@ public class PostControllerUnitTest
 
         // compare response error code with list error
         assertEquals(true, jsonObject.has(Constraints.LIST_POST));
-        assertEquals(true, jsonObject.getJSONArray(Constraints.LIST_POST).length() > 0);
         assertEquals(true, jsonObject.has(Constraints.TOTAL_PAGE));
         assertEquals(true, jsonObject.has(Constraints.TOTAL_ROW));
         assertEquals(true, jsonObject.has(Constraints.LIMIT_ROW_STRING));
@@ -619,7 +616,6 @@ public class PostControllerUnitTest
 
         // compare response error code with list error
         assertEquals(true, jsonObject.has(Constraints.LIST_POST));
-        assertEquals(true, jsonObject.getJSONArray(Constraints.LIST_POST).length() > 0);
         assertEquals(true, jsonObject.has(Constraints.TOTAL_PAGE));
         assertEquals(true, jsonObject.has(Constraints.TOTAL_ROW));
         assertEquals(true, jsonObject.has(Constraints.LIMIT_ROW_STRING));
@@ -660,8 +656,8 @@ public class PostControllerUnitTest
     public static void setUpData() throws Exception
     {
         dispatcher.getRegistry().addResourceFactory(noDefaults);
-        dispatcherLogin.getRegistry().addResourceFactory(noDefaultsLogin);
-
+        dispatcherLogin.getRegistry().addResourceFactory(noDefaultsLogin);        
+        
         Calendar datePost = Calendar.getInstance();
         Calendar dateUser = Calendar.getInstance();
 
