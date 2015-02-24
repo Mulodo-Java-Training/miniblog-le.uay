@@ -11,32 +11,28 @@
 package com.mulodo.miniblog.exeption;
 
 /**
- * The dao exception 
+ * The dao exception
  * 
  * @author UayLU
- * 
  */
 @SuppressWarnings("serial")
-public class HandlerException extends Exception {
-	
-	/**
-	 *  constructor of DAOException
-	 *	
-	 * 
-	 *	
-	 */
-	public HandlerException() {
-		super();
-	}
+public class HandlerException extends Exception
+{
 
-	/**
-	 *  constructor of DAOException
-	 *	
-	 *  @param message : message for exception
-	 *
-	 *	
-	 */
-	public HandlerException(String message) {
-		super(message);
-	}
+    /**
+     * constructor of DAOException
+     */
+    public HandlerException() {
+        super();
+    }
+
+    /**
+     * constructor of DAOException
+     *
+     * @param message
+     *            : message for exception
+     */
+    public HandlerException(String message) {
+        super(message);
+    }
 }

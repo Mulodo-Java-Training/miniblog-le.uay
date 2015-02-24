@@ -14,19 +14,23 @@ package com.mulodo.miniblog.object;
  * The message object for build response data
  * 
  * @author UayLU
- * 
  */
-public class Message {
-	private int code;
-	
-	public Message(int code) {
-		super();
-		this.code = code;
-	}
-	public int getCode() {
-		return code;
-	}
-	public void setCode(int code) {
-		this.code = code;
-	}
+public class Message
+{
+    private int code;
+
+    public Message(int code) {
+        super();
+        this.code = code;
+    }
+
+    public int getCode()
+    {
+        return code;
+    }
+
+    public void setCode(int code)
+    {
+        this.code = code;
+    }
 }

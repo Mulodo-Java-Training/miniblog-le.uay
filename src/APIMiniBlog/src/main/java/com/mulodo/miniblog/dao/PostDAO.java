@@ -19,57 +19,55 @@ import com.mulodo.miniblog.model.Post;
  * The interface of post dao
  * 
  * @author UayLU
- * 
  */
-public interface PostDAO extends GenericDAO<Post>{
-	
-	/**
-	 *  get_all_post use to get all post from database
-	 *	
-	 *	@param	author_id : user id that owner post
-	 *  @param  isForUser : result of check current user owner or not
-	 *  @param  pageNume: the number of page you want to get
-	 *
-	 *	@return List<Post>
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	public List<Post> getAllPost(int pageNum, int author_id, String description, Boolean isForUser, Boolean isOwnerUser) throws HandlerException;
-	
-	/**
-	 *  get_all_post_size use to get size of post with owner user from database
-	 *	
-	 *	@param	author_id : user id that owner post
-	 *  @param  isForUser : result of check current user owner or not
-	 *
-	 *	@return int
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	public int getAllPostSize(int author_id, String description, Boolean isForUser, Boolean isOwnerUser) throws HandlerException;
+public interface PostDAO extends GenericDAO<Post>
+{
 
-	
-	/**
-	 *  deleteByTitle use for delete post by title in the database
-	 *	
-	 *	@param	title : title of post
-	 *
-	 *	@return void
-	 *	
-	 *  @exception  HandlerException
-	 */
-	public void deleteByTitle(String title) throws HandlerException;
+    /**
+     * get_all_post use to get all post from database
+     *
+     * @param author_id
+     *            : user id that owner post
+     * @param isForUser
+     *            : result of check current user owner or not
+     * @param pageNume
+     *            : the number of page you want to get
+     * @return List<Post>
+     * @exception HandlerException
+     */
+    public List<Post> getAllPost(int pageNum, int author_id, String description, Boolean isForUser,
+            Boolean isOwnerUser) throws HandlerException;
 
-	/**
-	 *  findByTitle use for find post by title in the database for unit test
-	 *	
-	 *	@param	title : title of post
-	 *
-	 *	@return Post
-	 *	
-	 *  @exception  HandlerException
-	 */
-	public Post findByTitle(String title) throws HandlerException;
+    /**
+     * get_all_post_size use to get size of post with owner user from database
+     *
+     * @param author_id
+     *            : user id that owner post
+     * @param isForUser
+     *            : result of check current user owner or not
+     * @return int
+     * @exception HandlerException
+     */
+    public int getAllPostSize(int author_id, String description, Boolean isForUser,
+            Boolean isOwnerUser) throws HandlerException;
+
+    /**
+     * deleteByTitle use for delete post by title in the database
+     *
+     * @param title
+     *            : title of post
+     * @return void
+     * @exception HandlerException
+     */
+    public void deleteByTitle(String title) throws HandlerException;
+
+    /**
+     * findByTitle use for find post by title in the database for unit test
+     *
+     * @param title
+     *            : title of post
+     * @return Post
+     * @exception HandlerException
+     */
+    public Post findByTitle(String title) throws HandlerException;
 }

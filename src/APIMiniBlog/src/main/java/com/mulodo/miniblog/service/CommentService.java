@@ -19,35 +19,35 @@ import com.mulodo.miniblog.model.Comment;
  * The interface of comment service
  * 
  * @author UayLU
- * 
  */
-public interface CommentService extends GenericService<Comment>{
-	
-	/**
-	 *  get_all_comment_for_post use to call get all comment for post function in 
-	 *  commentdao for post.
-	 *	
-	 *	@param	post_id : id of post for search
-	 *  @param  isOwnerPost : result of check current user owner or not
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  ServiceException
-	 */
-	public List<Comment> getAllCommentForPost(int post_id, Boolean isOwnerPost) throws HandlerException;
-	
-	/**
-	 *  get_all_comment_for_user use to call get all comment for user function in 
-	 *  commentdao for post.
-	 *	
-	 *	@param	post_id : id of post for search
-	 *  @param  isOwnerPost : result of check current user owner or not
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  ServiceException
-	 */
-	public List<Comment> getAllCommentForUser(int user_id, Boolean isOwnerUser) throws HandlerException;
+public interface CommentService extends GenericService<Comment>
+{
+
+    /**
+     * get_all_comment_for_post use to call get all comment for post function in
+     * commentdao for post.
+     *
+     * @param post_id
+     *            : id of post for search
+     * @param isOwnerPost
+     *            : result of check current user owner or not
+     * @return Boolean
+     * @exception ServiceException
+     */
+    public List<Comment> getAllCommentForPost(int post_id, Boolean isOwnerPost)
+            throws HandlerException;
+
+    /**
+     * get_all_comment_for_user use to call get all comment for user function in
+     * commentdao for post.
+     *
+     * @param post_id
+     *            : id of post for search
+     * @param isOwnerPost
+     *            : result of check current user owner or not
+     * @return Boolean
+     * @exception ServiceException
+     */
+    public List<Comment> getAllCommentForUser(int user_id, Boolean isOwnerUser)
+            throws HandlerException;
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="2.281" tests="6" errors="0" skipped="0" failures="0">
+<testsuite name="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="1.883" tests="6" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home/jre/lib"/>
@@ -24,7 +24,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="Mac OS X"/>
-    <property name="classworlds.conf" value="/Users/leuuay/mulodo/Spring/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf3531021556206418160.tmp"/>
+    <property name="classworlds.conf" value="/Users/leuuay/mulodo/Spring/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf1729712799741573995.tmp"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
     <property name="java.library.path" value="/Users/leuuay/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
@@ -61,10 +61,10 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="activeDeactive" classname="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="0.315"/>
-  <testcase name="delete" classname="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="0.741"/>
-  <testcase name="add_new" classname="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="0.257"/>
-  <testcase name="update" classname="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="0.351"/>
-  <testcase name="get_all_post" classname="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="0.213"/>
-  <testcase name="get_all_post_for_user" classname="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="0.404"/>
+  <testcase name="activeDeactive" classname="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="0.256"/>
+  <testcase name="delete" classname="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="0.3"/>
+  <testcase name="add_new" classname="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="0.222"/>
+  <testcase name="update" classname="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="0.244"/>
+  <testcase name="get_all_post" classname="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="0.173"/>
+  <testcase name="get_all_post_for_user" classname="com.mulodo.miniblog.unitest.PostControllerUnitTest" time="0.688"/>
 </testsuite>

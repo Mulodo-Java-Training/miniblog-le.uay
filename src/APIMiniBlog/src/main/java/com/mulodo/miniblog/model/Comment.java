@@ -24,100 +24,110 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * The comment entity work with hibernate 
+ * The comment entity work with hibernate
  * 
  * @author UayLU
- * 
  */
 @Entity
 @Table(name = "Comment")
-public class Comment {
+public class Comment
+{
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(nullable = false)
-	private int id;
-	
-	@Column(nullable = false, name = "content", length= 500)
-	private String content;
-	
-	@Column(nullable = false, name = "created_at", columnDefinition="DATETIME")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created_at;
-	
-	@Column(nullable = false, name = "modified_at", columnDefinition="DATETIME")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date modified_at;
-	
-	@ManyToOne
-    @JoinColumn(nullable = false,name = "user_id", referencedColumnName = "id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
+    private int id;
+
+    @Column(nullable = false, name = "content", length = 500)
+    private String content;
+
+    @Column(nullable = false, name = "created_at", columnDefinition = "DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created_at;
+
+    @Column(nullable = false, name = "modified_at", columnDefinition = "DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modified_at;
+
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "user_id", referencedColumnName = "id")
     private User user;
-	
-	@ManyToOne
-    @JoinColumn(nullable = false,name = "post_id", referencedColumnName = "id")
+
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "post_id", referencedColumnName = "id")
     private Post post;
-	
-	public Comment() {
-		super();
-	}
 
-	public Comment(String content, Date created_at, Date modified_at,
-			User user, Post post) {
-		super();
-		this.content = content;
-		this.created_at = created_at;
-		this.modified_at = modified_at;
-		this.user = user;
-		this.post = post;
-	}
+    public Comment() {
+        super();
+    }
 
-	public User getUser() {
-		return user;
-	}
+    public Comment(String content, Date created_at, Date modified_at, User user, Post post) {
+        super();
+        this.content = content;
+        this.created_at = created_at;
+        this.modified_at = modified_at;
+        this.user = user;
+        this.post = post;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public User getUser()
+    {
+        return user;
+    }
 
-	public Post getPost() {
-		return post;
-	}
+    public void setUser(User user)
+    {
+        this.user = user;
+    }
 
-	public void setPost(Post post) {
-		this.post = post;
-	}
+    public Post getPost()
+    {
+        return post;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public void setPost(Post post)
+    {
+        this.post = post;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public int getId()
+    {
+        return id;
+    }
 
-	public String getContent() {
-		return content;
-	}
+    public void setId(int id)
+    {
+        this.id = id;
+    }
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+    public String getContent()
+    {
+        return content;
+    }
 
-	public Date getCreated_at() {
-		return created_at;
-	}
+    public void setContent(String content)
+    {
+        this.content = content;
+    }
 
-	public void setCreated_at(Date created_at) {
-		this.created_at = created_at;
-	}
+    public Date getCreated_at()
+    {
+        return created_at;
+    }
 
-	public Date getModified_at() {
-		return modified_at;
-	}
+    public void setCreated_at(Date created_at)
+    {
+        this.created_at = created_at;
+    }
 
-	public void setModified_at(Date modified_at) {
-		this.modified_at = modified_at;
-	}
-	
-	
+    public Date getModified_at()
+    {
+        return modified_at;
+    }
+
+    public void setModified_at(Date modified_at)
+    {
+        this.modified_at = modified_at;
+    }
+
 }

@@ -43,417 +43,442 @@ import com.mulodo.miniblog.utils.ApplicationContextUtils;
 import com.mulodo.miniblog.utils.BuildJSON;
 import com.mulodo.miniblog.validator.PostValidate;
 
-
 /**
  * The post controller
  * 
  * @author UayLU
- * 
  */
 @Controller
 @Path(&quot;/posts&quot;)
 @Produces(MediaType.APPLICATION_JSON)
-<span class="fc" id="L56">public class PostController </span>
+<span class="fc" id="L54">public class PostController</span>
 {
-	
-	//declare postService for get bean from applicationcontext.xml
-	private PostService postService;
-	
-	//declare tokenService for get bean from applicationcontext.xml
-	private TokenService tokenService;
-	
-	/**
-	 *  setPostService use to set datasource from applicationcontent.xml
-	 *	
-	 *	@param	ps : PostService from datasource
-	 *
-	 *	@return void
-	 */
-	@Autowired
-	@Qualifier(&quot;postService&quot;)
-	public void setPostService(PostService ps){
-<span class="fc" id="L75">		this.postService = ps;</span>
-<span class="fc" id="L76">	}</span>
-	
-	/**
-	 *  setTokenService use to set datasource from applicationcontent.xml
-	 *	
-	 *	@param	ts : TokenService from datasource
-	 *
-	 *	@return void
-	 */
-	@Autowired
-	@Qualifier(&quot;tokenService&quot;)
-	public void setTokenService(TokenService ts){
-<span class="fc" id="L88">		this.tokenService = ts;</span>
-<span class="fc" id="L89">	}</span>
-	
-	
-	/**
-	 *  add_post is api that user use for create new post in miniblog
-	 *	
-	 *  @param  title : title of post
-	 *  @param  content : content of post
-	 *    
-	 *	@return Response
-	 *	
-	 *	
-	 */
-	@RolesAllowed(&quot;ADMIN&quot;)
+
+    // declare postService for get bean from applicationcontext.xml
+    private PostService postService;
+
+    // declare tokenService for get bean from applicationcontext.xml
+    private TokenService tokenService;
+
+    /**
+     * setPostService use to set datasource from applicationcontent.xml
+     *
+     * @param ps
+     *            : PostService from datasource
+     * @return void
+     */
+    @Autowired
+    @Qualifier(&quot;postService&quot;)
+    public void setPostService(PostService ps)
+    {
+<span class="fc" id="L74">        this.postService = ps;</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * setTokenService use to set datasource from applicationcontent.xml
+     *
+     * @param ts
+     *            : TokenService from datasource
+     * @return void
+     */
+    @Autowired
+    @Qualifier(&quot;tokenService&quot;)
+    public void setTokenService(TokenService ts)
+    {
+<span class="fc" id="L88">        this.tokenService = ts;</span>
+<span class="fc" id="L89">    }</span>
+
+    /**
+     * add_post is api that user use for create new post in miniblog
+     *
+     * @param title
+     *            : title of post
+     * @param content
+     *            : content of post
+     * @return Response
+     */
+    @RolesAllowed(&quot;ADMIN&quot;)
     @POST
     @Path(&quot;add&quot;)
-    public Response addPost( @HeaderParam(Constraints.ACCESS_KEY) String access_key,
-    		@FormParam(&quot;title&quot;) String title, @FormParam(&quot;content&quot;) String content) {
-		
-<span class="pc bpc" id="L108" title="3 of 4 branches missed.">		if(tokenService == null || postService == null){</span>
-<span class="fc" id="L109">			setDataSource();</span>
-		}
-		
-		//declare jsonObject for build return data
-<span class="fc" id="L113">		JSONObject jsonObject = new JSONObject();</span>
-		//validate data from client and add to meta
-<span class="fc" id="L115">		PostValidate postValidate = new PostValidate();</span>
-<span class="fc" id="L116">		Meta meta =  postValidate.validateAddNew(title, content);</span>
-<span class="fc" id="L117">		Data data = null;</span>
-		//if have error, add error to jsonobject and return to client
-<span class="fc bfc" id="L119" title="All 2 branches covered.">		if(meta != null){</span>
-<span class="fc" id="L120">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="fc" id="L121">			return Response.status(200).entity(jsonObject.toString()).build();</span>
-		}
-<span class="pc bpc" id="L123" title="1 of 2 branches missed.">		if(access_key != null){</span>
-			try {
-				//get user login by access_key of token
-<span class="fc" id="L126">				System.out.println(&quot;access &quot;+access_key);</span>
-<span class="fc" id="L127">				Token token = this.tokenService.findByAccessKey(access_key);</span>
-<span class="pc bpc" id="L128" title="1 of 2 branches missed.">				if(token != null){</span>
-					//get user from token
-<span class="fc" id="L130">					User user = token.getUser();</span>
-<span class="fc" id="L131">					Calendar cal = Calendar.getInstance();</span>
-					
-					//add data to post variable
-<span class="fc" id="L134">					Post post = new Post();</span>
-<span class="fc" id="L135">					post.setTitle(title);</span>
-<span class="fc" id="L136">					post.setContent(content);</span>
-<span class="fc" id="L137">					post.setCreated_at(cal.getTime());</span>
-<span class="fc" id="L138">					post.setModified_at(cal.getTime());</span>
-<span class="fc" id="L139">					post.setUser(user);</span>
-<span class="fc" id="L140">					post.setStatus(Constraints.POST_ACTIVE);</span>
-					//add new post to database
-<span class="fc" id="L142">					this.postService.add(post);</span>
-					//set success to response
-<span class="fc" id="L144">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_206, 0), null);</span>
-				}
-<span class="pc" id="L146">			}catch(Exception ex){</span>
-<span class="nc" id="L147">				ex.printStackTrace();</span>
-<span class="nc" id="L148">				jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
-			}
-		}
-<span class="fc" id="L151">		return Response.status(200).entity(jsonObject.toString()).build();</span>
+    public Response addPost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+            @FormParam(&quot;title&quot;) String title, @FormParam(&quot;content&quot;) String content)
+    {
+
+<span class="pc bpc" id="L107" title="3 of 4 branches missed.">        if (tokenService == null || postService == null) {</span>
+<span class="fc" id="L108">            setDataSource();</span>
+        }
+
+        // declare jsonObject for build return data
+<span class="fc" id="L112">        JSONObject jsonObject = new JSONObject();</span>
+        // validate data from client and add to meta
+<span class="fc" id="L114">        PostValidate postValidate = new PostValidate();</span>
+<span class="fc" id="L115">        Meta meta = postValidate.validateAddNew(title, content);</span>
+<span class="fc" id="L116">        Data data = null;</span>
+        // if have error, add error to jsonobject and return to client
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L119">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L120">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+        }
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if (access_key != null) {</span>
+            try {
+                // get user login by access_key of token
+<span class="fc" id="L125">                System.out.println(&quot;access &quot; + access_key);</span>
+<span class="fc" id="L126">                Token token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">                if (token != null) {</span>
+                    // get user from token
+<span class="fc" id="L129">                    User user = token.getUser();</span>
+<span class="fc" id="L130">                    Calendar cal = Calendar.getInstance();</span>
+
+                    // add data to post variable
+<span class="fc" id="L133">                    Post post = new Post();</span>
+<span class="fc" id="L134">                    post.setTitle(title);</span>
+<span class="fc" id="L135">                    post.setContent(content);</span>
+<span class="fc" id="L136">                    post.setCreated_at(cal.getTime());</span>
+<span class="fc" id="L137">                    post.setModified_at(cal.getTime());</span>
+<span class="fc" id="L138">                    post.setUser(user);</span>
+<span class="fc" id="L139">                    post.setStatus(Constraints.POST_ACTIVE);</span>
+                    // add new post to database
+<span class="fc" id="L141">                    this.postService.add(post);</span>
+                    // set success to response
+<span class="fc" id="L143">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_206, 0), null);</span>
+                }
+<span class="nc" id="L145">            } catch (Exception ex) {</span>
+<span class="nc" id="L146">                ex.printStackTrace();</span>
+<span class="nc" id="L147">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                        Constraints.CODE_9001), null);
+<span class="fc" id="L149">            }</span>
+        }
+<span class="fc" id="L151">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
-	
-	/**
-	 *  active_deactive_post is api that user use for active and deactive post in miniblog
-	 *	
-	 *  @param  id : post id
-	 *  @param  status : new status for post
-	 *    
-	 *	@return Response
-	 *	
-	 *	
-	 */
-	@RolesAllowed(&quot;ADMIN&quot;)
+
+    /**
+     * active_deactive_post is api that user use for active and deactive post in
+     * miniblog
+     *
+     * @param id
+     *            : post id
+     * @param status
+     *            : new status for post
+     * @return Response
+     */
+    @RolesAllowed(&quot;ADMIN&quot;)
     @PUT
     @Path(&quot;activeDeactive&quot;)
-	public Response activeDeactivePost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
-			@FormParam(&quot;id&quot;) String id, @FormParam(&quot;status&quot;) String status){
-		
-<span class="pc bpc" id="L170" title="3 of 4 branches missed.">		if(tokenService == null || postService == null){</span>
-<span class="fc" id="L171">			setDataSource();</span>
-		}
-		
-		//declare jsonObject for build return data
-<span class="fc" id="L175">		JSONObject jsonObject = new JSONObject();</span>
-		
-		//validate post data
-<span class="fc" id="L178">		PostValidate postValidate = new PostValidate();</span>
-<span class="fc" id="L179">		Meta meta = postValidate.validateActiveDeactive(id, status);</span>
-<span class="fc" id="L180">		Data data = null;</span>
-		//if have error, return error
-<span class="fc bfc" id="L182" title="All 2 branches covered.">		if(meta != null){</span>
-<span class="fc" id="L183">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="fc" id="L184">			return Response.status(200).entity(jsonObject.toString()).build();</span>
-		}
-		try{
-			//get token for getting user from accessy_key in header
-<span class="fc" id="L188">			Token token = null;</span>
-<span class="pc bpc" id="L189" title="1 of 2 branches missed.">			if(access_key != null){</span>
-<span class="fc" id="L190">				token = this.tokenService.findByAccessKey(access_key);</span>
-			}
-<span class="pc bpc" id="L192" title="1 of 2 branches missed.">			if(token != null){</span>
-				//get post from post id send from client
-<span class="fc" id="L194">				int postId = Integer.parseInt(id);</span>
-<span class="fc" id="L195">				Post post = this.postService.findOne(postId);</span>
-				//if have post and current user have permission on it, call update function
-				// else if have post but not have permission on it, return permission error code
-				// else return invalid post error code
-<span class="fc bfc" id="L199" title="All 4 branches covered.">				if(post != null &amp;&amp; post.getUser().getId() == token.getUser().getId()){</span>
-<span class="fc" id="L200">					int newStatus = Integer.parseInt(status); </span>
-<span class="fc" id="L201">					post.setStatus(newStatus);</span>
-<span class="fc" id="L202">					this.postService.update(post);</span>
-					//return success code
-<span class="fc" id="L204">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_208, 0), null);</span>
-<span class="pc bpc" id="L205" title="1 of 4 branches missed.">				}else if (post != null &amp;&amp; post.getUser().getId() != token.getUser().getId()) {</span>
-					//return permission error code
-<span class="fc" id="L207">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2509), null);</span>
-<span class="fc" id="L208">				}else{</span>
-					//return invalid error code
-<span class="fc" id="L210">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2501), null);</span>
-				}
-			}
-<span class="pc" id="L213">		}catch(Exception ex){</span>
-<span class="nc" id="L214">			ex.printStackTrace();</span>
-<span class="nc" id="L215">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
-		}
-		
-<span class="fc" id="L218">		return Response.status(200).entity(jsonObject.toString()).build();</span>
-	}	
-	
-	/**
-	 *  update_post is api that user use for update post in miniblog
-	 *	
-	 *  @param  id : post id
-	 *  @param  title : title of post
-	 *  @param  content : content of post
-	 *    
-	 *	@return Response
-	 *	
-	 *	
-	 */
-	@RolesAllowed(&quot;ADMIN&quot;)
+    public Response activeDeactivePost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+            @FormParam(&quot;id&quot;) String id, @FormParam(&quot;status&quot;) String status)
+    {
+
+<span class="pc bpc" id="L171" title="1 of 4 branches missed.">        if (tokenService == null || postService == null) {</span>
+<span class="fc" id="L172">            setDataSource();</span>
+        }
+
+        // declare jsonObject for build return data
+<span class="fc" id="L176">        JSONObject jsonObject = new JSONObject();</span>
+
+        // validate post data
+<span class="fc" id="L179">        PostValidate postValidate = new PostValidate();</span>
+<span class="fc" id="L180">        Meta meta = postValidate.validateActiveDeactive(id, status);</span>
+<span class="fc" id="L181">        Data data = null;</span>
+        // if have error, return error
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L184">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L185">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+        }
+        try {
+            // get token for getting user from accessy_key in header
+<span class="fc" id="L189">            Token token = null;</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">            if (access_key != null) {</span>
+<span class="fc" id="L191">                token = this.tokenService.findByAccessKey(access_key);</span>
+            }
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">            if (token != null) {</span>
+                // get post from post id send from client
+<span class="fc" id="L195">                int postId = Integer.parseInt(id);</span>
+<span class="fc" id="L196">                Post post = this.postService.findOne(postId);</span>
+                // if have post and current user have permission on it, call
+                // update function
+                // else if have post but not have permission on it, return
+                // permission error code
+                // else return invalid post error code
+<span class="fc bfc" id="L202" title="All 4 branches covered.">                if (post != null &amp;&amp; post.getUser().getId() == token.getUser().getId()) {</span>
+<span class="fc" id="L203">                    int newStatus = Integer.parseInt(status);</span>
+<span class="fc" id="L204">                    post.setStatus(newStatus);</span>
+<span class="fc" id="L205">                    this.postService.update(post);</span>
+                    // return success code
+<span class="fc" id="L207">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_208, 0), null);</span>
+<span class="pc bpc" id="L208" title="1 of 4 branches missed.">                } else if (post != null &amp;&amp; post.getUser().getId() != token.getUser().getId()) {</span>
+                    // return permission error code
+<span class="fc" id="L210">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                            Constraints.CODE_2509), null);
+                } else {
+                    // return invalid error code
+<span class="fc" id="L214">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                            Constraints.CODE_2501), null);
+                }
+            }
+<span class="nc" id="L218">        } catch (Exception ex) {</span>
+<span class="nc" id="L219">            ex.printStackTrace();</span>
+<span class="nc" id="L220">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                    Constraints.CODE_9001), null);
+<span class="fc" id="L222">        }</span>
+
+<span class="fc" id="L224">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+    }
+
+    /**
+     * update_post is api that user use for update post in miniblog
+     *
+     * @param id
+     *            : post id
+     * @param title
+     *            : title of post
+     * @param content
+     *            : content of post
+     * @return Response
+     */
+    @RolesAllowed(&quot;ADMIN&quot;)
     @PUT
     @Path(&quot;update&quot;)
-	public Response updatePost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
-			@FormParam(&quot;id&quot;) String id, @FormParam(&quot;title&quot;) String title,
-			@FormParam(&quot;content&quot;) String content){
-		
-<span class="pc bpc" id="L239" title="3 of 4 branches missed.">		if(tokenService == null || postService == null){</span>
-<span class="fc" id="L240">			setDataSource();</span>
-		}
-		
-		//declare jsonObject for build return data
-<span class="fc" id="L244">		JSONObject jsonObject = new JSONObject();</span>
-		
-		//validate post data, if have error, return error code in meta object to client
-<span class="fc" id="L247">		PostValidate postValidate = new PostValidate();</span>
-<span class="fc" id="L248">		Meta meta = postValidate.validateUpdate(id, title, content);</span>
-<span class="fc" id="L249">		Data data = null;</span>
-<span class="fc bfc" id="L250" title="All 2 branches covered.">		if(meta != null){</span>
-<span class="fc" id="L251">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="fc" id="L252">			return Response.status(200).entity(jsonObject.toString()).build();</span>
-		}	
-		try{
-<span class="fc" id="L255">			Token token = null;</span>
-<span class="pc bpc" id="L256" title="1 of 2 branches missed.">			if(access_key != null){</span>
-<span class="fc" id="L257">				token = this.tokenService.findByAccessKey(access_key);</span>
-			}
-<span class="pc bpc" id="L259" title="1 of 2 branches missed.">			if(token != null){</span>
-<span class="fc" id="L260">				int postId = Integer.parseInt(id);</span>
-<span class="fc" id="L261">				Post post = this.postService.findOne(postId);</span>
-				//if have post and current user have permission on it, call update function
-				// else if have post but not have permission on it, return permission error code
-				// else return invalid post error code
-<span class="pc bpc" id="L265" title="2 of 4 branches missed.">				if(post != null &amp;&amp; post.getUser().getId() == token.getUser().getId()){</span>
-<span class="fc" id="L266">					post.setContent(content);</span>
-<span class="fc" id="L267">					post.setTitle(title);</span>
-<span class="fc" id="L268">					Calendar cal = Calendar.getInstance();</span>
-<span class="fc" id="L269">					post.setModified_at(cal.getTime());</span>
-<span class="fc" id="L270">					this.postService.update(post);</span>
-					//return success code
-<span class="fc" id="L272">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_207, 0), null);</span>
-<span class="pc bnc" id="L273" title="All 4 branches missed.">				}else if (post != null &amp;&amp; post.getUser().getId() != token.getUser().getId()) {</span>
-					//return permission error code
-<span class="nc" id="L275">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2509), null);</span>
-<span class="nc" id="L276">				}else{</span>
-					//return invalid error code
-<span class="nc" id="L278">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2501), null);</span>
-				}
-			}
-<span class="nc" id="L281">		}catch(Exception ex){</span>
-<span class="nc" id="L282">			ex.printStackTrace();</span>
-<span class="nc" id="L283">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
-		}
-		
-<span class="fc" id="L286">		return Response.status(200).entity(jsonObject.toString()).build();</span>
-	}	
-	
-	/**
-	 *  delete is api that user use for delete post in miniblog
-	 *	
-	 *  @param  id : post id
-	 *    
-	 *	@return Response
-	 *	
-	 *	
-	 */
-	@RolesAllowed(&quot;ADMIN&quot;)
+    public Response updatePost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+            @FormParam(&quot;id&quot;) String id, @FormParam(&quot;title&quot;) String title,
+            @FormParam(&quot;content&quot;) String content)
+    {
+
+<span class="pc bpc" id="L246" title="1 of 4 branches missed.">        if (tokenService == null || postService == null) {</span>
+<span class="fc" id="L247">            setDataSource();</span>
+        }
+
+        // declare jsonObject for build return data
+<span class="fc" id="L251">        JSONObject jsonObject = new JSONObject();</span>
+
+        // validate post data, if have error, return error code in meta object
+        // to client
+<span class="fc" id="L255">        PostValidate postValidate = new PostValidate();</span>
+<span class="fc" id="L256">        Meta meta = postValidate.validateUpdate(id, title, content);</span>
+<span class="fc" id="L257">        Data data = null;</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L259">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L260">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+        }
+        try {
+<span class="fc" id="L263">            Token token = null;</span>
+<span class="pc bpc" id="L264" title="1 of 2 branches missed.">            if (access_key != null) {</span>
+<span class="fc" id="L265">                token = this.tokenService.findByAccessKey(access_key);</span>
+            }
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">            if (token != null) {</span>
+<span class="fc" id="L268">                int postId = Integer.parseInt(id);</span>
+<span class="fc" id="L269">                Post post = this.postService.findOne(postId);</span>
+                // if have post and current user have permission on it, call
+                // update function
+                // else if have post but not have permission on it, return
+                // permission error code
+                // else return invalid post error code
+<span class="fc bfc" id="L275" title="All 4 branches covered.">                if (post != null &amp;&amp; post.getUser().getId() == token.getUser().getId()) {</span>
+<span class="fc" id="L276">                    post.setContent(content);</span>
+<span class="fc" id="L277">                    post.setTitle(title);</span>
+<span class="fc" id="L278">                    Calendar cal = Calendar.getInstance();</span>
+<span class="fc" id="L279">                    post.setModified_at(cal.getTime());</span>
+<span class="fc" id="L280">                    this.postService.update(post);</span>
+                    // return success code
+<span class="fc" id="L282">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_207, 0), null);</span>
+<span class="pc bpc" id="L283" title="1 of 4 branches missed.">                } else if (post != null &amp;&amp; post.getUser().getId() != token.getUser().getId()) {</span>
+                    // return permission error code
+<span class="fc" id="L285">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                            Constraints.CODE_2509), null);
+                } else {
+                    // return invalid error code
+<span class="fc" id="L289">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                            Constraints.CODE_2501), null);
+                }
+            }
+<span class="nc" id="L293">        } catch (Exception ex) {</span>
+<span class="nc" id="L294">            ex.printStackTrace();</span>
+<span class="nc" id="L295">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                    Constraints.CODE_9001), null);
+<span class="fc" id="L297">        }</span>
+
+<span class="fc" id="L299">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+    }
+
+    /**
+     * delete is api that user use for delete post in miniblog
+     *
+     * @param id
+     *            : post id
+     * @return Response
+     */
+    @RolesAllowed(&quot;ADMIN&quot;)
     @DELETE
     @Path(&quot;delete/{id}&quot;)
-	public Response delete(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
-			@PathParam(&quot;id&quot;) String id){
-		
-<span class="pc bpc" id="L304" title="3 of 4 branches missed.">		if(tokenService == null || postService == null){</span>
-<span class="fc" id="L305">			setDataSource();</span>
-		}
-		
-		//declare jsonObject for build return data
-<span class="fc" id="L309">		JSONObject jsonObject = new JSONObject();</span>
-		
-		//validate post data, if have error, return error code in meta object to client
-<span class="fc" id="L312">		PostValidate postValidate = new PostValidate();</span>
-<span class="fc" id="L313">		Meta meta = postValidate.validateDelete(id);</span>
-<span class="fc" id="L314">		Data data = null;</span>
-<span class="fc bfc" id="L315" title="All 2 branches covered.">		if(meta != null){</span>
-<span class="fc" id="L316">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="fc" id="L317">			return Response.status(200).entity(jsonObject.toString()).build();</span>
-		}
-		try{
-<span class="fc" id="L320">			Token token = null;</span>
-<span class="pc bpc" id="L321" title="1 of 2 branches missed.">			if(access_key != null){</span>
-<span class="fc" id="L322">				token = this.tokenService.findByAccessKey(access_key);</span>
-			}
-<span class="pc bpc" id="L324" title="1 of 2 branches missed.">			if(token != null){</span>
-<span class="fc" id="L325">				int postId = Integer.parseInt(id);</span>
-<span class="fc" id="L326">				Post post = this.postService.findOne(postId);</span>
-				//if have post and current user have permission on it, call update function
-				// else if have post but not have permission on it, return permission error code
-				// else return invalid post error code
-<span class="fc bfc" id="L330" title="All 4 branches covered.">				if(post != null &amp;&amp; post.getUser().getId() == token.getUser().getId()){</span>
-<span class="fc" id="L331">					this.postService.delete(postId);</span>
-					//return success code
-<span class="fc" id="L333">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_209, 0), null);</span>
-<span class="pc bpc" id="L334" title="1 of 4 branches missed.">				}else if (post != null &amp;&amp; post.getUser().getId() != token.getUser().getId()) {</span>
-					//return permission error code
-<span class="fc" id="L336">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2509), null);</span>
-<span class="fc" id="L337">				}else{</span>
-					//return invalid error code
-<span class="fc" id="L339">					jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_2501), null);</span>
-				}
-			}
-<span class="pc" id="L342">		}catch(Exception ex){</span>
-<span class="nc" id="L343">			ex.printStackTrace();</span>
-<span class="nc" id="L344">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
-		}
-		
-<span class="fc" id="L347">		return Response.status(200).entity(jsonObject.toString()).build();</span>
-	}	
-	
-	/**
-	 *  getAllPost is api that user use for getting all post in miniblog limit 
-	 *  by 10 per request
-	 *	
-	 *  @param  pageNum : number of page.
-	 *    
-	 *	@return Response
-	 *	
-	 *	
-	 */
-	@RolesAllowed(&quot;ADMIN&quot;)
+    public Response delete(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+            @PathParam(&quot;id&quot;) String id)
+    {
+
+<span class="pc bpc" id="L316" title="1 of 4 branches missed.">        if (tokenService == null || postService == null) {</span>
+<span class="fc" id="L317">            setDataSource();</span>
+        }
+
+        // declare jsonObject for build return data
+<span class="fc" id="L321">        JSONObject jsonObject = new JSONObject();</span>
+
+        // validate post data, if have error, return error code in meta object
+        // to client
+<span class="fc" id="L325">        PostValidate postValidate = new PostValidate();</span>
+<span class="fc" id="L326">        Meta meta = postValidate.validateDelete(id);</span>
+<span class="fc" id="L327">        Data data = null;</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L329">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L330">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+        }
+        try {
+<span class="fc" id="L333">            Token token = null;</span>
+<span class="pc bpc" id="L334" title="1 of 2 branches missed.">            if (access_key != null) {</span>
+<span class="fc" id="L335">                token = this.tokenService.findByAccessKey(access_key);</span>
+            }
+<span class="pc bpc" id="L337" title="1 of 2 branches missed.">            if (token != null) {</span>
+<span class="fc" id="L338">                int postId = Integer.parseInt(id);</span>
+<span class="fc" id="L339">                Post post = this.postService.findOne(postId);</span>
+                // if have post and current user have permission on it, call
+                // update function
+                // else if have post but not have permission on it, return
+                // permission error code
+                // else return invalid post error code
+<span class="fc bfc" id="L345" title="All 4 branches covered.">                if (post != null &amp;&amp; post.getUser().getId() == token.getUser().getId()) {</span>
+<span class="fc" id="L346">                    this.postService.delete(postId);</span>
+                    // return success code
+<span class="fc" id="L348">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_209, 0), null);</span>
+<span class="pc bpc" id="L349" title="1 of 4 branches missed.">                } else if (post != null &amp;&amp; post.getUser().getId() != token.getUser().getId()) {</span>
+                    // return permission error code
+<span class="fc" id="L351">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                            Constraints.CODE_2509), null);
+                } else {
+                    // return invalid error code
+<span class="fc" id="L355">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                            Constraints.CODE_2501), null);
+                }
+            }
+<span class="nc" id="L359">        } catch (Exception ex) {</span>
+<span class="nc" id="L360">            ex.printStackTrace();</span>
+<span class="nc" id="L361">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                    Constraints.CODE_9001), null);
+<span class="fc" id="L363">        }</span>
+
+<span class="fc" id="L365">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+    }
+
+    /**
+     * getAllPost is api that user use for getting all post in miniblog limit by
+     * 10 per request
+     *
+     * @param pageNum
+     *            : number of page.
+     * @return Response
+     */
+    @RolesAllowed(&quot;ADMIN&quot;)
     @GET
     @Path(&quot;getAllPost&quot;)
-	public Response getAllPost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
-			@QueryParam(&quot;pageNum&quot;) String pageNum, @QueryParam(&quot;description&quot;) String description){
-		
-<span class="pc bpc" id="L366" title="3 of 4 branches missed.">		if(tokenService == null || postService == null){</span>
-<span class="fc" id="L367">			setDataSource();</span>
-		}
-		
-		//declare jsonObject for build return data
-<span class="fc" id="L371">		JSONObject jsonObject = new JSONObject();</span>
-		
-		//validate post data, if have error, return error code in meta object to client
-<span class="fc" id="L374">		PostValidate postValidate = new PostValidate();</span>
-<span class="fc" id="L375">		Meta meta = postValidate.validateGetAllPost(pageNum);</span>
-<span class="fc" id="L376">		Data data = null;</span>
-<span class="fc bfc" id="L377" title="All 2 branches covered.">		if(meta != null){</span>
-<span class="fc" id="L378">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="fc" id="L379">			return Response.status(200).entity(jsonObject.toString()).build();</span>
-		}		
-		try{
-			//get current user login
-<span class="fc" id="L383">			Token token =	this.tokenService.findByAccessKey(access_key);</span>
-<span class="fc" id="L384">			int pageNumInt = Integer.parseInt(pageNum);</span>
-			//get all post of current user and like description(if not null)
-<span class="fc" id="L386">			data = this.postService.getAllPost(pageNumInt,token.getUser().getId(), description);</span>
-<span class="fc" id="L387">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="pc" id="L388">		}catch(Exception ex){</span>
-<span class="nc" id="L389">			ex.printStackTrace();</span>
-<span class="nc" id="L390">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
-		}
-		
-<span class="fc" id="L393">		return Response.status(200).entity(jsonObject.toString()).build();</span>
-	}
-	
-	/**
-	 *  getAllPostForUser is api that user use for getting all post for user in 
-	 *  miniblog limit by 10 per request
-	 *	
-	 *  @param  pageNum : number of page.
-	 *    
-	 *	@return Response
-	 *	
-	 *	
-	 */
-	@RolesAllowed(&quot;ADMIN&quot;)
+    public Response getAllPost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+            @QueryParam(&quot;pageNum&quot;) String pageNum, @QueryParam(&quot;description&quot;) String description)
+    {
+
+<span class="pc bpc" id="L383" title="1 of 4 branches missed.">        if (tokenService == null || postService == null) {</span>
+<span class="fc" id="L384">            setDataSource();</span>
+        }
+
+        // declare jsonObject for build return data
+<span class="fc" id="L388">        JSONObject jsonObject = new JSONObject();</span>
+
+        // validate post data, if have error, return error code in meta object
+        // to client
+<span class="fc" id="L392">        PostValidate postValidate = new PostValidate();</span>
+<span class="fc" id="L393">        Meta meta = postValidate.validateGetAllPost(pageNum);</span>
+<span class="fc" id="L394">        Data data = null;</span>
+<span class="fc bfc" id="L395" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L396">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L397">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+        }
+        try {
+            // get current user login
+<span class="fc" id="L401">            Token token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="fc" id="L402">            int pageNumInt = Integer.parseInt(pageNum);</span>
+            // get all post of current user and like description(if not null)
+<span class="fc" id="L404">            data = this.postService.getAllPost(pageNumInt, token.getUser().getId(), description);</span>
+<span class="fc" id="L405">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L406">        } catch (Exception ex) {</span>
+<span class="nc" id="L407">            ex.printStackTrace();</span>
+<span class="nc" id="L408">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                    Constraints.CODE_9001), null);
+<span class="fc" id="L410">        }</span>
+
+<span class="fc" id="L412">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+    }
+
+    /**
+     * getAllPostForUser is api that user use for getting all post for user in
+     * miniblog limit by 10 per request
+     *
+     * @param pageNum
+     *            : number of page.
+     * @return Response
+     */
+    @RolesAllowed(&quot;ADMIN&quot;)
     @GET
     @Path(&quot;getPostForUser&quot;)
-	public Response getAllPostForUser(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
-			@QueryParam(&quot;pageNum&quot;) String pageNum, @QueryParam(&quot;user_id&quot;)  String user_id){
-		
-<span class="pc bpc" id="L412" title="3 of 4 branches missed.">		if(tokenService == null || postService == null){</span>
-<span class="fc" id="L413">			setDataSource();</span>
-		}
-		
-		//declare jsonObject for build return data
-<span class="fc" id="L417">		JSONObject jsonObject = new JSONObject();</span>
-		
-		//validate post data, if have error, return error code in meta object to client
-<span class="fc" id="L420">		PostValidate postValidate = new PostValidate();</span>
-<span class="fc" id="L421">		Meta meta = postValidate.validateGetAllPostForUser(pageNum, user_id);</span>
-<span class="fc" id="L422">		Data data = null;</span>
-<span class="fc bfc" id="L423" title="All 2 branches covered.">		if(meta != null){</span>
-<span class="fc" id="L424">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="fc" id="L425">			return Response.status(200).entity(jsonObject.toString()).build();</span>
-		}	
-		try{
-			//get current user login
-<span class="fc" id="L429">			Token token =	this.tokenService.findByAccessKey(access_key);</span>
-<span class="fc" id="L430">			int pageNumInt = Integer.parseInt(pageNum);</span>
-			//if current user login have same user id send from client,
-			//system get all post from database include: all post of current user login, and 
-			//post have status active of other users and user have status active
-			//if not same, get all post have status active and user have status active
-<span class="fc bfc" id="L435" title="All 2 branches covered.">			if(token.getUser().getId() == Integer.parseInt(user_id)){</span>
-<span class="fc" id="L436">				data = this.postService.getAllPostForUser(pageNumInt, token.getUser().getId(), true);</span>
-<span class="fc" id="L437">			}else{</span>
-<span class="fc" id="L438">				data = this.postService.getAllPostForUser(pageNumInt, Integer.parseInt(user_id), false);</span>
-			}
-			
-<span class="fc" id="L441">			jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="pc" id="L442">		}catch(Exception ex){</span>
-<span class="nc" id="L443">			ex.printStackTrace();</span>
-<span class="nc" id="L444">			jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500, Constraints.CODE_9001), null);</span>
-		}
-		
-<span class="fc" id="L447">		return Response.status(200).entity(jsonObject.toString()).build();</span>
-	}
-	
-	/**
-	 *  setDataSource: use for setting datasoure to tokeservice and userservice
-	 *	
-	 */
-	private void setDataSource(){
-<span class="fc" id="L455">		tokenService = ApplicationContextUtils.getTokenServiceDataSource();</span>
-<span class="fc" id="L456">		postService = ApplicationContextUtils.getPostServiceDataSource();</span>
-<span class="fc" id="L457">	}</span>
+    public Response getAllPostForUser(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+            @QueryParam(&quot;pageNum&quot;) String pageNum, @QueryParam(&quot;user_id&quot;) String user_id)
+    {
+
+<span class="pc bpc" id="L430" title="1 of 4 branches missed.">        if (tokenService == null || postService == null) {</span>
+<span class="fc" id="L431">            setDataSource();</span>
+        }
+
+        // declare jsonObject for build return data
+<span class="fc" id="L435">        JSONObject jsonObject = new JSONObject();</span>
+
+        // validate post data, if have error, return error code in meta object
+        // to client
+<span class="fc" id="L439">        PostValidate postValidate = new PostValidate();</span>
+<span class="fc" id="L440">        Meta meta = postValidate.validateGetAllPostForUser(pageNum, user_id);</span>
+<span class="fc" id="L441">        Data data = null;</span>
+<span class="fc bfc" id="L442" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L443">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L444">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+        }
+        try {
+            // get current user login
+<span class="fc" id="L448">            Token token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="fc" id="L449">            int pageNumInt = Integer.parseInt(pageNum);</span>
+            // if current user login have same user id send from client,
+            // system get all post from database include: all post of current
+            // user login, and
+            // post have status active of other users and user have status
+            // active
+            // if not same, get all post have status active and user have status
+            // active
+<span class="fc bfc" id="L457" title="All 2 branches covered.">            if (token.getUser().getId() == Integer.parseInt(user_id)) {</span>
+<span class="fc" id="L458">                data = this.postService</span>
+                        .getAllPostForUser(pageNumInt, token.getUser().getId(), true);
+            } else {
+<span class="fc" id="L461">                data = this.postService.getAllPostForUser(pageNumInt, Integer.parseInt(user_id),</span>
+                        false);
+            }
+
+<span class="fc" id="L465">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L466">        } catch (Exception ex) {</span>
+<span class="nc" id="L467">            ex.printStackTrace();</span>
+<span class="nc" id="L468">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                    Constraints.CODE_9001), null);
+<span class="fc" id="L470">        }</span>
+
+<span class="fc" id="L472">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+    }
+
+    /**
+     * setDataSource: use for setting datasoure to tokeservice and userservice
+     */
+    private void setDataSource()
+    {
+<span class="fc" id="L480">        tokenService = ApplicationContextUtils.getTokenServiceDataSource();</span>
+<span class="fc" id="L481">        postService = ApplicationContextUtils.getPostServiceDataSource();</span>
+<span class="fc" id="L482">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

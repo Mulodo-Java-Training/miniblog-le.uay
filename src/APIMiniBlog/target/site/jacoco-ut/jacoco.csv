@@ -1,11 +1,11 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-APIMiniBlog,com.mulodo.miniblog.rest.controller,UserController,84,674,27,39,7,164,20,24,0,11
-APIMiniBlog,com.mulodo.miniblog.rest.controller,PostController,111,580,34,44,16,141,26,23,0,10
-APIMiniBlog,com.mulodo.miniblog.rest.controller,CommentController,468,151,63,9,99,41,37,9,4,6
+APIMiniBlog,com.mulodo.miniblog.rest.controller,UserController,84,677,27,39,14,163,20,24,0,11
+APIMiniBlog,com.mulodo.miniblog.rest.controller,PostController,69,623,19,59,18,141,18,31,0,10
+APIMiniBlog,com.mulodo.miniblog.rest.controller,CommentController,468,151,63,9,101,41,37,9,4,6
 APIMiniBlog,com.mulodo.miniblog.contraints,Constraints,3,0,0,0,1,0,1,0,1,0
 APIMiniBlog,com.mulodo.miniblog.model,User,0,105,0,0,0,44,0,21,0,21
 APIMiniBlog,com.mulodo.miniblog.model,Comment,22,41,0,0,8,19,7,7,7,7
-APIMiniBlog,com.mulodo.miniblog.model,Token,13,25,0,0,5,11,4,7,4,7
+APIMiniBlog,com.mulodo.miniblog.model,Token,9,29,0,0,3,13,3,8,3,8
 APIMiniBlog,com.mulodo.miniblog.model,Post,4,76,0,0,2,32,1,17,1,17
 APIMiniBlog,com.mulodo.miniblog.object,Meta,8,35,0,0,4,12,2,4,2,4
 APIMiniBlog,com.mulodo.miniblog.object,Message,4,9,0,0,2,4,1,2,1,2
@@ -24,8 +24,8 @@ APIMiniBlog,com.mulodo.miniblog.service.impl,UserServiceImpl,7,62,0,0,2,14,0,8,0
 APIMiniBlog,com.mulodo.miniblog.service.impl,TokenServiceImpl,24,32,4,4,8,11,4,5,0,5
 APIMiniBlog,com.mulodo.miniblog.service.impl,CommentServiceImpl,12,7,0,0,2,3,2,2,2,2
 APIMiniBlog,com.mulodo.miniblog.service.impl,GenericServiceImpl,0,27,0,0,0,7,0,6,0,6
-APIMiniBlog,com.mulodo.miniblog.rest.security,SecurityInterceptor,373,0,34,0,81,0,21,0,4,0
-APIMiniBlog,com.mulodo.miniblog.validator,UserValidate,18,440,3,65,4,111,4,36,1,5
+APIMiniBlog,com.mulodo.miniblog.rest.security,SecurityInterceptor,375,0,34,0,82,0,21,0,4,0
+APIMiniBlog,com.mulodo.miniblog.validator,UserValidate,18,440,3,65,3,107,4,36,1,5
 APIMiniBlog,com.mulodo.miniblog.validator,CommentValidate,159,52,21,7,41,14,16,4,5,1
 APIMiniBlog,com.mulodo.miniblog.validator,PostValidate,28,284,4,38,4,76,4,24,0,7
 APIMiniBlog,com.mulodo.miniblog.exeption,HandlerException,7,0,0,0,4,0,2,0,2,0
