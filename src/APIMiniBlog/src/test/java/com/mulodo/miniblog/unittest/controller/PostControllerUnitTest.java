@@ -48,8 +48,10 @@ public class PostControllerUnitTest
 {
 
     // set seesion bean in applicationContext.xml to userservice
-    private final static PostService postService = (PostService) SpringApplicationContext.getBean("postService");
-    private final static UserService userService = (UserService) SpringApplicationContext.getBean("userService");
+    private final static PostService postService = (PostService) SpringApplicationContext
+            .getBean("postService");
+    private final static UserService userService = (UserService) SpringApplicationContext
+            .getBean("userService");
 
     private static Dispatcher dispatcher = MockDispatcherFactory.createDispatcher();
     private static POJOResourceFactory noDefaults = new POJOResourceFactory(PostController.class);
@@ -649,8 +651,8 @@ public class PostControllerUnitTest
     public static void setUpData() throws Exception
     {
         dispatcher.getRegistry().addResourceFactory(noDefaults);
-        dispatcherLogin.getRegistry().addResourceFactory(noDefaultsLogin);        
-        
+        dispatcherLogin.getRegistry().addResourceFactory(noDefaultsLogin);
+
         Calendar datePost = Calendar.getInstance();
         Calendar dateUser = Calendar.getInstance();
 

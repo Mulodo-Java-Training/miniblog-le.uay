@@ -41,17 +41,16 @@ public class SecurityInterceptorUnitTest
 
     @Mock
     private ContainerRequestContext requestContext;
-    
-    
+
     @Mock
     private ResourceMethodInvoker methodInvoker;
 
     @Mock
     private TokenService tokenService;
-    
+
     @Mock
     private MultivaluedMap<String, String> listHeader;
-    
+
     @Mock
     private UriInfo uri;
 
@@ -64,14 +63,14 @@ public class SecurityInterceptorUnitTest
     @Test
     public void testAccessDeniedNullAccessKey() throws NoSuchMethodException, SecurityException
     {
-        UserController userController = new UserController(); 
+        UserController userController = new UserController();
         Class<? extends UserController> user = userController.getClass();
         Method method = null;
 
         method = user.getMethod("getUserInfo", String.class);
 
-        when(requestContext
-            .getProperty("org.jboss.resteasy.core.ResourceMethodInvoker")).thenReturn(methodInvoker);
+        when(requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker"))
+                .thenReturn(methodInvoker);
         when(methodInvoker.getMethod()).thenReturn(method);
         when(requestContext.getHeaders()).thenReturn(listHeader);
         when(listHeader.containsKey(Constraints.ACCESS_KEY)).thenReturn(false);
@@ -79,18 +78,19 @@ public class SecurityInterceptorUnitTest
         when(uri.getPath()).thenReturn("/users/getUserInfo");
         securityInterceptor.filter(requestContext);
     }
-    
+
     @Test
-    public void testAccessDeniedInvalidAccessKeyInDatabase() throws NoSuchMethodException, SecurityException, HandlerException
+    public void testAccessDeniedInvalidAccessKeyInDatabase() throws NoSuchMethodException,
+            SecurityException, HandlerException
     {
-        UserController userController = new UserController(); 
+        UserController userController = new UserController();
         Class<? extends UserController> user = userController.getClass();
         Method method = null;
 
         method = user.getMethod("getUserInfo", String.class);
 
-        when(requestContext
-            .getProperty("org.jboss.resteasy.core.ResourceMethodInvoker")).thenReturn(methodInvoker);
+        when(requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker"))
+                .thenReturn(methodInvoker);
         when(methodInvoker.getMethod()).thenReturn(method);
         when(requestContext.getHeaders()).thenReturn(listHeader);
         when(listHeader.containsKey(Constraints.ACCESS_KEY)).thenReturn(true);
@@ -102,18 +102,19 @@ public class SecurityInterceptorUnitTest
         when(tokenService.findByAccessKey(headers.get(0))).thenReturn(null);
         securityInterceptor.filter(requestContext);
     }
-    
+
     @Test
-    public void testAccessDeniedOutOfDateAccessKey() throws NoSuchMethodException, SecurityException, HandlerException
+    public void testAccessDeniedOutOfDateAccessKey() throws NoSuchMethodException,
+            SecurityException, HandlerException
     {
-        UserController userController = new UserController(); 
+        UserController userController = new UserController();
         Class<? extends UserController> user = userController.getClass();
         Method method = null;
 
         method = user.getMethod("getUserInfo", String.class);
 
-        when(requestContext
-            .getProperty("org.jboss.resteasy.core.ResourceMethodInvoker")).thenReturn(methodInvoker);
+        when(requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker"))
+                .thenReturn(methodInvoker);
         when(methodInvoker.getMethod()).thenReturn(method);
         when(requestContext.getHeaders()).thenReturn(listHeader);
         when(listHeader.containsKey(Constraints.ACCESS_KEY)).thenReturn(true);
@@ -130,18 +131,19 @@ public class SecurityInterceptorUnitTest
         when(tokenService.findByAccessKey(headers.get(0))).thenReturn(token);
         securityInterceptor.filter(requestContext);
     }
-    
+
     @Test
-    public void testAccessSuccess() throws NoSuchMethodException, SecurityException, HandlerException
+    public void testAccessSuccess() throws NoSuchMethodException, SecurityException,
+            HandlerException
     {
-        UserController userController = new UserController(); 
+        UserController userController = new UserController();
         Class<? extends UserController> user = userController.getClass();
         Method method = null;
 
         method = user.getMethod("getUserInfo", String.class);
 
-        when(requestContext
-            .getProperty("org.jboss.resteasy.core.ResourceMethodInvoker")).thenReturn(methodInvoker);
+        when(requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker"))
+                .thenReturn(methodInvoker);
         when(methodInvoker.getMethod()).thenReturn(method);
         when(requestContext.getHeaders()).thenReturn(listHeader);
         when(listHeader.containsKey(Constraints.ACCESS_KEY)).thenReturn(true);
@@ -158,18 +160,19 @@ public class SecurityInterceptorUnitTest
         when(tokenService.findByAccessKey(headers.get(0))).thenReturn(token);
         securityInterceptor.filter(requestContext);
     }
-    
+
     @Test
-    public void testAlreadyLogin() throws NoSuchMethodException, SecurityException, HandlerException
+    public void testAlreadyLogin() throws NoSuchMethodException, SecurityException,
+            HandlerException
     {
-        UserController userController = new UserController(); 
+        UserController userController = new UserController();
         Class<? extends UserController> user = userController.getClass();
         Method method = null;
 
         method = user.getMethod("getUserInfo", String.class);
 
-        when(requestContext
-            .getProperty("org.jboss.resteasy.core.ResourceMethodInvoker")).thenReturn(methodInvoker);
+        when(requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker"))
+                .thenReturn(methodInvoker);
         when(methodInvoker.getMethod()).thenReturn(method);
         when(requestContext.getHeaders()).thenReturn(listHeader);
         when(listHeader.containsKey(Constraints.ACCESS_KEY)).thenReturn(true);
@@ -186,18 +189,18 @@ public class SecurityInterceptorUnitTest
         when(tokenService.findByAccessKey(headers.get(0))).thenReturn(token);
         securityInterceptor.filter(requestContext);
     }
-    
+
     @Test
     public void testException() throws NoSuchMethodException, SecurityException, HandlerException
     {
-        UserController userController = new UserController(); 
+        UserController userController = new UserController();
         Class<? extends UserController> user = userController.getClass();
         Method method = null;
 
         method = user.getMethod("getUserInfo", String.class);
 
-        when(requestContext
-            .getProperty("org.jboss.resteasy.core.ResourceMethodInvoker")).thenReturn(methodInvoker);
+        when(requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker"))
+                .thenReturn(methodInvoker);
         when(methodInvoker.getMethod()).thenReturn(method);
         when(requestContext.getHeaders()).thenReturn(listHeader);
         when(listHeader.containsKey(Constraints.ACCESS_KEY)).thenReturn(true);
@@ -209,18 +212,19 @@ public class SecurityInterceptorUnitTest
         when(tokenService.findByAccessKey(headers.get(0))).thenThrow(new HandlerException());
         securityInterceptor.filter(requestContext);
     }
-    
+
     @Test
-    public void testExceptionNotLogin() throws NoSuchMethodException, SecurityException, HandlerException
+    public void testExceptionNotLogin() throws NoSuchMethodException, SecurityException,
+            HandlerException
     {
-        UserController userController = new UserController(); 
+        UserController userController = new UserController();
         Class<? extends UserController> user = userController.getClass();
         Method method = null;
 
         method = user.getMethod("getUserInfo", String.class);
 
-        when(requestContext
-            .getProperty("org.jboss.resteasy.core.ResourceMethodInvoker")).thenReturn(methodInvoker);
+        when(requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker"))
+                .thenReturn(methodInvoker);
         when(methodInvoker.getMethod()).thenReturn(method);
         when(requestContext.getHeaders()).thenReturn(listHeader);
         when(listHeader.containsKey(Constraints.ACCESS_KEY)).thenReturn(true);

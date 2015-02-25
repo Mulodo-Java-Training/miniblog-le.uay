@@ -41,20 +41,16 @@ import com.mulodo.miniblog.utils.SpringApplicationContext;
  * 
  * @author UayLU
  */
-@ContextConfiguration
-(
-  {
-   "file:src/main/webapp/WEB-INF/applicationContext.xml"
-  }
-)
+@ContextConfiguration({ "file:src/main/webapp/WEB-INF/applicationContext.xml" })
 public class UserControllerUnitTest
 {
-    
-    private final static UserService userService = (UserService) SpringApplicationContext.getBean("userService");
+
+    private final static UserService userService = (UserService) SpringApplicationContext
+            .getBean("userService");
     private static Dispatcher dispatcher = MockDispatcherFactory.createDispatcher();
     private static POJOResourceFactory noDefaults = new POJOResourceFactory(UserController.class);
     MockHttpResponse response = null;
-    
+
     /**
      * add_new user for unit testing addNew in usercontroller
      *

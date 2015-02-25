@@ -49,7 +49,7 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO
     {
         try {
             session = this.sessionFactory.getCurrentSession();
-            
+
             Criteria criteria = session.createCriteria(Token.class);
 
             criteria.add(Restrictions.eq("access_key", access_key));
@@ -58,12 +58,12 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO
             } else {
                 Token token = (Token) criteria.list().get(0);
                 session.delete(token);
-                
+
                 logger.info("Token deleted successfully, token details=" + token);
                 return true;
             }
         } catch (HibernateException ex) {
-            
+
             throw new HandlerException(ex.getMessage());
         }
     }
@@ -83,17 +83,17 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO
         try {
             session = this.sessionFactory.getCurrentSession();
             Criteria criteria = session.createCriteria(Token.class);
-            
+
             criteria.add(Restrictions.eq("access_key", access_key));
             Token token = null;
             if (!criteria.list().isEmpty()) {
                 token = (Token) criteria.list().get(0);
                 logger.info("Token searching successfully, token details=" + token);
             }
-            
+
             return token;
-        } catch (HibernateException ex) {           
-            
+        } catch (HibernateException ex) {
+
             throw new HandlerException(ex.getMessage());
         }
     }
@@ -114,14 +114,14 @@ public class TokenDAOImpl extends GenericDAOImpl<Token> implements TokenDAO
 
         try {
             session = this.sessionFactory.getCurrentSession();
-            
+
             Query query = session.createQuery("delete Token where user_id = :user_id");
             query.setParameter("user_id", user.getId());
             query.executeUpdate();
-            
+
             return true;
         } catch (HibernateException ex) {
-            
+
             throw new HandlerException(ex.getMessage());
         }
     }

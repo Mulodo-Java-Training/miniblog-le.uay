@@ -68,7 +68,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
             return user.getId() != 0 && user.getUsername().equals(username);
 
         } catch (HibernateException ex) {
-            
+
             throw new HandlerException(ex.getMessage());
         }
     }
@@ -105,7 +105,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
             return !(user != null && user.getId() == userDB.getId());
 
         } catch (HibernateException ex) {
-            
+
             throw new HandlerException(ex.getMessage());
         }
     }
@@ -139,8 +139,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
             }
             return user;
         } catch (HibernateException ex) {
-            
-            
+
             throw new HandlerException(ex.getMessage());
         }
     }
@@ -186,7 +185,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
             }
             return usersList;
         } catch (HibernateException ex) {
-            
+
             throw new HandlerException(ex.getMessage());
         }
     }
@@ -205,7 +204,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
     {
         try {
             session = this.sessionFactory.getCurrentSession();
-            
+
             Criteria criteria = session.createCriteria(User.class);
 
             criteria.add(Restrictions.eq("username", username));
@@ -214,13 +213,13 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
             } else {
                 User user = (User) criteria.list().get(0);
                 session.delete(user);
-                
+
                 logger.info("User deleted successfully, user details=" + user);
                 return true;
             }
 
         } catch (HibernateException ex) {
-                      
+
             throw new HandlerException(ex.getMessage());
         }
     }
@@ -249,7 +248,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
             }
             return user;
         } catch (HibernateException ex) {
-            
+
             logger.info("Hibernate exception, Details=" + ex.getMessage());
             throw new HandlerException(ex.getMessage());
         }

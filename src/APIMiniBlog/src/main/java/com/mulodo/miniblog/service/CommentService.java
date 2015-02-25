@@ -50,7 +50,7 @@ public interface CommentService extends GenericService<Comment>
      */
     public List<Comment> getAllCommentForUser(int user_id, Boolean isOwnerUser)
             throws HandlerException;
-    
+
     /**
      * findByTitle use for find comment by content in the database for unit test
      *

@@ -55,17 +55,17 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T>
     {
         try {
             session = this.sessionFactory.getCurrentSession();
-            
+
             session.persist(entity);
-            
+
             logger.info("Entity saved successfully, Entity Details=" + entity);
             return true;
         } catch (HibernateException ex) {
-            
+
             logger.info("Hibernate exception, Details=" + ex.getMessage());
             throw new HandlerException(ex.getMessage());
         }
-        
+
     }
 
     /**
@@ -82,16 +82,16 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T>
     {
         try {
             session = this.sessionFactory.getCurrentSession();
-            
+
             session.update(entity);
-            
+
             logger.info("Entity updated successfully, Entity Details=" + entity);
             return true;
         } catch (HibernateException ex) {
-            
+
             logger.info("Hibernate exception, Details=" + ex.getMessage());
             throw new HandlerException(ex.getMessage());
-        } 
+        }
     }
 
     /**
@@ -112,22 +112,21 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T>
             this.genericType = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(),
                     GenericDAOImpl.class);
             session = this.sessionFactory.getCurrentSession();
-            
+
             T p = (T) session.load(this.genericType, id);
             if (p != null) {
                 session.delete(p);
-            }else{
+            } else {
                 return false;
             }
-            
+
             logger.info("Entity deleted successfully, Entity details=" + p);
             return true;
         } catch (HibernateException ex) {
-            
-            
+
             logger.info("Hibernate exception, Details=" + ex.getMessage());
             throw new HandlerException(ex.getMessage());
-        } 
+        }
     }
 
     /**
@@ -153,10 +152,10 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T>
             }
             return p;
         } catch (HibernateException ex) {
-            
+
             logger.info("Hibernate exception, Details=" + ex.getMessage());
             throw new HandlerException(ex.getMessage());
-        } 
+        }
     }
 
 }

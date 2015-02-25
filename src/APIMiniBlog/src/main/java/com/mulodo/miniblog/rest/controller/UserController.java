@@ -529,7 +529,7 @@ public class UserController
      */
     private void setDataSource()
     {
-          
+
         tokenService = (TokenService) SpringApplicationContext.getBean("tokenService");
         userService = (UserService) SpringApplicationContext.getBean("userService");
     }
