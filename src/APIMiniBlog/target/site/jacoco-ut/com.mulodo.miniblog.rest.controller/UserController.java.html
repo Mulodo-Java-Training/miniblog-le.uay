@@ -10,8 +10,6 @@
  */
 package com.mulodo.miniblog.rest.controller;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -41,9 +39,9 @@ import com.mulodo.miniblog.object.Data;
 import com.mulodo.miniblog.object.Meta;
 import com.mulodo.miniblog.service.TokenService;
 import com.mulodo.miniblog.service.UserService;
-import com.mulodo.miniblog.utils.ApplicationContextUtils;
 import com.mulodo.miniblog.utils.BuildJSON;
 import com.mulodo.miniblog.utils.EncrypUtils;
+import com.mulodo.miniblog.utils.SpringApplicationContext;
 import com.mulodo.miniblog.validator.UserValidate;
 
 /**
@@ -55,7 +53,7 @@ import com.mulodo.miniblog.validator.UserValidate;
 @Path(&quot;/users&quot;)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-<span class="fc" id="L58">public class UserController</span>
+<span class="fc" id="L56">public class UserController</span>
 {
 
     private UserService userService;
@@ -72,8 +70,8 @@ import com.mulodo.miniblog.validator.UserValidate;
     @Qualifier(&quot;userService&quot;)
     public void setUserService(UserService us)
     {
-<span class="fc" id="L75">        this.userService = us;</span>
-<span class="fc" id="L76">    }</span>
+<span class="fc" id="L73">        this.userService = us;</span>
+<span class="fc" id="L74">    }</span>
 
     /**
      * setTokenService use to set datasource from applicationcontent.xml
@@ -86,8 +84,8 @@ import com.mulodo.miniblog.validator.UserValidate;
     @Qualifier(&quot;tokenService&quot;)
     public void setTokenService(TokenService ts)
     {
-<span class="fc" id="L89">        this.tokenService = ts;</span>
-<span class="fc" id="L90">    }</span>
+<span class="fc" id="L87">        this.tokenService = ts;</span>
+<span class="fc" id="L88">    }</span>
 
     /**
      * add_user is api that user use for create new user in miniblog
@@ -112,61 +110,61 @@ import com.mulodo.miniblog.validator.UserValidate;
             @FormParam(&quot;lastname&quot;) String lastname, @FormParam(&quot;email&quot;) String email)
     {
 
-<span class="pc bpc" id="L115" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
-<span class="fc" id="L116">            setDataSource();</span>
+<span class="pc bpc" id="L113" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
+<span class="fc" id="L114">            setDataSource();</span>
         }
 
-<span class="fc" id="L119">        JSONObject jsonObject = new JSONObject();</span>
+<span class="fc" id="L117">        JSONObject jsonObject = new JSONObject();</span>
         // validate data from client and add to meta
-<span class="fc" id="L121">        Meta meta = UserValidate.validateAddNew(username, firstname, lastname, password, email);</span>
-<span class="fc" id="L122">        Data data = null;</span>
+<span class="fc" id="L119">        Meta meta = UserValidate.validateAddNew(username, firstname, lastname, password, email);</span>
+<span class="fc" id="L120">        Data data = null;</span>
         // if have any error, add meta to jsonobject and return to client
-<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (meta != null) {</span>
-<span class="fc" id="L125">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="fc" id="L126">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L123">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L124">            return Response.status(200).entity(jsonObject.toString()).build();</span>
         }
         try {
             // check exists user in database
-<span class="fc" id="L130">            Boolean check = this.userService.isUserExits(username);</span>
-<span class="fc bfc" id="L131" title="All 2 branches covered.">            if (check == true) {</span>
+<span class="fc" id="L128">            Boolean check = this.userService.isUserExits(username);</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">            if (check == true) {</span>
                 // if exists user in database, return code error
-<span class="fc" id="L133">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-                        Constraints.CODE_2010), null);
-<span class="fc" id="L135">                return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L131">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
+<span class="fc" id="L132">                        Constraints.CODE_2010), null);</span>
+<span class="fc" id="L133">                return Response.status(200).entity(jsonObject.toString()).build();</span>
             }
             // check exists email in database
-<span class="fc" id="L138">            check = this.userService.isEmailExits(</span>
-                    email.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;), null);
-<span class="fc bfc" id="L140" title="All 2 branches covered.">            if (check == true) {</span>
+<span class="fc" id="L136">            check = this.userService.isEmailExits(</span>
+<span class="fc" id="L137">                    email.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;), null);</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">            if (check == true) {</span>
                 // if exists email in database, return code error
-<span class="fc" id="L142">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-                        Constraints.CODE_2009), null);
-<span class="fc" id="L144">                return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L140">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
+<span class="fc" id="L141">                        Constraints.CODE_2009), null);</span>
+<span class="fc" id="L142">                return Response.status(200).entity(jsonObject.toString()).build();</span>
             }
 
             // ceate new user with data from client
-<span class="fc" id="L148">            User user = new User();</span>
-<span class="fc" id="L149">            user.setUsername(username.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
-<span class="fc" id="L150">            user.setFirstname(firstname.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
-<span class="fc" id="L151">            user.setLastname(lastname.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
-<span class="fc" id="L152">            password = password.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;);</span>
-<span class="fc" id="L153">            password = EncrypUtils.encrypData(password);</span>
-<span class="fc" id="L154">            user.setPassword(password);</span>
-<span class="fc" id="L155">            user.setEmail(email.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
-<span class="fc" id="L156">            user.setStatus(Constraints.USER_ACTIVE);</span>
-<span class="fc" id="L157">            Calendar date = Calendar.getInstance();</span>
-<span class="fc" id="L158">            user.setCreated_at(date.getTime());</span>
-<span class="fc" id="L159">            user.setModified_at(date.getTime());</span>
+<span class="fc" id="L146">            User user = new User();</span>
+<span class="fc" id="L147">            user.setUsername(username.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
+<span class="fc" id="L148">            user.setFirstname(firstname.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
+<span class="fc" id="L149">            user.setLastname(lastname.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
+<span class="fc" id="L150">            password = password.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;);</span>
+<span class="fc" id="L151">            password = EncrypUtils.encrypData(password);</span>
+<span class="fc" id="L152">            user.setPassword(password);</span>
+<span class="fc" id="L153">            user.setEmail(email.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
+<span class="fc" id="L154">            user.setStatus(Constraints.USER_ACTIVE);</span>
+<span class="fc" id="L155">            Calendar date = Calendar.getInstance();</span>
+<span class="fc" id="L156">            user.setCreated_at(date.getTime());</span>
+<span class="fc" id="L157">            user.setModified_at(date.getTime());</span>
 
             // cal user service to add data to database, return code success
-<span class="fc" id="L162">            this.userService.add(user);</span>
-<span class="fc" id="L163">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_200, 0), null);</span>
-<span class="nc" id="L164">        } catch (Exception ex) {</span>
-<span class="nc" id="L165">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L167">        }</span>
+<span class="fc" id="L160">            this.userService.add(user);</span>
+<span class="fc" id="L161">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_200, 0), null);</span>
+<span class="pc" id="L162">        } catch (Exception ex) {</span>
+<span class="nc" id="L163">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
+<span class="nc" id="L164">                    Constraints.CODE_9001), null);</span>
+        }
 
-<span class="fc" id="L169">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L167">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 
     /**
@@ -192,72 +190,70 @@ import com.mulodo.miniblog.validator.UserValidate;
             @FormParam(&quot;status&quot;) String status)
     {
 
-<span class="fc" id="L195">        System.out.println(&quot;pass &quot; + password);</span>
-
-<span class="pc bpc" id="L197" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
-<span class="fc" id="L198">            setDataSource();</span>
+<span class="pc bpc" id="L193" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
+<span class="fc" id="L194">            setDataSource();</span>
         }
 
-<span class="fc" id="L201">        JSONObject jsonObject = new JSONObject();</span>
+<span class="fc" id="L197">        JSONObject jsonObject = new JSONObject();</span>
 
         // validate data from client and add to meta
-<span class="fc" id="L204">        Meta meta = UserValidate.validateUpdate(firstname, lastname, email, status, password);</span>
-<span class="fc" id="L205">        Data data = null;</span>
+<span class="fc" id="L200">        Meta meta = UserValidate.validateUpdate(firstname, lastname, email, status, password);</span>
+<span class="fc" id="L201">        Data data = null;</span>
         // if have any error, add meta to jsonobject and return to client
-<span class="fc bfc" id="L207" title="All 2 branches covered.">        if (meta != null) {</span>
-<span class="fc" id="L208">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="fc" id="L209">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L204">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L205">            return Response.status(200).entity(jsonObject.toString()).build();</span>
         }
         try {
             // get token from access_key
-<span class="fc" id="L213">            Token token = null;</span>
-<span class="pc bpc" id="L214" title="1 of 2 branches missed.">            if (access_key != null) {</span>
-<span class="fc" id="L215">                token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="fc" id="L209">            Token token = null;</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">            if (access_key != null) {</span>
+<span class="fc" id="L211">                token = this.tokenService.findByAccessKey(access_key);</span>
             }
 
-<span class="pc bpc" id="L218" title="1 of 2 branches missed.">            if (token != null) {</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">            if (token != null) {</span>
 
                 // encryp password and check valid password with current user
                 // login
-<span class="fc" id="L222">                password = EncrypUtils.encrypData(password);</span>
-<span class="fc" id="L223">                Boolean isValid = true;</span>
-<span class="fc" id="L224">                isValid = token.getUser().getPassword().equals(password);</span>
-<span class="fc bfc" id="L225" title="All 2 branches covered.">                if (!isValid) {</span>
+<span class="fc" id="L218">                password = EncrypUtils.encrypData(password);</span>
+<span class="fc" id="L219">                Boolean isValid = true;</span>
+<span class="fc" id="L220">                isValid = token.getUser().getPassword().equals(password);</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">                if (!isValid) {</span>
                     // if password did not match, return code error
-<span class="fc" id="L227">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-                            Constraints.CODE_2012), null);
-<span class="fc" id="L229">                    return Response.status(Constraints.CODE_200).entity(jsonObject.toString())</span>
-                            .build();
+<span class="fc" id="L223">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
+<span class="fc" id="L224">                            Constraints.CODE_2012), null);</span>
+<span class="fc" id="L225">                    return Response.status(Constraints.CODE_200).entity(jsonObject.toString())</span>
+<span class="fc" id="L226">                            .build();</span>
                 }
                 // check exists email in database, exclusion current user's
                 // email in database
-<span class="fc" id="L234">                isValid = this.userService.isEmailExits(</span>
-                        email.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;), token.getUser());
-<span class="fc bfc" id="L236" title="All 2 branches covered.">                if (isValid) {</span>
+<span class="fc" id="L230">                isValid = this.userService.isEmailExits(</span>
+<span class="fc" id="L231">                        email.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;), token.getUser());</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">                if (isValid) {</span>
                     // if exists email in database, return code error
-<span class="fc" id="L238">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-                            Constraints.CODE_2009), null);
-<span class="fc" id="L240">                    return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L234">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
+<span class="fc" id="L235">                            Constraints.CODE_2009), null);</span>
+<span class="fc" id="L236">                    return Response.status(200).entity(jsonObject.toString()).build();</span>
                 }
                 // get user from token, and change data
-<span class="fc" id="L243">                User user = token.getUser();</span>
-<span class="fc" id="L244">                user.setFirstname(firstname.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
-<span class="fc" id="L245">                user.setLastname(lastname.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
-<span class="fc" id="L246">                user.setEmail(email.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
-<span class="fc" id="L247">                user.setStatus(Integer.parseInt(status));</span>
-<span class="fc" id="L248">                Calendar date = Calendar.getInstance();</span>
-<span class="fc" id="L249">                user.setModified_at(date.getTime());</span>
+<span class="fc" id="L239">                User user = token.getUser();</span>
+<span class="fc" id="L240">                user.setFirstname(firstname.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
+<span class="fc" id="L241">                user.setLastname(lastname.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
+<span class="fc" id="L242">                user.setEmail(email.replaceAll(Constraints.REGEX_END_WHITESPACE, &quot;&quot;));</span>
+<span class="fc" id="L243">                user.setStatus(Integer.parseInt(status));</span>
+<span class="fc" id="L244">                Calendar date = Calendar.getInstance();</span>
+<span class="fc" id="L245">                user.setModified_at(date.getTime());</span>
                 // cal user service to update
-<span class="fc" id="L251">                this.userService.update(user);</span>
+<span class="fc" id="L247">                this.userService.update(user);</span>
                 // return message success
-<span class="fc" id="L253">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_201, 0), null);</span>
+<span class="fc" id="L249">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_201, 0), null);</span>
             }
-<span class="nc" id="L255">        } catch (Exception ex) {</span>
-<span class="nc" id="L256">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L258">        }</span>
+<span class="pc" id="L251">        } catch (Exception ex) {</span>
+<span class="nc" id="L252">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
+<span class="nc" id="L253">                    Constraints.CODE_9001), null);</span>
+        }
 
-<span class="fc" id="L260">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L256">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 
     /**
@@ -274,38 +270,38 @@ import com.mulodo.miniblog.validator.UserValidate;
             @QueryParam(&quot;name&quot;) String name)
     {
 
-<span class="pc bpc" id="L277" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
-<span class="fc" id="L278">            setDataSource();</span>
+<span class="pc bpc" id="L273" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
+<span class="fc" id="L274">            setDataSource();</span>
         }
 
-<span class="fc" id="L281">        JSONObject jsonObject = new JSONObject();</span>
+<span class="fc" id="L277">        JSONObject jsonObject = new JSONObject();</span>
         // validate data from client
-<span class="fc" id="L283">        Meta meta = UserValidate.validateFindUserByName(name);</span>
-<span class="fc" id="L284">        Data data = null;</span>
+<span class="fc" id="L279">        Meta meta = UserValidate.validateFindUserByName(name);</span>
+<span class="fc" id="L280">        Data data = null;</span>
         // if have any error, add meta to jsonobject and return to client
-<span class="fc bfc" id="L286" title="All 2 branches covered.">        if (meta != null) {</span>
-<span class="fc" id="L287">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="fc" id="L288">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L283">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L284">            return Response.status(200).entity(jsonObject.toString()).build();</span>
         }
-<span class="fc" id="L290">        List&lt;User&gt; listUser = null;</span>
+<span class="fc" id="L286">        List&lt;User&gt; listUser = null;</span>
         try {
             // get list user from userservice match with name (firstname,
             // lastname, firstname)
-<span class="fc" id="L294">            listUser = this.userService.findByName(name);</span>
-<span class="fc" id="L295">            data = new Data();</span>
+<span class="fc" id="L290">            listUser = this.userService.findByName(name);</span>
+<span class="fc" id="L291">            data = new Data();</span>
             // set list user to data
 
-<span class="fc" id="L298">            data.setListUser(listUser);</span>
+<span class="fc" id="L294">            data.setListUser(listUser);</span>
             // add data to jsonobject and return json to client
-<span class="fc" id="L300">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L296">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
 
-<span class="nc" id="L302">        } catch (Exception ex) {</span>
-<span class="nc" id="L303">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L305">        }</span>
+<span class="pc" id="L298">        } catch (Exception ex) {</span>
+<span class="nc" id="L299">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
+<span class="nc" id="L300">                    Constraints.CODE_9001), null);</span>
+        }
 
-<span class="fc" id="L307">        return Response.status(200).entity(jsonObject.toString())</span>
-                .header(Constraints.ACCESS_KEY, access_key).build();
+<span class="fc" id="L303">        return Response.status(200).entity(jsonObject.toString())</span>
+<span class="fc" id="L304">                .header(Constraints.ACCESS_KEY, access_key).build();</span>
     }
 
     /**
@@ -321,36 +317,37 @@ import com.mulodo.miniblog.validator.UserValidate;
     public Response getUserInfo(@HeaderParam(Constraints.ACCESS_KEY) String access_key)
     {
 
-<span class="pc bpc" id="L324" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
-<span class="fc" id="L325">            setDataSource();</span>
+<span class="pc bpc" id="L320" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
+<span class="fc" id="L321">            setDataSource();</span>
         }
 
-<span class="fc" id="L328">        JSONObject jsonObject = new JSONObject();</span>
-<span class="fc" id="L329">        Data data = null;</span>
+<span class="fc" id="L324">        JSONObject jsonObject = new JSONObject();</span>
+<span class="fc" id="L325">        Data data = null;</span>
         try {
-<span class="fc" id="L331">            Token token = null;</span>
-<span class="fc" id="L332">            User user = null;</span>
+<span class="fc" id="L327">            Token token = null;</span>
+<span class="fc" id="L328">            User user = null;</span>
             // find token by access_key of token
-<span class="pc bpc" id="L334" title="1 of 2 branches missed.">            if (access_key != null) {</span>
-<span class="fc" id="L335">                token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="pc bpc" id="L330" title="1 of 2 branches missed.">            if (access_key != null) {</span>
+<span class="fc" id="L331">                token = this.tokenService.findByAccessKey(access_key);</span>
             }
-<span class="pc bpc" id="L337" title="1 of 2 branches missed.">            if (token != null) {</span>
+<span class="pc bpc" id="L333" title="1 of 2 branches missed.">            if (token != null) {</span>
                 // get user from token
-<span class="fc" id="L339">                user = token.getUser();</span>
+<span class="fc" id="L335">                user = token.getUser();</span>
                 // set password null
-<span class="fc" id="L341">                user.setPassword(null);</span>
+<span class="fc" id="L337">                user.setPassword(null);</span>
                 // add password to data and return client
-<span class="fc" id="L343">                data = new Data();</span>
-<span class="fc" id="L344">                data.setUser(user);</span>
-<span class="fc" id="L345">                jsonObject = BuildJSON.buildReturn(null, data);</span>
+<span class="fc" id="L339">                data = new Data();</span>
+<span class="fc" id="L340">                data.setUser(user);</span>
+<span class="fc" id="L341">                jsonObject = BuildJSON.buildReturn(null, data);</span>
             }
 
-<span class="nc" id="L348">        } catch (Exception ex) {</span>
-<span class="nc" id="L349">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L351">        }</span>
+<span class="pc" id="L344">        } catch (Exception ex) {</span>
+<span class="nc" id="L345">            ex.printStackTrace();</span>
+<span class="nc" id="L346">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
+<span class="nc" id="L347">                    Constraints.CODE_9001), null);</span>
+        }
         // jsonObject.put(&quot;user&quot;, user);
-<span class="fc" id="L353">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L350">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 
     /**
@@ -370,50 +367,50 @@ import com.mulodo.miniblog.validator.UserValidate;
             @FormParam(&quot;password&quot;) String password)
     {
 
-<span class="pc bpc" id="L373" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
-<span class="fc" id="L374">            setDataSource();</span>
+<span class="pc bpc" id="L370" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
+<span class="fc" id="L371">            setDataSource();</span>
         }
 
-<span class="fc" id="L377">        JSONObject jsonObject = new JSONObject();</span>
+<span class="fc" id="L374">        JSONObject jsonObject = new JSONObject();</span>
         // validate data frome client with uservalidate class
-<span class="fc" id="L379">        Meta meta = UserValidate.validateLogin(username, password);</span>
-<span class="fc" id="L380">        Data data = null;</span>
+<span class="fc" id="L376">        Meta meta = UserValidate.validateLogin(username, password);</span>
+<span class="fc" id="L377">        Data data = null;</span>
         // if have any error, and meta to json and return code error
-<span class="fc bfc" id="L382" title="All 2 branches covered.">        if (meta != null) {</span>
-<span class="fc" id="L383">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="fc" id="L384">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc bfc" id="L379" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L380">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L381">            return Response.status(200).entity(jsonObject.toString()).build();</span>
         }
         try {
             // check valid login with data from database
-<span class="fc" id="L388">            User user = this.userService.isValidLogin(username, password);</span>
-<span class="fc bfc" id="L389" title="All 2 branches covered.">            if (user != null) {</span>
+<span class="fc" id="L385">            User user = this.userService.isValidLogin(username, password);</span>
+<span class="fc bfc" id="L386" title="All 2 branches covered.">            if (user != null) {</span>
                 // if valid login, create new token and set new data to this
                 // token
-<span class="fc" id="L392">                Token token = new Token();</span>
-<span class="fc" id="L393">                Calendar date = Calendar.getInstance();</span>
-<span class="fc" id="L394">                String access_key = EncrypUtils.buildAccessKey(username, password);</span>
-<span class="fc" id="L395">                token.setAccess_key(access_key);</span>
-<span class="fc" id="L396">                token.setCreated_at(date.getTime());</span>
-<span class="fc" id="L397">                date.add(Calendar.HOUR_OF_DAY, 1);</span>
-<span class="fc" id="L398">                token.setExpired_at(date.getTime());</span>
-<span class="fc" id="L399">                token.setUser(user);</span>
+<span class="fc" id="L389">                Token token = new Token();</span>
+<span class="fc" id="L390">                Calendar date = Calendar.getInstance();</span>
+<span class="fc" id="L391">                String access_key = EncrypUtils.buildAccessKey(username, password);</span>
+<span class="fc" id="L392">                token.setAccess_key(access_key);</span>
+<span class="fc" id="L393">                token.setCreated_at(date.getTime());</span>
+<span class="fc" id="L394">                date.add(Calendar.HOUR_OF_DAY, 1);</span>
+<span class="fc" id="L395">                token.setExpired_at(date.getTime());</span>
+<span class="fc" id="L396">                token.setUser(user);</span>
                 // add new token to database match with this user
-<span class="fc" id="L401">                this.tokenService.add(token);</span>
+<span class="fc" id="L398">                this.tokenService.add(token);</span>
 
                 // if success, return access_key through header
-<span class="fc" id="L404">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_204, 0), null);</span>
-<span class="fc" id="L405">                return Response.status(200).entity(jsonObject.toString())</span>
-                        .header(Constraints.ACCESS_KEY, access_key).build();
+<span class="fc" id="L401">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_204, 0), null);</span>
+<span class="fc" id="L402">                return Response.status(200).entity(jsonObject.toString())</span>
+<span class="fc" id="L403">                        .header(Constraints.ACCESS_KEY, access_key).build();</span>
             } else {
-<span class="fc" id="L408">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-                        Constraints.CODE_1001), null);
+<span class="fc" id="L405">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
+<span class="fc" id="L406">                        Constraints.CODE_1001), null);</span>
             }
-<span class="nc" id="L411">        } catch (Exception ex) {</span>
-<span class="nc" id="L412">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L414">        }</span>
+<span class="pc" id="L408">        } catch (Exception ex) {</span>
+<span class="nc" id="L409">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
+<span class="nc" id="L410">                    Constraints.CODE_9001), null);</span>
+        }
 
-<span class="fc" id="L416">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L413">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 
     /**
@@ -428,34 +425,35 @@ import com.mulodo.miniblog.validator.UserValidate;
     public Response logout(@HeaderParam(Constraints.ACCESS_KEY) String access_key)
     {
 
-<span class="pc bpc" id="L431" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
-<span class="fc" id="L432">            setDataSource();</span>
+<span class="pc bpc" id="L428" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
+<span class="fc" id="L429">            setDataSource();</span>
         }
 
-<span class="fc" id="L435">        JSONObject jsonObject = new JSONObject();</span>
-<span class="fc" id="L436">        Token token = null;</span>
+<span class="fc" id="L432">        JSONObject jsonObject = new JSONObject();</span>
+<span class="fc" id="L433">        Token token = null;</span>
 
         try {
 
             // get current token by access_key
-<span class="fc bfc" id="L441" title="All 2 branches covered.">            if (access_key != null) {</span>
-<span class="fc" id="L442">                token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="fc bfc" id="L438" title="All 2 branches covered.">            if (access_key != null) {</span>
+<span class="fc" id="L439">                token = this.tokenService.findByAccessKey(access_key);</span>
             }
 
-<span class="fc bfc" id="L445" title="All 2 branches covered.">            if (token != null) {</span>
+<span class="fc bfc" id="L442" title="All 2 branches covered.">            if (token != null) {</span>
                 // if valid access_key, delete current access_key
-<span class="fc" id="L447">                this.tokenService.deleteByAccessKey(access_key);</span>
+<span class="fc" id="L444">                this.tokenService.deleteByAccessKey(access_key);</span>
                 // if success, return message success
 
-<span class="fc" id="L450">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_205, 0), null);</span>
+<span class="fc" id="L447">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_205, 0), null);</span>
 
             }
-<span class="nc" id="L453">        } catch (Exception ex) {</span>
-<span class="nc" id="L454">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L456">        }</span>
+<span class="pc" id="L450">        } catch (Exception ex) {</span>
+<span class="nc" id="L451">            ex.printStackTrace();</span>
+<span class="nc" id="L452">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,</span>
+<span class="nc" id="L453">                    Constraints.CODE_9001), null);</span>
+        }
 
-<span class="fc" id="L458">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L456">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 
     /**
@@ -475,54 +473,55 @@ import com.mulodo.miniblog.validator.UserValidate;
             @FormParam(&quot;newPassword&quot;) String newPassword)
     {
 
-<span class="pc bpc" id="L478" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
-<span class="fc" id="L479">            setDataSource();</span>
+<span class="pc bpc" id="L476" title="3 of 4 branches missed.">        if (tokenService == null || userService == null) {</span>
+<span class="fc" id="L477">            setDataSource();</span>
         }
 
-<span class="fc" id="L482">        JSONObject jsonObject = new JSONObject();</span>
+<span class="fc" id="L480">        JSONObject jsonObject = new JSONObject();</span>
         // validate data from client
-<span class="fc" id="L484">        Meta meta = UserValidate.validateChangePassword(oldPassword, newPassword);</span>
-<span class="fc" id="L485">        Data data = null;</span>
+<span class="fc" id="L482">        Meta meta = UserValidate.validateChangePassword(oldPassword, newPassword);</span>
+<span class="fc" id="L483">        Data data = null;</span>
         // if have any error, add meta to json and return to client
-<span class="fc bfc" id="L487" title="All 2 branches covered.">        if (meta != null) {</span>
-<span class="fc" id="L488">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="fc" id="L489">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc bfc" id="L485" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L486">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L487">            return Response.status(200).entity(jsonObject.toString()).build();</span>
         }
 
         try {
 
-<span class="fc" id="L494">            Token token = null;</span>
-<span class="pc bpc" id="L495" title="1 of 2 branches missed.">            if (access_key != null) {</span>
-<span class="fc" id="L496">                token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="fc" id="L492">            Token token = null;</span>
+<span class="pc bpc" id="L493" title="1 of 2 branches missed.">            if (access_key != null) {</span>
+<span class="fc" id="L494">                token = this.tokenService.findByAccessKey(access_key);</span>
             }
 
             // get current user by access_key of token
 
-<span class="pc bpc" id="L501" title="1 of 2 branches missed.">            if (token != null) {</span>
+<span class="pc bpc" id="L499" title="1 of 2 branches missed.">            if (token != null) {</span>
                 // get user from token
-<span class="fc" id="L503">                User user = token.getUser();</span>
+<span class="fc" id="L501">                User user = token.getUser();</span>
                 // encryp old password and compare with password save in
                 // database
-<span class="fc" id="L506">                oldPassword = EncrypUtils.encrypData(oldPassword);</span>
-<span class="fc bfc" id="L507" title="All 2 branches covered.">                if (oldPassword.equals(user.getPassword())) {</span>
+<span class="fc" id="L504">                oldPassword = EncrypUtils.encrypData(oldPassword);</span>
+<span class="fc bfc" id="L505" title="All 2 branches covered.">                if (oldPassword.equals(user.getPassword())) {</span>
                     // if match, set new password to user and cal update in
                     // userservice to update
-<span class="fc" id="L510">                    newPassword = EncrypUtils.encrypData(newPassword);</span>
-<span class="fc" id="L511">                    user.setPassword(newPassword);</span>
-<span class="fc" id="L512">                    userService.update(user);</span>
+<span class="fc" id="L508">                    newPassword = EncrypUtils.encrypData(newPassword);</span>
+<span class="fc" id="L509">                    user.setPassword(newPassword);</span>
+<span class="fc" id="L510">                    userService.update(user);</span>
                     // after success, delete all old token in database.
-<span class="fc" id="L514">                    this.tokenService.deleteByUser(user);</span>
-<span class="fc" id="L515">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_203, 0), null);</span>
-                } else {
-<span class="fc" id="L517">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-                            Constraints.CODE_2016), null);
+<span class="fc" id="L512">                    this.tokenService.deleteByUser(user);</span>
+<span class="fc" id="L513">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_203, 0), null);</span>
+<span class="fc" id="L514">                } else {</span>
+<span class="fc" id="L515">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
+<span class="fc" id="L516">                            Constraints.CODE_2016), null);</span>
                 }
             }
-<span class="nc" id="L521">        } catch (Exception ex) {</span>
-<span class="nc" id="L522">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L524">        }</span>
-<span class="fc" id="L525">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="pc" id="L519">        } catch (Exception ex) {</span>
+<span class="nc" id="L520">            ex.printStackTrace();</span>
+<span class="nc" id="L521">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
+<span class="nc" id="L522">                    Constraints.CODE_9001), null);</span>
+        }
+<span class="fc" id="L524">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 
     /**
@@ -530,8 +529,9 @@ import com.mulodo.miniblog.validator.UserValidate;
      */
     private void setDataSource()
     {
-<span class="fc" id="L533">        tokenService = ApplicationContextUtils.getTokenServiceDataSource();</span>
-<span class="fc" id="L534">        userService = ApplicationContextUtils.getUserServiceDataSource();</span>
+          
+<span class="fc" id="L533">        tokenService = (TokenService) SpringApplicationContext.getBean(&quot;tokenService&quot;);</span>
+<span class="fc" id="L534">        userService = (UserService) SpringApplicationContext.getBean(&quot;userService&quot;);</span>
 <span class="fc" id="L535">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

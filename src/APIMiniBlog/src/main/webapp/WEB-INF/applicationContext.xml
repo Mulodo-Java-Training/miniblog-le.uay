@@ -10,52 +10,58 @@
 
 	<context:annotation-config></context:annotation-config>
 	<context:component-scan base-package="com.mulodo.miniblog"></context:component-scan>
-		<!-- Database Configuration -->
-		<import resource="DataSource.xml" />
-		<import resource="Hibernate.xml" />
+	<!-- Database Configuration -->
+	<import resource="DataSource.xml" />
+	<import resource="Hibernate.xml" />
 
-		<tx:annotation-driven transaction-manager="txManager" />
-		
-		<bean id="txManager"
-			class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-			<!-- (this dependency is defined somewhere else) -->
-			<property name="dataSource" ref="dataSource" />
-		</bean>
-		
-		<!-- <bean id="genericDAO" class="com.mulodo.miniblog.dao.GenericDAOImpl" >
-			<property name="sessionFactory" ref="sessionFactory" />
-		</bean> -->
-				
-		<bean id="userDAO" class="com.mulodo.miniblog.dao.impl.UserDAOImpl" >
-			<property name="sessionFactory" ref="sessionFactory" />
-		</bean>
-		<bean id="userService" class="com.mulodo.miniblog.service.impl.UserServiceImpl">
-			<property name="userDAO" ref="userDAO" />
-		    <property name="genericDAO" ref="userDAO" />
-		</bean>
-		
-		<bean id="tokenDAO"  class="com.mulodo.miniblog.dao.impl.TokenDAOImpl">
-			<property name="sessionFactory" ref="sessionFactory" />
-		</bean>
-		<bean id="tokenService" class="com.mulodo.miniblog.service.impl.TokenServiceImpl">
-			<property name="tokenDAO" ref="tokenDAO" />
-			<property name="genericDAO" ref="userDAO" />
-		</bean>
-		
-		<bean id="postDAO"  class="com.mulodo.miniblog.dao.impl.PostDAOImpl">
-			<property name="sessionFactory" ref="sessionFactory" />
-		</bean>
-		<bean id="postService" class="com.mulodo.miniblog.service.impl.PostServiceImpl">
-			<property name="postDAO" ref="postDAO" />
-			<property name="genericDAO" ref="postDAO" />
-		</bean>
-		
-		<bean id="commentDAO"  class="com.mulodo.miniblog.dao.impl.CommentDAOImpl">
-			<property name="sessionFactory" ref="sessionFactory" />
-		</bean>
-		<bean id="commentService" class="com.mulodo.miniblog.service.impl.CommentServiceImpl">
-			<property name="commentDAO" ref="commentDAO" />
-			<property name="genericDAO" ref="commentDAO" />
-		</bean>
-		
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
+		(this dependency is defined somewhere else) <property name="dataSource" ref="dataSource" 
+		/> </bean> -->
+	<bean id="transactionManager"
+			class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+
+
+	<!-- <bean id="genericDAO" class="com.mulodo.miniblog.dao.GenericDAOImpl" 
+		> <property name="sessionFactory" ref="sessionFactory" /> </bean> -->
+
+	<bean id="userDAO" class="com.mulodo.miniblog.dao.impl.UserDAOImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="userService" class="com.mulodo.miniblog.service.impl.UserServiceImpl">
+		<property name="userDAO" ref="userDAO" />
+		<property name="genericDAO" ref="userDAO" />
+	</bean>
+
+	<bean id="tokenDAO" class="com.mulodo.miniblog.dao.impl.TokenDAOImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="tokenService" class="com.mulodo.miniblog.service.impl.TokenServiceImpl">
+		<property name="tokenDAO" ref="tokenDAO" />
+		<property name="genericDAO" ref="userDAO" />
+	</bean>
+
+	<bean id="postDAO" class="com.mulodo.miniblog.dao.impl.PostDAOImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="postService" class="com.mulodo.miniblog.service.impl.PostServiceImpl">
+		<property name="postDAO" ref="postDAO" />
+		<property name="genericDAO" ref="postDAO" />
+	</bean>
+
+	<bean id="commentDAO" class="com.mulodo.miniblog.dao.impl.CommentDAOImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="commentService" class="com.mulodo.miniblog.service.impl.CommentServiceImpl">
+		<property name="commentDAO" ref="commentDAO" />
+		<property name="genericDAO" ref="commentDAO" />
+	</bean>
+
+	<bean id="springApplicationContext" class="com.mulodo.miniblog.utils.SpringApplicationContext" />
+
+
 </beans>

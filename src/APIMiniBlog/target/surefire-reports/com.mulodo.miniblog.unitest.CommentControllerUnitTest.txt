@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.mulodo.miniblog.unitest.CommentControllerUnitTest
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.054 sec - in com.mulodo.miniblog.unitest.CommentControllerUnitTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.323 sec - in com.mulodo.miniblog.unitest.CommentControllerUnitTest

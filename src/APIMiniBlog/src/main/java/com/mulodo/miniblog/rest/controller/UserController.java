@@ -10,8 +10,6 @@
  */
 package com.mulodo.miniblog.rest.controller;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -33,7 +31,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.test.context.ContextConfiguration;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.model.Token;
@@ -42,9 +39,9 @@ import com.mulodo.miniblog.object.Data;
 import com.mulodo.miniblog.object.Meta;
 import com.mulodo.miniblog.service.TokenService;
 import com.mulodo.miniblog.service.UserService;
-import com.mulodo.miniblog.utils.ApplicationContextUtils;
 import com.mulodo.miniblog.utils.BuildJSON;
 import com.mulodo.miniblog.utils.EncrypUtils;
+import com.mulodo.miniblog.utils.SpringApplicationContext;
 import com.mulodo.miniblog.validator.UserValidate;
 
 /**
@@ -192,8 +189,6 @@ public class UserController
             @FormParam("lastname") String lastname, @FormParam("email") String email,
             @FormParam("status") String status)
     {
-
-        System.out.println("pass " + password);
 
         if (tokenService == null || userService == null) {
             setDataSource();
@@ -347,6 +342,7 @@ public class UserController
             }
 
         } catch (Exception ex) {
+            ex.printStackTrace();
             jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,
                     Constraints.CODE_9001), null);
         }
@@ -452,6 +448,7 @@ public class UserController
 
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,
                     Constraints.CODE_9001), null);
         }
@@ -520,6 +517,7 @@ public class UserController
                 }
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,
                     Constraints.CODE_9001), null);
         }
@@ -531,7 +529,8 @@ public class UserController
      */
     private void setDataSource()
     {
-        tokenService = ApplicationContextUtils.getTokenServiceDataSource();
-        userService = ApplicationContextUtils.getUserServiceDataSource();
+          
+        tokenService = (TokenService) SpringApplicationContext.getBean("tokenService");
+        userService = (UserService) SpringApplicationContext.getBean("userService");
     }
 }

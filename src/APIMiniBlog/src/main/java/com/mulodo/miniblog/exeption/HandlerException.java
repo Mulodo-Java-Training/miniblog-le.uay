@@ -1,9 +1,9 @@
 /* 
- * DAOException.java 
+ * HandlerException.java 
  *  
  * 1.0
  * 
- * 2015/02/02
+ * 2015/02/23
  *  
  * Copyright (c) 2015 Le U Uay
  * 
@@ -11,7 +11,7 @@
 package com.mulodo.miniblog.exeption;
 
 /**
- * The dao exception
+ * The handler exception
  * 
  * @author UayLU
  */
@@ -20,14 +20,14 @@ public class HandlerException extends Exception
 {
 
     /**
-     * constructor of DAOException
+     * constructor of HandlerException
      */
     public HandlerException() {
         super();
     }
 
     /**
-     * constructor of DAOException
+     * constructor of HandlerException
      *
      * @param message
      *            : message for exception

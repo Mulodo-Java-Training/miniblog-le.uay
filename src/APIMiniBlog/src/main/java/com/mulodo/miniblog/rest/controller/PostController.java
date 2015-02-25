@@ -39,8 +39,8 @@ import com.mulodo.miniblog.object.Data;
 import com.mulodo.miniblog.object.Meta;
 import com.mulodo.miniblog.service.PostService;
 import com.mulodo.miniblog.service.TokenService;
-import com.mulodo.miniblog.utils.ApplicationContextUtils;
 import com.mulodo.miniblog.utils.BuildJSON;
+import com.mulodo.miniblog.utils.SpringApplicationContext;
 import com.mulodo.miniblog.validator.PostValidate;
 
 /**
@@ -122,7 +122,6 @@ public class PostController
         if (access_key != null) {
             try {
                 // get user login by access_key of token
-                System.out.println("access " + access_key);
                 Token token = this.tokenService.findByAccessKey(access_key);
                 if (token != null) {
                     // get user from token
@@ -477,7 +476,7 @@ public class PostController
      */
     private void setDataSource()
     {
-        tokenService = ApplicationContextUtils.getTokenServiceDataSource();
-        postService = ApplicationContextUtils.getPostServiceDataSource();
+        tokenService = (TokenService) SpringApplicationContext.getBean("tokenService");
+        postService = (PostService) SpringApplicationContext.getBean("postService");
     }
 }

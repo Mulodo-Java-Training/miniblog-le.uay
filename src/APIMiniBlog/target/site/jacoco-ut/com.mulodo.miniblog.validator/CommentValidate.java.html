@@ -22,179 +22,183 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
  * The CommentValidate use to validate comment data
  * 
  * @author UayLU
- * 
  */
-<span class="nc" id="L27">public class CommentValidate {</span>
+<span class="nc" id="L26">public class CommentValidate</span>
+{
 
-	/**
-	 *  validate_add_new use for validate add new data comment
-	 *	
-	 *	@param	user_id : post_id of post
-	 *  @param  content : content of post
-	 *	
-	 *  @return Meta
-	 *	
-	 */
-	public static Meta validateAddNew(String comment_id, String content){
-		
-		//List message contain error message validate
-<span class="fc" id="L41">		List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
-		
-		Boolean isValid;
-		//check null empty or white space if string
-<span class="fc" id="L45">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(content);</span>
-<span class="fc bfc" id="L46" title="All 2 branches covered.">		if(!isValid){</span>
-			//check if have error, add message error to listmessage
-<span class="fc" id="L48">			listMessage.add(new Message(Constraints.CODE_3001));</span>
-<span class="fc" id="L49">		}else{</span>
-			//check valid length of string
-<span class="fc" id="L51">			isValid = ValidatorUtils.isValidLength(content, 1, 500);</span>
-<span class="pc bpc" id="L52" title="1 of 2 branches missed.">			if(!isValid){</span>
-				//check if have error, add message error to listmessage
-<span class="nc" id="L54">				listMessage.add(new Message(Constraints.CODE_3005));</span>
-			}
-		}
-		
-<span class="fc" id="L58">		isValid = ValidatorUtils.isPositiveInteger(comment_id);		</span>
-<span class="fc bfc" id="L59" title="All 2 branches covered.">		if(!isValid){</span>
-			//check if have error, add message error to listmessage
-<span class="fc" id="L61">			listMessage.add(new Message(Constraints.CODE_3007));</span>
-		}
-		
-<span class="fc bfc" id="L64" title="All 2 branches covered.">		if(!listMessage.isEmpty() ){</span>
-			//check if have error, add message error to listmessage
-<span class="fc" id="L66">			Meta meta = new Meta(Constraints.CODE_3000, listMessage);</span>
-<span class="fc" id="L67">			return meta;</span>
-		}
-<span class="fc" id="L69">		return null;</span>
-	}
+    /**
+     * validate_add_new use for validate add new data comment
+     *
+     * @param user_id
+     *            : post_id of post
+     * @param content
+     *            : content of post
+     * @return Meta
+     */
+    public static Meta validateAddNew(String comment_id, String content)
+    {
 
-	/**
-	 *  validate_update use for validate update data comment
-	 *	
-	 *	@param	comment_id : comment_id of comment
-	 *  @param  content : content of post
-	 *	
-	 *  @return Meta
-	 *	
-	 */
-	public static Meta validateUpdate(String comment_id, String content) {
-		
-		//List message contain error message validate
-<span class="nc" id="L84">		List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
-		
-		Boolean isValid;
-		//check null empty or white space if string
-<span class="nc" id="L88">		isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(content);</span>
-<span class="nc bnc" id="L89" title="All 2 branches missed.">		if(!isValid){</span>
-			//check if have error, add message error to listmessage
-<span class="nc" id="L91">			listMessage.add(new Message(Constraints.CODE_3001));</span>
-<span class="nc" id="L92">		}else{</span>
-			//check valid length of string
-<span class="nc" id="L94">			isValid = ValidatorUtils.isValidLength(content, 1, 500);</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">			if(!isValid){</span>
-				//check if have error, add message error to listmessage
-<span class="nc" id="L97">				listMessage.add(new Message(Constraints.CODE_3005));</span>
-			}
-		}
-		
-<span class="nc" id="L101">		isValid = ValidatorUtils.isPositiveInteger(comment_id);		</span>
-<span class="nc bnc" id="L102" title="All 2 branches missed.">		if(!isValid){</span>
-			//check if have error, add message error to listmessage
-<span class="nc" id="L104">			listMessage.add(new Message(Constraints.CODE_3006));</span>
-		}
-		
-<span class="nc bnc" id="L107" title="All 2 branches missed.">		if(!listMessage.isEmpty() ){</span>
-			//check if have error, add message error to listmessage
-<span class="nc" id="L109">			Meta meta = new Meta(Constraints.CODE_3000, listMessage);</span>
-<span class="nc" id="L110">			return meta;</span>
-		}
-<span class="nc" id="L112">		return null;</span>
-	}
+        // List message contain error message validate
+<span class="fc" id="L42">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
 
-	/**
-	 *  validate_delete use for validate delete comment
-	 *	
-	 *	@param	comment_id : comment_id of comment
-	 *	
-	 *  @return Meta
-	 *	
-	 */
-	public static Meta validateDelete(String comment_id) {
-		
-		//List message contain error message validate
-<span class="nc" id="L126">		List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
-		
-		Boolean isValid;
-		
-<span class="nc" id="L130">		isValid = ValidatorUtils.isPositiveInteger(comment_id);		</span>
-<span class="nc bnc" id="L131" title="All 2 branches missed.">		if(!isValid){</span>
-<span class="nc" id="L132">			listMessage.add(new Message(Constraints.CODE_3006));</span>
-		}
-		
-<span class="nc bnc" id="L135" title="All 2 branches missed.">		if(!listMessage.isEmpty() ){</span>
-<span class="nc" id="L136">			Meta meta = new Meta(Constraints.CODE_3000, listMessage);</span>
-<span class="nc" id="L137">			return meta;</span>
-		}
-<span class="nc" id="L139">		return null;</span>
-	}
+        Boolean isValid;
+        // check null empty or white space if string
+<span class="fc" id="L46">        isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(content);</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (!isValid) {</span>
+            // check if have error, add message error to listmessage
+<span class="fc" id="L49">            listMessage.add(new Message(Constraints.CODE_3001));</span>
+<span class="fc" id="L50">        } else {</span>
+            // check valid length of string
+<span class="fc" id="L52">            isValid = ValidatorUtils.isValidLength(content, 1, 500);</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">            if (!isValid) {</span>
+                // check if have error, add message error to listmessage
+<span class="nc" id="L55">                listMessage.add(new Message(Constraints.CODE_3005));</span>
+            }
+        }
 
-	/**
-	 *  validate_get_all_comment_for_post use for validate get all comment for user
-	 *	
-	 *	@param	post_id : post_id of post
-	 *	
-	 *  @return Meta
-	 *	
-	 */
-	public static Meta validateGetAllCommentForPost(String post_id) {
-		
-		//List message contain error message validate
-<span class="nc" id="L153">		List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
-		
-		Boolean isValid;
-		
-<span class="nc" id="L157">		isValid = ValidatorUtils.isPositiveInteger(post_id);		</span>
-<span class="nc bnc" id="L158" title="All 2 branches missed.">		if(!isValid){</span>
-			//check if have error, add message error to listmessage
-<span class="nc" id="L160">			listMessage.add(new Message(Constraints.CODE_3002));</span>
-		}
-		
-<span class="nc bnc" id="L163" title="All 2 branches missed.">		if(!listMessage.isEmpty() ){</span>
-			//check if have error, add message error to listmessage
-<span class="nc" id="L165">			Meta meta = new Meta(Constraints.CODE_3000, listMessage);</span>
-<span class="nc" id="L166">			return meta;</span>
-		}
-<span class="nc" id="L168">		return null;</span>
-	}
+<span class="fc" id="L59">        isValid = ValidatorUtils.isPositiveInteger(comment_id);</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (!isValid) {</span>
+            // check if have error, add message error to listmessage
+<span class="fc" id="L62">            listMessage.add(new Message(Constraints.CODE_3007));</span>
+        }
 
-	/**
-	 *  validate_get_all_comment_for_user use for validate get all comment for user
-	 *	
-	 *	@param	user_id : user_id of user
-	 *	
-	 *  @return Meta
-	 *	
-	 */
-	public static Meta validateGetAllCommentForUser(String user_id) {
-		
-		//List message contain error message validate
-<span class="nc" id="L182">		List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
-		
-		Boolean isValid;
-		
-<span class="nc" id="L186">		isValid = ValidatorUtils.isPositiveInteger(user_id);		</span>
-<span class="nc bnc" id="L187" title="All 2 branches missed.">		if(!isValid){</span>
-			//check if have error, add message error to listmessage
-<span class="nc" id="L189">			listMessage.add(new Message(Constraints.CODE_3003));</span>
-		}
-		
-<span class="nc bnc" id="L192" title="All 2 branches missed.">		if(!listMessage.isEmpty() ){</span>
-			//check if have error, add message error to listmessage
-<span class="nc" id="L194">			Meta meta = new Meta(Constraints.CODE_3000, listMessage);</span>
-<span class="nc" id="L195">			return meta;</span>
-		}
-<span class="nc" id="L197">		return null;</span>
-	}
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
+            // check if have error, add message error to listmessage
+<span class="fc" id="L67">            Meta meta = new Meta(Constraints.CODE_3000, listMessage);</span>
+<span class="fc" id="L68">            return meta;</span>
+        }
+<span class="fc" id="L70">        return null;</span>
+    }
+
+    /**
+     * validate_update use for validate update data comment
+     *
+     * @param comment_id
+     *            : comment_id of comment
+     * @param content
+     *            : content of post
+     * @return Meta
+     */
+    public static Meta validateUpdate(String comment_id, String content)
+    {
+
+        // List message contain error message validate
+<span class="fc" id="L86">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+
+        Boolean isValid;
+        // check null empty or white space if string
+<span class="fc" id="L90">        isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(content);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (!isValid) {</span>
+            // check if have error, add message error to listmessage
+<span class="fc" id="L93">            listMessage.add(new Message(Constraints.CODE_3001));</span>
+<span class="fc" id="L94">        } else {</span>
+            // check valid length of string
+<span class="fc" id="L96">            isValid = ValidatorUtils.isValidLength(content, 1, 500);</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">            if (!isValid) {</span>
+                // check if have error, add message error to listmessage
+<span class="nc" id="L99">                listMessage.add(new Message(Constraints.CODE_3005));</span>
+            }
+        }
+
+<span class="fc" id="L103">        isValid = ValidatorUtils.isPositiveInteger(comment_id);</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if (!isValid) {</span>
+            // check if have error, add message error to listmessage
+<span class="fc" id="L106">            listMessage.add(new Message(Constraints.CODE_3006));</span>
+        }
+
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
+            // check if have error, add message error to listmessage
+<span class="fc" id="L111">            Meta meta = new Meta(Constraints.CODE_3000, listMessage);</span>
+<span class="fc" id="L112">            return meta;</span>
+        }
+<span class="fc" id="L114">        return null;</span>
+    }
+
+    /**
+     * validate_delete use for validate delete comment
+     *
+     * @param comment_id
+     *            : comment_id of comment
+     * @return Meta
+     */
+    public static Meta validateDelete(String comment_id)
+    {
+
+        // List message contain error message validate
+<span class="fc" id="L128">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+
+        Boolean isValid;
+
+<span class="fc" id="L132">        isValid = ValidatorUtils.isPositiveInteger(comment_id);</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if (!isValid) {</span>
+<span class="fc" id="L134">            listMessage.add(new Message(Constraints.CODE_3006));</span>
+        }
+
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
+<span class="fc" id="L138">            Meta meta = new Meta(Constraints.CODE_3000, listMessage);</span>
+<span class="fc" id="L139">            return meta;</span>
+        }
+<span class="fc" id="L141">        return null;</span>
+    }
+
+    /**
+     * validate_get_all_comment_for_post use for validate get all comment for
+     * user
+     *
+     * @param post_id
+     *            : post_id of post
+     * @return Meta
+     */
+    public static Meta validateGetAllCommentForPost(String post_id)
+    {
+
+        // List message contain error message validate
+<span class="fc" id="L156">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+
+        Boolean isValid;
+
+<span class="fc" id="L160">        isValid = ValidatorUtils.isPositiveInteger(post_id);</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        if (!isValid) {</span>
+            // check if have error, add message error to listmessage
+<span class="fc" id="L163">            listMessage.add(new Message(Constraints.CODE_3002));</span>
+        }
+
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
+            // check if have error, add message error to listmessage
+<span class="fc" id="L168">            Meta meta = new Meta(Constraints.CODE_3000, listMessage);</span>
+<span class="fc" id="L169">            return meta;</span>
+        }
+<span class="fc" id="L171">        return null;</span>
+    }
+
+    /**
+     * validate_get_all_comment_for_user use for validate get all comment for
+     * user
+     *
+     * @param user_id
+     *            : user_id of user
+     * @return Meta
+     */
+    public static Meta validateGetAllCommentForUser(String user_id)
+    {
+
+        // List message contain error message validate
+<span class="fc" id="L186">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+
+        Boolean isValid;
+
+<span class="fc" id="L190">        isValid = ValidatorUtils.isPositiveInteger(user_id);</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        if (!isValid) {</span>
+            // check if have error, add message error to listmessage
+<span class="fc" id="L193">            listMessage.add(new Message(Constraints.CODE_3003));</span>
+        }
+
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
+            // check if have error, add message error to listmessage
+<span class="fc" id="L198">            Meta meta = new Meta(Constraints.CODE_3000, listMessage);</span>
+<span class="fc" id="L199">            return meta;</span>
+        }
+<span class="fc" id="L201">        return null;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

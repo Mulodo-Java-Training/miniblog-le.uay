@@ -24,96 +24,80 @@ import com.mulodo.miniblog.service.TokenService;
  * The token service impl
  * 
  * @author UayLU
- * 
  */
 @Service
-<span class="fc" id="L30">public class TokenServiceImpl extends GenericServiceImpl&lt;Token&gt; implements TokenService{</span>
+<span class="fc" id="L29">public class TokenServiceImpl extends GenericServiceImpl&lt;Token&gt; implements TokenService</span>
+{
 
-	private TokenDAO tokenDAO;
-	
-	 /**
-	 *  setTokenDAO use to set datasource from applicationcontent.xml
-	 *	
-	 *	@param	tokenDAO : tokenDAO from datasource
-	 *
-	 *	@return void
-	 */
-	@Autowired
-	@Qualifier(&quot;tokenDAO&quot;)
-	public void setTokenDAO (TokenDAO tokenDAO){
-<span class="fc" id="L44">		this.tokenDAO = tokenDAO;</span>
-<span class="fc" id="L45">	}</span>
-	
-	/**
-	 *  delete_by_access_key use to call delete by access key function from tokendao
-	 *	
-	 *	@param	access_key : access_key in token table
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Boolean deleteByAccessKey(String access_key) throws HandlerException {
+    private TokenDAO tokenDAO;
 
-<span class="pc bpc" id="L60" title="1 of 2 branches missed.">		if (access_key!= null){</span>
-<span class="fc" id="L61">			return this.tokenDAO.deleteByAccessKey(access_key);</span>
-		}else{
-<span class="nc" id="L63">			return false;</span>
-		}
-	}
+    /**
+     * setTokenDAO use to set datasource from applicationcontent.xml
+     *
+     * @param tokenDAO
+     *            : tokenDAO from datasource
+     * @return void
+     */
+    @Autowired
+    @Qualifier(&quot;tokenDAO&quot;)
+    public void setTokenDAO(TokenDAO tokenDAO)
+    {
+<span class="fc" id="L45">        this.tokenDAO = tokenDAO;</span>
+<span class="fc" id="L46">    }</span>
 
-	/**
-	 *  find_by_access_key use to call find by access key function from tokendao
-	 *	
-	 *	@param	access_key : access_key in token table
-	 *
-	 *	@return Token
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Token findByAccessKey(String access_key) throws HandlerException  {
-		try{
-<span class="pc bpc" id="L80" title="1 of 2 branches missed.">			if (access_key!= null){</span>
-<span class="fc" id="L81">				Token token = this.tokenDAO.findByAccessKey(access_key);</span>
-<span class="pc bpc" id="L82" title="1 of 2 branches missed.">				if(token != null){</span>
-<span class="fc" id="L83">					return token;</span>
-				}else{
-<span class="nc" id="L85">					return null;</span>
-				}
-			}else{
-<span class="nc" id="L88">				return null;</span>
-			}
-<span class="nc" id="L90">		}catch(HandlerException ex){</span>
-<span class="nc" id="L91">			throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L92">		}catch(Exception ex){</span>
-<span class="nc" id="L93">			throw new HandlerException(ex.getMessage());</span>
-		}
-	}
+    /**
+     * delete_by_access_key use to call delete by access key function from
+     * tokendao
+     *
+     * @param access_key
+     *            : access_key in token table
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    public Boolean deleteByAccessKey(String access_key) throws HandlerException
+    {
 
-	/**
-	 *  delete_by_user use to call delete by user function from tokendao
-	 *	
-	 *	@param	user : user that owner access_key in token table
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Boolean deleteByUser(User user) throws HandlerException {
-	
-<span class="pc bpc" id="L110" title="1 of 2 branches missed.">		if (user!= null){</span>
-<span class="fc" id="L111">			return this.tokenDAO.deleteByUser(user);</span>
-		}else{
-<span class="nc" id="L113">			return false;</span>
-		}
-		
-	}
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (access_key != null) {</span>
+<span class="fc" id="L62">            return this.tokenDAO.deleteByAccessKey(access_key);</span>
+        } else {
+<span class="nc" id="L64">            return false;</span>
+        }
+    }
+
+    /**
+     * find_by_access_key use to call find by access key function from tokendao
+     *
+     * @param access_key
+     *            : access_key in token table
+     * @return Token
+     * @exception HandlerException
+     */
+    @Override
+    public Token findByAccessKey(String access_key) throws HandlerException
+    {
+<span class="fc" id="L79">        return this.tokenDAO.findByAccessKey(access_key);</span>
+    }
+
+    /**
+     * delete_by_user use to call delete by user function from tokendao
+     *
+     * @param user
+     *            : user that owner access_key in token table
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    public Boolean deleteByUser(User user) throws HandlerException
+    {
+
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if (user != null) {</span>
+<span class="fc" id="L95">            return this.tokenDAO.deleteByUser(user);</span>
+        } else {
+<span class="nc" id="L97">            return false;</span>
+        }
+
+    }
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

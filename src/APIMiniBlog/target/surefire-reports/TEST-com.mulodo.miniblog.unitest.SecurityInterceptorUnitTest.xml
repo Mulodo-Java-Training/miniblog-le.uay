@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest" time="0.643" tests="1" errors="1" skipped="0" failures="0">
+<testsuite name="com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest" time="0.028" tests="7" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home/jre/lib"/>
@@ -24,7 +24,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="Mac OS X"/>
-    <property name="classworlds.conf" value="/Users/leuuay/mulodo/Spring/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf1204644468758631338.tmp"/>
+    <property name="classworlds.conf" value="/Users/leuuay/mulodo/Spring/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf6716165109385308835.tmp"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
     <property name="java.library.path" value="/Users/leuuay/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
@@ -61,12 +61,11 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="testAccessDeniedWithNullAccessKey" classname="com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest" time="0.643">
-    <error message="No matching handler method found for servlet request: path &apos;/users/add&apos;, method &apos;POST&apos;, parameters map[[empty]]" type="org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException">org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException: No matching handler method found for servlet request: path '/users/add', method 'POST', parameters map[[empty]]
-	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter$ServletHandlerMethodResolver.resolveHandlerMethod(AnnotationMethodHandlerAdapter.java:646)
-	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:431)
-	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:424)
-	at com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest.testAccessDeniedWithNullAccessKey(SecurityInterceptorUnitTest.java:68)
-</error>
-  </testcase>
+  <testcase name="testException" classname="com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest" time="0.006"/>
+  <testcase name="testAccessDeniedOutOfDateAccessKey" classname="com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest" time="0.004"/>
+  <testcase name="testExceptionNotLogin" classname="com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest" time="0.006"/>
+  <testcase name="testAccessDeniedNullAccessKey" classname="com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest" time="0.003"/>
+  <testcase name="testAccessSuccess" classname="com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest" time="0.003"/>
+  <testcase name="testAlreadyLogin" classname="com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest" time="0.003"/>
+  <testcase name="testAccessDeniedInvalidAccessKeyInDatabase" classname="com.mulodo.miniblog.unitest.SecurityInterceptorUnitTest" time="0.003"/>
 </testsuite>

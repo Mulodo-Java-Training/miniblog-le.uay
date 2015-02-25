@@ -10,16 +10,14 @@
  */
 package com.mulodo.miniblog.dao.impl;
 
-import java.util.List;
-
 import org.hibernate.HibernateException;
-import org.hibernate.ObjectNotFoundException;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mulodo.miniblog.dao.GenericDAO;
 import com.mulodo.miniblog.exeption.HandlerException;
@@ -28,151 +26,138 @@ import com.mulodo.miniblog.exeption.HandlerException;
  * The abstract class of generic dao impl
  * 
  * @author UayLU
- * 
  */
-<span class="fc" id="L33">public abstract class GenericDAOImpl&lt;T&gt; implements GenericDAO&lt;T&gt; {</span>
+<span class="fc" id="L30">public abstract class GenericDAOImpl&lt;T&gt; implements GenericDAO&lt;T&gt;</span>
+{
 
-	protected SessionFactory sessionFactory;
-<span class="fc" id="L36">	protected Session session = null;</span>
-<span class="fc" id="L37">	protected Transaction tx = null;</span>
-<span class="fc" id="L38">	private static final Logger logger = LoggerFactory.getLogger(GenericDAOImpl.class);</span>
-	private Class&lt;T&gt; genericType;
-	
-	public void setSessionFactory(SessionFactory sessionFactory){
-<span class="fc" id="L42">		this.sessionFactory = sessionFactory;</span>
-<span class="fc" id="L43">	}</span>
-	
-	/**
-	 *  add use to add new entity to database
-	 *	
-	 *	@param	entity : match with entity in model package
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
+    protected SessionFactory sessionFactory;
+<span class="fc" id="L34">    protected Session session = null;</span>
+<span class="fc" id="L35">    protected Transaction tx = null;</span>
+<span class="fc" id="L36">    private static final Logger logger = LoggerFactory.getLogger(GenericDAOImpl.class);</span>
+    private Class&lt;T&gt; genericType;
+
+    public void setSessionFactory(SessionFactory sessionFactory)
+    {
+<span class="fc" id="L41">        this.sessionFactory = sessionFactory;</span>
+<span class="fc" id="L42">    }</span>
+
+    /**
+     * add use to add new entity to database
+     *
+     * @param entity
+     *            : match with entity in model package
+     * @return Boolean
+     * @exception HandlerException
+     */
     @Override
-    public Boolean add(T entity) throws HandlerException {
-		try{
-<span class="fc" id="L58">	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L59">	        tx = session.beginTransaction();</span>
-<span class="fc" id="L60">	        session.persist(entity);</span>
-<span class="fc" id="L61">	        tx.commit();</span>
-<span class="fc" id="L62">            logger.info(&quot;Entity saved successfully, Entity Details=&quot;+entity);</span>
-<span class="fc" id="L63">            return true;</span>
-<span class="nc" id="L64">    	}catch(HibernateException ex){</span>
-<span class="nc bnc" id="L65" title="All 2 branches missed.">    		if(tx != null)	tx.rollback();</span>
-<span class="nc" id="L66">    		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
-<span class="nc" id="L67">    		ex.printStackTrace();</span>
-<span class="nc" id="L68">    		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L69">    	}finally {</span>
-<span class="pc" id="L70">    		   session.close();</span>
-<span class="nc" id="L71">    	}</span>
+    @Transactional
+    public Boolean add(T entity) throws HandlerException
+    {
+        try {
+<span class="fc" id="L57">            session = this.sessionFactory.getCurrentSession();</span>
+            
+<span class="fc" id="L59">            session.persist(entity);</span>
+            
+<span class="fc" id="L61">            logger.info(&quot;Entity saved successfully, Entity Details=&quot; + entity);</span>
+<span class="fc" id="L62">            return true;</span>
+<span class="nc" id="L63">        } catch (HibernateException ex) {</span>
+            
+<span class="nc" id="L65">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+<span class="nc" id="L66">            throw new HandlerException(ex.getMessage());</span>
+        }
+        
     }
 
     /**
-	 *  update use to update new information of entity to database
-	 *	
-	 *	@param	entity : match with entity in model package
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
+     * update use to update new information of entity to database
+     *
+     * @param entity
+     *            : match with entity in model package
+     * @return Boolean
+     * @exception HandlerException
+     */
     @Override
-    public Boolean update(T entity) throws HandlerException {
-    	try{
-<span class="fc" id="L87">	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L88">	        tx = session.beginTransaction();</span>
-<span class="fc" id="L89">	        session.update(entity);</span>
-<span class="fc" id="L90">	        tx.commit();</span>
-<span class="fc" id="L91">	        logger.info(&quot;Entity updated successfully, Entity Details=&quot;+entity);</span>
-<span class="fc" id="L92">	        return true;</span>
-<span class="nc" id="L93">    	}catch(HibernateException ex){</span>
-<span class="nc" id="L94">    		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
-<span class="nc" id="L95">    		tx.rollback();</span>
-<span class="nc" id="L96">    		ex.printStackTrace();</span>
-<span class="nc" id="L97">    		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L98">    	}finally {</span>
-<span class="pc" id="L99">    		   session.close();</span>
-<span class="nc" id="L100">    	}</span>
+    @Transactional
+    public Boolean update(T entity) throws HandlerException
+    {
+        try {
+<span class="fc" id="L84">            session = this.sessionFactory.getCurrentSession();</span>
+            
+<span class="fc" id="L86">            session.update(entity);</span>
+            
+<span class="fc" id="L88">            logger.info(&quot;Entity updated successfully, Entity Details=&quot; + entity);</span>
+<span class="fc" id="L89">            return true;</span>
+<span class="nc" id="L90">        } catch (HibernateException ex) {</span>
+            
+<span class="nc" id="L92">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+<span class="nc" id="L93">            throw new HandlerException(ex.getMessage());</span>
+        } 
     }
 
     /**
-	 *  delete use to delete entity exist in database
-	 *	
-	 *	@param	id : id of entity in database
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	@SuppressWarnings(&quot;unchecked&quot;)
-    public Boolean delete(int id) throws HandlerException {
-    	 try{
-    		 
-<span class="fc" id="L118">    		this.genericType = (Class&lt;T&gt;) GenericTypeResolver.resolveTypeArgument(getClass(), GenericDAOImpl.class); </span>
-<span class="fc" id="L119"> 	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L120"> 	        tx = session.beginTransaction();</span>
-<span class="fc" id="L121">			T p = (T) session.load(this.genericType, id);</span>
-<span class="pc bpc" id="L122" title="1 of 2 branches missed."> 	        if(p != null){</span>
-<span class="fc" id="L123"> 	            session.delete(p);</span>
- 	        }
-<span class="fc" id="L125"> 	        tx.commit();</span>
-<span class="fc" id="L126"> 	        logger.info(&quot;Entity deleted successfully, Entity details=&quot;+p);</span>
-<span class="fc" id="L127"> 	        return true;</span>
-<span class="nc" id="L128">     	}catch(HibernateException ex){</span>
-<span class="nc bnc" id="L129" title="All 2 branches missed.">     		if(tx != null)	{</span>
-<span class="nc" id="L130">     			tx.rollback();</span>
-     		}
-<span class="nc" id="L132">     		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
-<span class="nc" id="L133">     		ex.printStackTrace();</span>
-<span class="nc" id="L134">     		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L135">     	}finally {</span>
-<span class="pc" id="L136">     		session.close();</span>
-<span class="nc" id="L137">     	}</span>
+     * delete use to delete entity exist in database
+     *
+     * @param id
+     *            : id of entity in database
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Transactional
+    public Boolean delete(int id) throws HandlerException
+    {
+        try {
+
+<span class="fc" id="L112">            this.genericType = (Class&lt;T&gt;) GenericTypeResolver.resolveTypeArgument(getClass(),</span>
+<span class="fc" id="L113">                    GenericDAOImpl.class);</span>
+<span class="fc" id="L114">            session = this.sessionFactory.getCurrentSession();</span>
+            
+<span class="fc" id="L116">            T p = (T) session.load(this.genericType, id);</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">            if (p != null) {</span>
+<span class="fc" id="L118">                session.delete(p);</span>
+<span class="fc" id="L119">            }else{</span>
+<span class="nc" id="L120">                return false;</span>
+            }
+            
+<span class="fc" id="L123">            logger.info(&quot;Entity deleted successfully, Entity details=&quot; + p);</span>
+<span class="fc" id="L124">            return true;</span>
+<span class="nc" id="L125">        } catch (HibernateException ex) {</span>
+            
+            
+<span class="nc" id="L128">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+<span class="nc" id="L129">            throw new HandlerException(ex.getMessage());</span>
+        } 
     }
-    
-	/**
-	 *  findOne use to find one entity exist in database
-	 *	
-	 *	@param	id : id of entity in database
-	 *
-	 *	@return T
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@SuppressWarnings(&quot;unchecked&quot;)
-	@Override
-	public T findOne(int id) throws HandlerException {
-		try{
-<span class="fc" id="L154">			this.genericType = (Class&lt;T&gt;) GenericTypeResolver.resolveTypeArgument(getClass(), GenericDAOImpl.class);</span>
-<span class="fc" id="L155">	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L156">	        tx = session.beginTransaction();</span>
-<span class="fc" id="L157">	        T p = (T) session.get(this.genericType, id);</span>
-<span class="fc bfc" id="L158" title="All 2 branches covered.">	        if(p != null){</span>
-<span class="fc" id="L159">	        	logger.info(&quot;Entity loaded successfully, Entity details=&quot;+p);</span>
-	        }
-<span class="fc" id="L161">	        tx.commit();</span>
-<span class="fc" id="L162">	        return p;</span>
-<span class="nc" id="L163">    	}catch(HibernateException ex){</span>
-<span class="nc bnc" id="L164" title="All 2 branches missed.">    		if(tx != null){</span>
-<span class="nc" id="L165">    			tx.rollback();</span>
-    		}
-<span class="nc" id="L167">    		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
-<span class="nc" id="L168">    		ex.printStackTrace();</span>
-<span class="nc" id="L169">    		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L170">    	}finally {</span>
-<span class="pc" id="L171">    		   session.close();</span>
-<span class="nc" id="L172">    	}</span>
-	}
 
+    /**
+     * findOne use to find one entity exist in database
+     *
+     * @param id
+     *            : id of entity in database
+     * @return T
+     * @exception HandlerException
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Override
+    @Transactional
+    public T findOne(int id) throws HandlerException
+    {
+        try {
+<span class="fc" id="L147">            this.genericType = (Class&lt;T&gt;) GenericTypeResolver.resolveTypeArgument(getClass(),</span>
+<span class="fc" id="L148">                    GenericDAOImpl.class);</span>
+<span class="fc" id="L149">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L150">            T p = (T) session.get(this.genericType, id);</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">            if (p != null) {</span>
+<span class="fc" id="L152">                logger.info(&quot;Entity loaded successfully, Entity details=&quot; + p);</span>
+            }
+<span class="fc" id="L154">            return p;</span>
+<span class="nc" id="L155">        } catch (HibernateException ex) {</span>
+            
+<span class="nc" id="L157">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+<span class="nc" id="L158">            throw new HandlerException(ex.getMessage());</span>
+        } 
+    }
 
-    
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

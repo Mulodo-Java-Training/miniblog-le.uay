@@ -21,6 +21,7 @@ import org.hibernate.transform.Transformers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.UserDAO;
@@ -47,12 +48,12 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
      * @exception HandlerException
      */
     @Override
+    @Transactional
     public Boolean isUserExits(String username) throws HandlerException
     {
         try {
 
-            session = this.sessionFactory.openSession();
-            tx = session.beginTransaction();
+            session = this.sessionFactory.getCurrentSession();
             Criteria criteria = session.createCriteria(User.class);
 
             if (username != null) {
@@ -64,13 +65,11 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
             }
             User user = (User) criteria.list().get(0);
             logger.info("Check user successfully,  details=" + user.getId());
-            tx.commit();
             return user.getId() != 0 && user.getUsername().equals(username);
 
         } catch (HibernateException ex) {
+            
             throw new HandlerException(ex.getMessage());
-        } finally {
-            session.close();
         }
     }
 
@@ -85,13 +84,13 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
      * @exception HandlerException
      */
     @Override
+    @Transactional
     public Boolean isEmailExits(String email, User user) throws HandlerException
     {
 
         try {
 
-            session = this.sessionFactory.openSession();
-            tx = session.beginTransaction();
+            session = this.sessionFactory.getCurrentSession();
             Criteria criteria = session.createCriteria(User.class);
 
             if (email != null) {
@@ -103,14 +102,11 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
             }
             User userDB = (User) criteria.list().get(0);
 
-            tx.commit();
             return !(user != null && user.getId() == userDB.getId());
 
         } catch (HibernateException ex) {
-            ex.printStackTrace();
+            
             throw new HandlerException(ex.getMessage());
-        } finally {
-            session.close();
         }
     }
 
@@ -125,13 +121,13 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
      * @exception HandlerException
      */
     @Override
+    @Transactional
     public User isValidLogin(String username, String password) throws HandlerException
     {
         try {
             User user = null;
 
-            session = this.sessionFactory.openSession();
-            tx = session.beginTransaction();
+            session = this.sessionFactory.getCurrentSession();
             Criteria criteria = session.createCriteria(User.class);
 
             criteria.add(Restrictions.eq("username", username));
@@ -141,14 +137,11 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
                 user = (User) criteria.list().get(0);
                 logger.info("Person loaded successfully, Person details=" + user);
             }
-
-            tx.commit();
             return user;
         } catch (HibernateException ex) {
-            tx.rollback();
+            
+            
             throw new HandlerException(ex.getMessage());
-        } finally {
-            session.close();
         }
     }
 
@@ -162,10 +155,11 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
      */
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional
     public List<User> findByName(String name) throws HandlerException
     {
         try {
-            session = this.sessionFactory.openSession();
+            session = this.sessionFactory.getCurrentSession();
 
             Criteria criteria = session.createCriteria(User.class);
 
@@ -192,9 +186,8 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
             }
             return usersList;
         } catch (HibernateException ex) {
+            
             throw new HandlerException(ex.getMessage());
-        } finally {
-            session.close();
         }
     }
 
@@ -207,11 +200,12 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
      * @exception HandlerException
      */
     @Override
+    @Transactional
     public Boolean deleteByUsername(String username) throws HandlerException
     {
         try {
-            session = this.sessionFactory.openSession();
-            tx = session.beginTransaction();
+            session = this.sessionFactory.getCurrentSession();
+            
             Criteria criteria = session.createCriteria(User.class);
 
             criteria.add(Restrictions.eq("username", username));
@@ -220,16 +214,14 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
             } else {
                 User user = (User) criteria.list().get(0);
                 session.delete(user);
-                tx.commit();
+                
                 logger.info("User deleted successfully, user details=" + user);
                 return true;
             }
 
         } catch (HibernateException ex) {
-            tx.rollback();
+                      
             throw new HandlerException(ex.getMessage());
-        } finally {
-            session.close();
         }
     }
 
@@ -242,12 +234,13 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
      * @exception HandlerException
      */
     @Override
+    @Transactional
     public User findByUsername(String username) throws HandlerException
     {
         User user = null;
 
         try {
-            session = this.sessionFactory.openSession();
+            session = this.sessionFactory.getCurrentSession();
             Criteria criteria = session.createCriteria(User.class);
             criteria.add(Restrictions.eq("username", username));
             if (!criteria.list().isEmpty()) {
@@ -256,10 +249,9 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
             }
             return user;
         } catch (HibernateException ex) {
+            
             logger.info("Hibernate exception, Details=" + ex.getMessage());
             throw new HandlerException(ex.getMessage());
-        } finally {
-            session.close();
         }
     }
 }

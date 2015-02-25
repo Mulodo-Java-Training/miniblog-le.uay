@@ -21,86 +21,81 @@ import com.mulodo.miniblog.service.GenericService;
  * The generic service impl
  * 
  * @author UayLU
- * 
  */
 @Service
-<span class="fc" id="L27">public abstract class GenericServiceImpl&lt;T&gt; implements GenericService&lt;T&gt;{</span>
-
+<span class="fc" id="L26">public abstract class GenericServiceImpl&lt;T&gt; implements GenericService&lt;T&gt;</span>
+{
 
     protected GenericDAO&lt;T&gt; genericDAO;
-    
+
     /**
-	 *  setGenericDAO use to set datasource from applicationcontent.xml
-	 *	
-	 *	@param	genericDAO : genericDAO from datasource
-	 *
-	 *	@return void
-	 */
-    public void setGenericDAO(GenericDAO&lt;T&gt; genericDAO) {
-<span class="fc" id="L40">		this.genericDAO = genericDAO;</span>
-<span class="fc" id="L41">	}</span>
-    
+     * setGenericDAO use to set datasource from applicationcontent.xml
+     *
+     * @param genericDAO
+     *            : genericDAO from datasource
+     * @return void
+     */
+    public void setGenericDAO(GenericDAO&lt;T&gt; genericDAO)
+    {
+<span class="fc" id="L40">        this.genericDAO = genericDAO;</span>
+<span class="fc" id="L41">    }</span>
+
     /**
-	 *  add use to call add function in genericdao
-	 *	
-	 *	@param	entity : match with entity in model package
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Boolean add(T entity) throws HandlerException {
-<span class="fc" id="L55">		return this.genericDAO.add(entity);</span>
-	}
+     * add use to call add function in genericdao
+     *
+     * @param entity
+     *            : match with entity in model package
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    public Boolean add(T entity) throws HandlerException
+    {
+<span class="fc" id="L54">        return this.genericDAO.add(entity);</span>
+    }
 
-	/**
-	 *  update use to call update function in genericdao 
-	 *	
-	 *	@param	entity : match with entity in model package
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Boolean update(T entity) throws HandlerException {
-<span class="fc" id="L70">		return this.genericDAO.update(entity);</span>
-	}
+    /**
+     * update use to call update function in genericdao
+     *
+     * @param entity
+     *            : match with entity in model package
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    public Boolean update(T entity) throws HandlerException
+    {
+<span class="fc" id="L68">        return this.genericDAO.update(entity);</span>
+    }
 
-	/**
-	 *  delete use to call delete function in genericdao 
-	 *	
-	 *	@param	id : id of entity exist in database
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Boolean delete(int id) throws HandlerException {		
-<span class="fc" id="L85">		return this.genericDAO.delete(id);</span>
-	}
+    /**
+     * delete use to call delete function in genericdao
+     *
+     * @param id
+     *            : id of entity exist in database
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    public Boolean delete(int id) throws HandlerException
+    {
+<span class="fc" id="L82">        return this.genericDAO.delete(id);</span>
+    }
 
-	/**
-	 *  findOne use to call findOne function in genericdao 
-	 *	
-	 *	@param	id : id of entity exist in database
-	 *
-	 *	@return T
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */   
-	@Override
+    /**
+     * findOne use to call findOne function in genericdao
+     *
+     * @param id
+     *            : id of entity exist in database
+     * @return T
+     * @exception HandlerException
+     */
+    @Override
     @Transactional
-	public T findOne(int id) throws HandlerException {
-<span class="fc" id="L101">		return this.genericDAO.findOne(id);</span>
-	}
-
+    public T findOne(int id) throws HandlerException
+    {
+<span class="fc" id="L97">        return this.genericDAO.findOne(id);</span>
+    }
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -42,9 +42,8 @@ import com.mulodo.miniblog.object.Meta;
 import com.mulodo.miniblog.service.CommentService;
 import com.mulodo.miniblog.service.PostService;
 import com.mulodo.miniblog.service.TokenService;
-import com.mulodo.miniblog.service.UserService;
-import com.mulodo.miniblog.utils.ApplicationContextUtils;
 import com.mulodo.miniblog.utils.BuildJSON;
+import com.mulodo.miniblog.utils.SpringApplicationContext;
 import com.mulodo.miniblog.validator.CommentValidate;
 
 /**
@@ -55,7 +54,7 @@ import com.mulodo.miniblog.validator.CommentValidate;
 @Controller
 @Path(&quot;/comments&quot;)
 @Produces(MediaType.APPLICATION_JSON)
-<span class="fc" id="L58">public class CommentController</span>
+<span class="fc" id="L57">public class CommentController</span>
 {
 
     private PostService postService;
@@ -75,22 +74,22 @@ import com.mulodo.miniblog.validator.CommentValidate;
     @Qualifier(&quot;postService&quot;)
     public void setPostService(PostService ps)
     {
-<span class="fc" id="L78">        this.postService = ps;</span>
-<span class="fc" id="L79">    }</span>
+<span class="fc" id="L77">        this.postService = ps;</span>
+<span class="fc" id="L78">    }</span>
 
     /**
-     * setPostService use to set datasource from applicationcontent.xml
+     * setTokenService use to set datasource from applicationcontent.xml
      *
      * @param ps
-     *            : PostService from datasource
+     *            : TokenService from datasource
      * @return void
      */
     @Autowired
     @Qualifier(&quot;tokenService&quot;)
     public void setTokenService(TokenService ts)
     {
-<span class="fc" id="L92">        this.tokenService = ts;</span>
-<span class="fc" id="L93">    }</span>
+<span class="fc" id="L91">        this.tokenService = ts;</span>
+<span class="fc" id="L92">    }</span>
 
     /**
      * setCommentService use to set datasource from applicationcontent.xml
@@ -103,9 +102,20 @@ import com.mulodo.miniblog.validator.CommentValidate;
     @Qualifier(&quot;commentService&quot;)
     public void setCommentService(CommentService cs)
     {
-<span class="fc" id="L106">        this.commentService = cs;</span>
-<span class="fc" id="L107">    }</span>
+<span class="fc" id="L105">        this.commentService = cs;</span>
+<span class="fc" id="L106">    }</span>
 
+    /**
+     * addComment use to add comment to database
+     *
+     * @param access_key
+     *            : access key of token
+     * @param post_id
+     *            : id of post
+     * @param content
+     *            : content of post
+     * @return Response
+     */
     @RolesAllowed(&quot;ADMIN&quot;)
     @POST
     @Path(&quot;add&quot;)
@@ -113,239 +123,339 @@ import com.mulodo.miniblog.validator.CommentValidate;
             @FormParam(&quot;post_id&quot;) String post_id, @FormParam(&quot;content&quot;) String content)
     {
 
-<span class="pc bpc" id="L116" title="5 of 6 branches missed.">        if (tokenService == null || postService == null || commentService == null) {</span>
-<span class="fc" id="L117">            setDataSource();</span>
+        // get bean from application context if tokenSerivec, postService,
+        // commentService was null
+<span class="pc bpc" id="L128" title="5 of 6 branches missed.">        if (tokenService == null || postService == null || commentService == null) {</span>
+<span class="fc" id="L129">            setDataSource();</span>
         }
 
-<span class="fc" id="L120">        JSONObject jsonObject = new JSONObject();</span>
+        //create json object for return
+<span class="fc" id="L133">        JSONObject jsonObject = new JSONObject();</span>
 
-<span class="fc" id="L122">        Meta meta = CommentValidate.validateAddNew(post_id, content);</span>
-<span class="fc" id="L123">        Data data = null;</span>
-<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (meta != null) {</span>
-<span class="fc" id="L125">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="fc" id="L126">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+        //call validate method
+<span class="fc" id="L136">        Meta meta = CommentValidate.validateAddNew(post_id, content);</span>
+<span class="fc" id="L137">        Data data = null;</span>
+        //if have error in meta object, return it to client
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L140">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L141">            return Response.status(200).entity(jsonObject.toString()).build();</span>
         }
-<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        if (access_key != null) {</span>
-            try {
-
-<span class="fc" id="L131">                Token token = this.tokenService.findByAccessKey(access_key);</span>
-<span class="pc bpc" id="L132" title="1 of 2 branches missed.">                if (token != null) {</span>
-
-<span class="fc" id="L134">                    User user = token.getUser();</span>
-<span class="fc" id="L135">                    Calendar cal = Calendar.getInstance();</span>
-<span class="fc" id="L136">                    Post post = this.postService.findOne(Integer.parseInt(post_id));</span>
-<span class="fc bfc" id="L137" title="All 2 branches covered.">                    if (post == null) {</span>
-<span class="fc" id="L138">                        jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
-                                Constraints.CODE_3007), null);
-<span class="fc" id="L140">                        return Response.status(200).entity(jsonObject.toString()).build();</span>
-<span class="fc bfc" id="L141" title="All 2 branches covered.">                    } else if (post.getStatus() == Constraints.POST_INACTIVE) {</span>
-<span class="fc" id="L142">                        jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
-                                Constraints.CODE_3007), null);
-<span class="fc" id="L144">                        return Response.status(200).entity(jsonObject.toString()).build();</span>
-                    }
-<span class="fc" id="L146">                    Comment comment = new Comment();</span>
-<span class="fc" id="L147">                    comment.setContent(content);</span>
-<span class="fc" id="L148">                    comment.setCreated_at(cal.getTime());</span>
-<span class="fc" id="L149">                    comment.setModified_at(cal.getTime());</span>
-<span class="fc" id="L150">                    comment.setPost(post);</span>
-<span class="fc" id="L151">                    comment.setUser(user);</span>
-<span class="fc" id="L152">                    this.commentService.add(comment);</span>
-<span class="fc" id="L153">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_210, 0), null);</span>
+       
+<span class="fc" id="L144">        Token token = null;</span>
+        try {
+            //get token from access_key
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">            if (access_key != null) {</span>
+<span class="fc" id="L148">                token = this.tokenService.findByAccessKey(access_key);</span>
+            }
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">            if (token != null) {</span>
+                //get user infor from token
+<span class="fc" id="L152">                User user = token.getUser();</span>
+<span class="fc" id="L153">                Calendar cal = Calendar.getInstance();</span>
+                //find post form post_id
+<span class="fc" id="L155">                Post post = this.postService.findOne(Integer.parseInt(post_id));</span>
+                //if post null or post have status inactive return error to client
+<span class="fc bfc" id="L157" title="All 2 branches covered.">                if (post == null) {</span>
+<span class="fc" id="L158">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
+                            Constraints.CODE_3007), null);
+<span class="fc" id="L160">                    return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">                } else if (post.getStatus() == Constraints.POST_INACTIVE) {</span>
+<span class="fc" id="L162">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
+                            Constraints.CODE_3007), null);
+<span class="fc" id="L164">                    return Response.status(200).entity(jsonObject.toString()).build();</span>
                 }
-<span class="nc" id="L155">            } catch (Exception ex) {</span>
-<span class="nc" id="L156">                ex.printStackTrace();</span>
-<span class="nc" id="L157">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                        Constraints.CODE_9001), null);
-<span class="fc" id="L159">            }</span>
-        }
-<span class="fc" id="L161">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+                //create new comment object
+<span class="fc" id="L167">                Comment comment = new Comment();</span>
+<span class="fc" id="L168">                comment.setContent(content);</span>
+<span class="fc" id="L169">                comment.setCreated_at(cal.getTime());</span>
+<span class="fc" id="L170">                comment.setModified_at(cal.getTime());</span>
+<span class="fc" id="L171">                comment.setPost(post);</span>
+<span class="fc" id="L172">                comment.setUser(user);</span>
+                //have no more error, add new comment to database
+<span class="fc" id="L174">                this.commentService.add(comment);</span>
+                //create jsonobject success
+<span class="fc" id="L176">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_210, 0), null);</span>
+            }      
+<span class="nc" id="L178">        } catch (Exception ex) {</span>
+<span class="nc" id="L179">            ex.printStackTrace();</span>
+<span class="nc" id="L180">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+                    Constraints.CODE_9001), null);
+<span class="fc" id="L182">        }</span>
+       
+<span class="fc" id="L184">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 
+    /**
+     * updateComment use to update comment to database
+     *
+     * @param access_key
+     *            : access key of token
+     * @param comment_id
+     *            : id of comment
+     * @param content
+     *            : content of post
+     * @return Response
+     */
     @RolesAllowed(&quot;ADMIN&quot;)
     @PUT
     @Path(&quot;update&quot;)
     public Response updateComment(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
             @FormParam(&quot;comment_id&quot;) String comment_id, @FormParam(&quot;content&quot;) String content)
     {
-
-<span class="nc bnc" id="L171" title="All 6 branches missed.">        if (tokenService == null || postService == null || commentService == null) {</span>
-<span class="nc" id="L172">            setDataSource();</span>
+        // get bean from application context if tokenSerivec, postService,
+        // commentService was null
+<span class="pc bpc" id="L206" title="5 of 6 branches missed.">        if (tokenService == null || postService == null || commentService == null) {</span>
+<span class="fc" id="L207">            setDataSource();</span>
         }
 
-<span class="nc" id="L175">        JSONObject jsonObject = new JSONObject();</span>
+        // create json object for return
+<span class="fc" id="L211">        JSONObject jsonObject = new JSONObject();</span>
 
-<span class="nc" id="L177">        Meta meta = CommentValidate.validateUpdate(comment_id, content);</span>
-<span class="nc" id="L178">        Data data = null;</span>
-<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (meta != null) {</span>
-<span class="nc" id="L180">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L181">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+        // call validate method
+<span class="fc" id="L214">        Meta meta = CommentValidate.validateUpdate(comment_id, content);</span>
+<span class="fc" id="L215">        Data data = null;</span>
+        // if have error in meta object, return it to client
+<span class="fc bfc" id="L217" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L218">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L219">            return Response.status(200).entity(jsonObject.toString()).build();</span>
         }
 
         try {
-<span class="nc" id="L185">            Token token = null;</span>
-<span class="nc bnc" id="L186" title="All 2 branches missed.">            if (access_key != null) {</span>
-<span class="nc" id="L187">                token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="fc" id="L223">            Token token = null;</span>
+            // get token from access_key
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">            if (access_key != null) {</span>
+<span class="fc" id="L226">                token = this.tokenService.findByAccessKey(access_key);</span>
             }
-<span class="nc bnc" id="L189" title="All 2 branches missed.">            if (token != null) {</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">            if (token != null) {</span>
 
-<span class="nc" id="L191">                Calendar cal = Calendar.getInstance();</span>
-
-<span class="nc" id="L193">                Comment comment = this.commentService.findOne(Integer.parseInt(comment_id));</span>
-<span class="nc bnc" id="L194" title="All 2 branches missed.">                if (comment == null) {</span>
-<span class="nc" id="L195">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
+<span class="fc" id="L230">                Calendar cal = Calendar.getInstance();</span>
+                // find comment by comment_id in database
+<span class="fc" id="L232">                Comment comment = this.commentService.findOne(Integer.parseInt(comment_id));</span>
+                //if invalid comment, return invalid code
+<span class="fc bfc" id="L234" title="All 2 branches covered.">                if (comment == null) {</span>
+<span class="fc" id="L235">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
                             Constraints.CODE_3006), null);
-<span class="nc" id="L197">                    return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L237">                    return Response.status(200).entity(jsonObject.toString()).build();</span>
                 }
-<span class="nc bnc" id="L199" title="All 2 branches missed.">                if (comment.getUser().getId() != token.getUser().getId()) {</span>
-<span class="nc" id="L200">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
+                //if user have no permission in this comment, return error code
+<span class="fc bfc" id="L240" title="All 2 branches covered.">                if (comment.getUser().getId() != token.getUser().getId()) {</span>
+<span class="fc" id="L241">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
                             Constraints.CODE_3008), null);
-<span class="nc" id="L202">                    return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L243">                    return Response.status(200).entity(jsonObject.toString()).build();</span>
                 }
-<span class="nc" id="L204">                comment.setContent(content);</span>
-<span class="nc" id="L205">                comment.setModified_at(cal.getTime());</span>
-<span class="nc" id="L206">                this.commentService.update(comment);</span>
-<span class="nc" id="L207">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_211, 0), null);</span>
+                //update comment
+<span class="fc" id="L246">                comment.setContent(content);</span>
+<span class="fc" id="L247">                comment.setModified_at(cal.getTime());</span>
+                //call update method to update comment to database
+<span class="fc" id="L249">                this.commentService.update(comment);</span>
+<span class="fc" id="L250">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_211, 0), null);</span>
             }
-<span class="nc" id="L209">        } catch (Exception ex) {</span>
-<span class="nc" id="L210">            ex.printStackTrace();</span>
-<span class="nc" id="L211">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+<span class="nc" id="L252">        } catch (Exception ex) {</span>
+<span class="nc" id="L253">            ex.printStackTrace();</span>
+<span class="nc" id="L254">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
                     Constraints.CODE_9001), null);
-<span class="nc" id="L213">        }</span>
-<span class="nc" id="L214">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+<span class="fc" id="L256">        }</span>
+<span class="fc" id="L257">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 
+    /**
+     * delete use to delete comment to database
+     *
+     * @param access_key
+     *            : access key of token
+     * @param id
+     *            : id of comment
+     * @return Response
+     */
     @RolesAllowed(&quot;ADMIN&quot;)
     @DELETE
     @Path(&quot;delete/{id}&quot;)
     public Response delete(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
             @PathParam(&quot;id&quot;) String id)
     {
-
-<span class="nc bnc" id="L224" title="All 6 branches missed.">        if (tokenService == null || postService == null || commentService == null) {</span>
-<span class="nc" id="L225">            setDataSource();</span>
+        // get bean from application context if tokenSerivec, postService,
+        // commentService was null
+<span class="pc bpc" id="L277" title="5 of 6 branches missed.">        if (tokenService == null || postService == null || commentService == null) {</span>
+<span class="fc" id="L278">            setDataSource();</span>
         }
 
-<span class="nc" id="L228">        JSONObject jsonObject = new JSONObject();</span>
+        //create json object for return
+<span class="fc" id="L282">        JSONObject jsonObject = new JSONObject();</span>
 
-<span class="nc" id="L230">        Meta meta = CommentValidate.validateDelete(id);</span>
-<span class="nc" id="L231">        Data data = null;</span>
-<span class="nc bnc" id="L232" title="All 2 branches missed.">        if (meta != null) {</span>
-<span class="nc" id="L233">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L234">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+        //call validate method
+<span class="fc" id="L285">        Meta meta = CommentValidate.validateDelete(id);</span>
+<span class="fc" id="L286">        Data data = null;</span>
+        // if have error in meta object, return it to client        
+<span class="fc bfc" id="L288" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L289">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L290">            return Response.status(200).entity(jsonObject.toString()).build();</span>
         }
         try {
-<span class="nc" id="L237">            Token token = null;</span>
-<span class="nc bnc" id="L238" title="All 2 branches missed.">            if (access_key != null) {</span>
-<span class="nc" id="L239">                token = this.tokenService.findByAccessKey(access_key);</span>
+<span class="fc" id="L293">            Token token = null;</span>
+            // get token from access_key            
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">            if (access_key != null) {</span>
+<span class="fc" id="L296">                token = this.tokenService.findByAccessKey(access_key);</span>
             }
-<span class="nc bnc" id="L241" title="All 2 branches missed.">            if (token != null) {</span>
-<span class="nc" id="L242">                int commentId = Integer.parseInt(id);</span>
-<span class="nc" id="L243">                Comment comment = this.commentService.findOne(commentId);</span>
-<span class="nc bnc" id="L244" title="All 4 branches missed.">                if (comment != null &amp;&amp; comment.getUser().getId() == token.getUser().getId()) {</span>
-<span class="nc" id="L245">                    this.postService.delete(commentId);</span>
-<span class="nc" id="L246">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_212, 0), null);</span>
-<span class="nc bnc" id="L247" title="All 4 branches missed.">                } else if (comment != null &amp;&amp; comment.getUser().getId() != token.getUser().getId()) {</span>
-<span class="nc" id="L248">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
+<span class="pc bpc" id="L298" title="1 of 2 branches missed.">            if (token != null) {</span>
+<span class="fc" id="L299">                int commentId = Integer.parseInt(id);</span>
+                //find comment by comment id
+<span class="fc" id="L301">                Comment comment = this.commentService.findOne(commentId);</span>
+                //have 3 options: 
+                // if user have permission in valid commnet, call delete method
+                // if user have no permission in this comment, return error code
+                // if invalid comment in database, return error code
+<span class="fc bfc" id="L306" title="All 4 branches covered.">                if (comment != null &amp;&amp; comment.getUser().getId() == token.getUser().getId()) {</span>
+<span class="fc" id="L307">                    this.commentService.delete(commentId);</span>
+<span class="fc" id="L308">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_212, 0), null);</span>
+<span class="pc bpc" id="L309" title="1 of 4 branches missed.">                } else if (comment != null &amp;&amp; comment.getUser().getId() != token.getUser().getId()) {</span>
+<span class="fc" id="L310">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
                             Constraints.CODE_3008), null);
                 } else {
-<span class="nc" id="L251">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
+<span class="fc" id="L313">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
                             Constraints.CODE_3006), null);
                 }
             }
-<span class="nc" id="L255">        } catch (Exception ex) {</span>
-<span class="nc" id="L256">            ex.printStackTrace();</span>
-<span class="nc" id="L257">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+<span class="nc" id="L317">        } catch (Exception ex) {</span>
+<span class="nc" id="L318">            ex.printStackTrace();</span>
+            // build error message
+<span class="nc" id="L320">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_3000,</span>
                     Constraints.CODE_9001), null);
-<span class="nc" id="L259">        }</span>
+<span class="fc" id="L322">        }</span>
 
-<span class="nc" id="L261">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+        //return to client
+<span class="fc" id="L325">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 
+    /**
+     * getAllCommentForPost use to get all comment for post to database
+     *
+     * @param access_key
+     *            : access key of token
+     * @param post_id
+     *            : id of post
+     * @return Response
+     */
     @RolesAllowed(&quot;ADMIN&quot;)
     @GET
     @Path(&quot;getByPost&quot;)
     public Response getAllCommentForPost(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
             @QueryParam(&quot;post_id&quot;) String post_id)
     {
-
-<span class="nc bnc" id="L271" title="All 6 branches missed.">        if (tokenService == null || postService == null || commentService == null) {</span>
-<span class="nc" id="L272">            setDataSource();</span>
+        // get bean from application context if tokenSerivec, postService,
+        // commentService was null
+<span class="pc bpc" id="L345" title="5 of 6 branches missed.">        if (tokenService == null || postService == null || commentService == null) {</span>
+<span class="fc" id="L346">            setDataSource();</span>
         }
+        
+        //create json object for return
+<span class="fc" id="L350">        JSONObject jsonObject = new JSONObject();</span>
 
-<span class="nc" id="L275">        JSONObject jsonObject = new JSONObject();</span>
-
-<span class="nc" id="L277">        Meta meta = CommentValidate.validateGetAllCommentForPost(post_id);</span>
-<span class="nc" id="L278">        Data data = null;</span>
-<span class="nc bnc" id="L279" title="All 2 branches missed.">        if (meta != null) {</span>
-<span class="nc" id="L280">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L281">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+        //call validate method
+<span class="fc" id="L353">        Meta meta = CommentValidate.validateGetAllCommentForPost(post_id);</span>
+<span class="fc" id="L354">        Data data = null;</span>
+        // if have error in meta object, return it to client        
+<span class="fc bfc" id="L356" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L357">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L358">            return Response.status(200).entity(jsonObject.toString()).build();</span>
         }
         try {
-<span class="nc" id="L284">            Token token = this.tokenService.findByAccessKey(access_key);</span>
-
-<span class="nc" id="L286">            Post post = this.postService.findOne(Integer.parseInt(post_id));</span>
-<span class="nc" id="L287">            List&lt;Comment&gt; listComment = null;</span>
-<span class="nc bnc" id="L288" title="All 2 branches missed.">            if (post.getUser().getId() == token.getUser().getId()) {</span>
-<span class="nc" id="L289">                listComment = this.commentService.getAllCommentForPost(Integer.parseInt(post_id),</span>
+            // get token from access_key
+<span class="fc" id="L362">            Token token = this.tokenService.findByAccessKey(access_key);</span>
+            //get post from post service
+<span class="fc" id="L364">            Post post = this.postService.findOne(Integer.parseInt(post_id));</span>
+<span class="fc" id="L365">            List&lt;Comment&gt; listComment = null;</span>
+            // if post null, return error code
+<span class="fc bfc" id="L367" title="All 2 branches covered.">            if (post == null) {</span>
+<span class="fc" id="L368">                meta = new Meta(Constraints.CODE_3000, Constraints.CODE_3007);</span>
+<span class="fc" id="L369">                jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L370">                return Response.status(200).entity(jsonObject.toString()).build();</span>
+            }
+            // if user is owner post, get all comment in this post whatever status
+            // if user is not owner post, get all comment on only active post
+<span class="fc bfc" id="L374" title="All 2 branches covered.">            if (post.getUser().getId() == token.getUser().getId()) {</span>
+<span class="fc" id="L375">                listComment = this.commentService.getAllCommentForPost(Integer.parseInt(post_id),</span>
                         true);
             } else {
-<span class="nc" id="L292">                listComment = this.commentService.getAllCommentForPost(Integer.parseInt(post_id),</span>
+<span class="fc" id="L378">                listComment = this.commentService.getAllCommentForPost(Integer.parseInt(post_id),</span>
                         false);
             }
 
-<span class="nc" id="L296">            data = new Data();</span>
-<span class="nc" id="L297">            data.setListComment(listComment);</span>
-<span class="nc" id="L298">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L299">        } catch (Exception ex) {</span>
-<span class="nc" id="L300">            ex.printStackTrace();</span>
-<span class="nc" id="L301">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+            //buid return data
+<span class="fc" id="L383">            data = new Data();</span>
+<span class="fc" id="L384">            data.setListComment(listComment);</span>
+<span class="fc" id="L385">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="nc" id="L386">        } catch (Exception ex) {</span>
+<span class="nc" id="L387">            ex.printStackTrace();</span>
+            // build error code 9001
+<span class="nc" id="L389">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
                     Constraints.CODE_9001), null);
-<span class="nc" id="L303">        }</span>
+<span class="fc" id="L391">        }</span>
 
-<span class="nc" id="L305">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+        // return result to client
+<span class="fc" id="L394">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 
+    /**
+     * getAllCommentForUser use to get all comment for user to database
+     *
+     * @param access_key
+     *            : access key of token
+     * @param user_id
+     *            : id of user
+     * @return Response
+     */
     @RolesAllowed(&quot;ADMIN&quot;)
     @GET
     @Path(&quot;getByUser&quot;)
     public Response getAllCommentForUser(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
             @QueryParam(&quot;user_id&quot;) String user_id)
     {
-
-<span class="nc bnc" id="L315" title="All 6 branches missed.">        if (tokenService == null || postService == null || commentService == null) {</span>
-<span class="nc" id="L316">            setDataSource();</span>
+        // get bean from application context if tokenSerivec, postService,
+        // commentService was null
+<span class="pc bpc" id="L414" title="5 of 6 branches missed.">        if (tokenService == null || postService == null || commentService == null) {</span>
+<span class="fc" id="L415">            setDataSource();</span>
         }
 
-<span class="nc" id="L319">        JSONObject jsonObject = new JSONObject();</span>
+        //create json object for return
+<span class="fc" id="L419">        JSONObject jsonObject = new JSONObject();</span>
 
-<span class="nc" id="L321">        Meta meta = CommentValidate.validateGetAllCommentForUser(user_id);</span>
-<span class="nc" id="L322">        Data data = null;</span>
-<span class="nc bnc" id="L323" title="All 2 branches missed.">        if (meta != null) {</span>
-<span class="nc" id="L324">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L325">            return Response.status(200).entity(jsonObject.toString()).build();</span>
+        //call validate method
+<span class="fc" id="L422">        Meta meta = CommentValidate.validateGetAllCommentForUser(user_id);</span>
+<span class="fc" id="L423">        Data data = null;</span>
+        // if have error in meta object, return it to client        
+<span class="fc bfc" id="L425" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L426">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
+<span class="fc" id="L427">            return Response.status(200).entity(jsonObject.toString()).build();</span>
         }
         try {
-<span class="nc" id="L328">            Token token = this.tokenService.findByAccessKey(access_key);</span>
+            // get token from access_key
+<span class="fc" id="L431">            Token token = this.tokenService.findByAccessKey(access_key);</span>
 
-<span class="nc" id="L330">            int userIdDao = Integer.parseInt(user_id);</span>
-<span class="nc" id="L331">            List&lt;Comment&gt; listComment = null;</span>
-<span class="nc bnc" id="L332" title="All 2 branches missed.">            if (token.getUser().getId() == userIdDao) {</span>
-<span class="nc" id="L333">                listComment = this.commentService.getAllCommentForUser(token.getUser().getId(),</span>
+<span class="fc" id="L433">            int userIdRequest = Integer.parseInt(user_id);</span>
+<span class="fc" id="L434">            List&lt;Comment&gt; listComment = null;</span>
+            // if is current user, get all comment of user
+            // if not current user, get all comment with post have active status and user
+            //  have active status
+<span class="fc bfc" id="L438" title="All 2 branches covered.">            if (token.getUser().getId() == userIdRequest) {</span>
+<span class="fc" id="L439">                listComment = this.commentService.getAllCommentForUser(token.getUser().getId(),</span>
                         true);
             } else {
-<span class="nc" id="L336">                listComment = this.commentService.getAllCommentForUser(token.getUser().getId(),</span>
+<span class="fc" id="L442">                listComment = this.commentService.getAllCommentForUser(token.getUser().getId(),</span>
                         false);
             }
-<span class="nc" id="L339">            data = new Data();</span>
-<span class="nc" id="L340">            data.setListComment(listComment);</span>
-<span class="nc" id="L341">            jsonObject = BuildJSON.buildReturn(null, data);</span>
-<span class="nc" id="L342">        } catch (Exception ex) {</span>
-<span class="nc" id="L343">            ex.printStackTrace();</span>
-<span class="nc" id="L344">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
+            
+            // build data return
+<span class="fc" id="L447">            data = new Data();</span>
+<span class="fc" id="L448">            data.setListComment(listComment);</span>
+<span class="fc" id="L449">            jsonObject = BuildJSON.buildReturn(null, data);</span>
+<span class="nc" id="L450">        } catch (Exception ex) {</span>
+<span class="nc" id="L451">            ex.printStackTrace();</span>
+            // have system error, build data with code 9001
+<span class="nc" id="L453">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
                     Constraints.CODE_9001), null);
-<span class="nc" id="L346">        }</span>
+<span class="fc" id="L455">        }</span>
 
-<span class="nc" id="L348">        return Response.status(200).entity(jsonObject.toString()).build();</span>
+        // return data to client
+<span class="fc" id="L458">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
 
     /**
@@ -354,9 +464,10 @@ import com.mulodo.miniblog.validator.CommentValidate;
      */
     private void setDataSource()
     {
-<span class="fc" id="L357">        tokenService = ApplicationContextUtils.getTokenServiceDataSource();</span>
-<span class="fc" id="L358">        postService = ApplicationContextUtils.getPostServiceDataSource();</span>
-<span class="fc" id="L359">        commentService = ApplicationContextUtils.getCommentServiceDataSource();</span>
-<span class="fc" id="L360">    }</span>
+        //get bean (data source) from current application contenxt 
+<span class="fc" id="L468">        tokenService = (TokenService) SpringApplicationContext.getBean(&quot;tokenService&quot;);</span>
+<span class="fc" id="L469">        postService = (PostService) SpringApplicationContext.getBean(&quot;postService&quot;);</span>
+<span class="fc" id="L470">        commentService = (CommentService) SpringApplicationContext.getBean(&quot;commentService&quot;);</span>
+<span class="fc" id="L471">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

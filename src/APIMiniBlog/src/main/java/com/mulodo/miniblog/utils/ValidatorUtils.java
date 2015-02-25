@@ -23,11 +23,28 @@ import com.mulodo.miniblog.contraints.Constraints;
 public final class ValidatorUtils
 {
 
+    /**
+     * isNotNullNotEmptyNotWhiteSpace use for check not null, not empty, not white space
+     *
+     * @param string : string use for checking
+     * 
+     * @return Boolean
+     */
     public static Boolean isNotNullNotEmptyNotWhiteSpace(String string)
     {
         return string != null && !string.isEmpty() && !string.trim().isEmpty();
     }
 
+    
+    /**
+     * isValidLength use for check valid length of variable
+     *
+     * @param string : string use for checking
+     * @parem min    : min of string
+     * @parem max    : max of string
+     * 
+     * @return Boolean
+     */
     public static Boolean isValidLength(String string, int min, int max)
     {
         if (min > 0 && string.length() < min) {
@@ -38,6 +55,13 @@ public final class ValidatorUtils
         return true;
     }
 
+    /**
+     * isPositiveInteger use for check valid number like id of posts
+     *
+     * @param string : string use for checking
+     * 
+     * @return Boolean
+     */
     public static Boolean isPositiveInteger(String string)
     {
 
@@ -54,6 +78,13 @@ public final class ValidatorUtils
         }
     }
 
+    /**
+     * isStatusInteger use for check valid status
+     *
+     * @param string : string of status from client
+     * 
+     * @return Boolean
+     */
     public static Boolean isStatusInteger(String string)
     {
         try {
@@ -69,9 +100,16 @@ public final class ValidatorUtils
         }
     }
 
+    /**
+     * isValidEmail use for check valid email format
+     *
+     * @param email : string of email from client
+     * 
+     * @return Boolean
+     */
     public static Boolean isValidEmail(String email)
     {
-        if (email == null) {
+        if (!isNotNullNotEmptyNotWhiteSpace(email)) {
             return false;
         }
         Pattern pattern = Pattern.compile(Constraints.EMAIL_PATTERN);

@@ -24,6 +24,7 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.CommentDAO;
@@ -35,157 +36,206 @@ import com.mulodo.miniblog.model.User;
  * The comment dao impl
  * 
  * @author UayLU
- * 
  */
 @Repository(&quot;commentDAO&quot;)
-<span class="fc" id="L41">public class CommentDAOImpl extends GenericDAOImpl&lt;Comment&gt; implements CommentDAO {</span>
-	
-<span class="fc" id="L43">	private static final Logger logger = LoggerFactory.getLogger(CommentDAOImpl.class);</span>
-	
-	/**
-	 *  get_all_comment_for_post use to get all comment for post.
-	 *	
-	 *	@param	post_id : id of post for search
-	 *  @param  isOwnerPost : result of check current user owner or not
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@SuppressWarnings(&quot;unchecked&quot;)
-	@Override
-	public List&lt;Comment&gt; getAllCommentForPost(int post_id, Boolean isOwnerPost)
-			throws HandlerException {
-		try{
-<span class="nc" id="L61">	        session = this.sessionFactory.openSession();</span>
-	        
-<span class="nc" id="L63">	        Criteria criteria = session.createCriteria(Comment.class, &quot;comment&quot;);</span>
-	        
-<span class="nc" id="L65">	        criteria.createAlias(&quot;user&quot;, &quot;us&quot;);</span>
-<span class="nc" id="L66">	        criteria.setProjection(Projections.projectionList()</span>
-<span class="nc" id="L67">		        		.add(Projections.property(&quot;id&quot;).as(&quot;id&quot;))</span>
-<span class="nc" id="L68">		        		.add(Projections.property(&quot;content&quot;).as(&quot;content&quot;))</span>
-<span class="nc" id="L69">		        		.add(Projections.property(&quot;created_at&quot;).as(&quot;created_at&quot;))</span>
-<span class="nc" id="L70">		        		.add(Projections.property(&quot;modified_at&quot;).as(&quot;modified_at&quot;))</span>
-<span class="nc" id="L71">		        		.add(Projections.property(&quot;us.id&quot;))</span>
-<span class="nc" id="L72">		        		.add(Projections.property(&quot;us.username&quot;))</span>
-<span class="nc" id="L73">		        		.add(Projections.property(&quot;us.status&quot;))); </span>
-	 
-<span class="nc" id="L75">	        criteria.createAlias(&quot;post&quot;, &quot;pt&quot;);</span>
-<span class="nc" id="L76">	        criteria.add(Restrictions.eq(&quot;pt.id&quot;, post_id));</span>
-<span class="nc bnc" id="L77" title="All 2 branches missed.">	        if(!isOwnerPost){</span>
-<span class="nc" id="L78">	        	criteria.add(Restrictions.eq(&quot;pt.status&quot;, Constraints.POST_ACTIVE));</span>
-	        }
-	        
-<span class="nc" id="L81">	        criteria.addOrder(Order.desc(&quot;created_at&quot;));</span>
-	        
-	        
-<span class="nc bnc" id="L84" title="All 2 branches missed.">	        if(!criteria.list().isEmpty()){</span>
-<span class="nc" id="L85">	        	List&lt;Comment&gt; listComments = new ArrayList&lt;Comment&gt;();</span>
-<span class="nc" id="L86">	        	List&lt;Object[]&gt; result = criteria.list();</span>
-<span class="nc" id="L87">	        	Comment comment = null;</span>
-<span class="nc bnc" id="L88" title="All 2 branches missed.">	        	for (Iterator&lt;Object[]&gt; it = result.iterator(); it.hasNext();) {</span>
-<span class="nc" id="L89">	        	    Object[] myResult = (Object[]) it.next();</span>
-<span class="nc" id="L90">	        	    comment = new Comment();</span>
-<span class="nc" id="L91">	        	    comment.setId((int) myResult[0]);</span>
-<span class="nc" id="L92">	        	    comment.setContent((String) myResult[1]);</span>
-<span class="nc" id="L93">	        	    comment.setCreated_at((Date) myResult[2]);</span>
-<span class="nc" id="L94">	        	    comment.setModified_at((Date) myResult[3]);</span>
-<span class="nc" id="L95">	        	    comment.setUser(new User((int) myResult[4], (String) myResult[5], (int) myResult[6]));</span>
-<span class="nc" id="L96">	        	    listComments.add(comment);</span>
-	        	}
-	   
-<span class="nc bnc" id="L99" title="All 2 branches missed.">		        for(Comment cm : listComments){</span>
-<span class="nc" id="L100">		            logger.info(&quot;Post in get all post :&quot;+cm.getId());</span>
-		        }
-<span class="nc" id="L102">		        return listComments;</span>
-	        }else{
-<span class="nc" id="L104">	        	return null;</span>
-	        }
-<span class="nc" id="L106">    	}catch(HibernateException ex){</span>
-<span class="nc" id="L107">    		ex.printStackTrace();</span>
-<span class="nc" id="L108">    		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L109">    	}finally {</span>
-<span class="nc" id="L110">    		   session.close();</span>
-<span class="nc" id="L111">    	}</span>
-	}
+<span class="fc" id="L41">public class CommentDAOImpl extends GenericDAOImpl&lt;Comment&gt; implements CommentDAO</span>
+{
 
-	/**
-	 *  get_all_comment_for_user use to get all comment for user
-	 *	
-	 *	@param	post_id : id of post for search
-	 *  @param  isOwnerUser : result of check current user owner or not
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@SuppressWarnings(&quot;unchecked&quot;)
-	@Override
-	public List&lt;Comment&gt; getAllCommentForUser(int user_id, Boolean isOwnerUser)
-			throws HandlerException {
-<span class="nc" id="L129">		System.out.println(&quot;user id &quot;+ user_id);</span>
-		
-		try{
-<span class="nc" id="L132">	        session = this.sessionFactory.openSession();</span>
-	        
-<span class="nc" id="L134">	        Criteria criteria = session.createCriteria(Comment.class, &quot;comment&quot;);</span>
-	        
-<span class="nc" id="L136">	        criteria.createAlias(&quot;user&quot;, &quot;us&quot;);</span>
-<span class="nc" id="L137">	        criteria.setProjection(Projections.projectionList()</span>
-<span class="nc" id="L138">		        		.add(Projections.property(&quot;id&quot;))</span>
-<span class="nc" id="L139">		        		.add(Projections.property(&quot;content&quot;))</span>
-<span class="nc" id="L140">		        		.add(Projections.property(&quot;created_at&quot;))</span>
-<span class="nc" id="L141">		        		.add(Projections.property(&quot;modified_at&quot;))</span>
-<span class="nc" id="L142">		        		.add(Projections.property(&quot;us.id&quot;))</span>
-<span class="nc" id="L143">		        		.add(Projections.property(&quot;us.username&quot;))</span>
-<span class="nc" id="L144">		        		.add(Projections.property(&quot;us.status&quot;)));</span>
-//	        		.setResultTransformer(new AliasToBeanResultTransformer(Comment.class)); 
-	 
-<span class="nc" id="L147">	        criteria.add(Restrictions.eq(&quot;us.id&quot;, user_id));</span>
-	        
-<span class="nc" id="L149">	        criteria.createAlias(&quot;post&quot;, &quot;pt&quot;);</span>
-<span class="nc" id="L150">	        criteria.createAlias(&quot;post.user&quot;, &quot;pu&quot;);</span>
-<span class="nc bnc" id="L151" title="All 2 branches missed.">	        if(isOwnerUser){</span>
-<span class="nc" id="L152">	        	Criterion criterionPostUserActive = Restrictions.eq(&quot;pu.id&quot;, user_id);</span>
-<span class="nc" id="L153">	        	Criterion criterionCurrentActive = Restrictions.eq(&quot;pt.status&quot;, Constraints.POST_ACTIVE);</span>
-<span class="nc" id="L154">		        criteria.add(Restrictions.or(criterionPostUserActive, criterionCurrentActive));</span>
-<span class="nc" id="L155">	        }else{</span>
-<span class="nc" id="L156">	        	criteria.add(Restrictions.eq(&quot;pt.status&quot;, Constraints.POST_ACTIVE));</span>
-	        }
-	        
-<span class="nc" id="L159">	        criteria.addOrder(Order.desc(&quot;created_at&quot;));</span>
-	        
-	        
-<span class="nc bnc" id="L162" title="All 2 branches missed.">	        if(!criteria.list().isEmpty()){</span>
-<span class="nc" id="L163">	        	List&lt;Comment&gt; listComments = new ArrayList&lt;Comment&gt;();</span>
-<span class="nc" id="L164">	        	List&lt;Object[]&gt; result = criteria.list();</span>
-<span class="nc" id="L165">	        	System.out.println(&quot;size &quot;+ criteria.list().size());</span>
-<span class="nc" id="L166">	        	Comment comment = null;</span>
-<span class="nc bnc" id="L167" title="All 2 branches missed.">	        	for (Iterator&lt;Object[]&gt; it = result.iterator(); it.hasNext();) {</span>
-<span class="nc" id="L168">	        	    Object[] myResult = (Object[]) it.next();</span>
-<span class="nc" id="L169">	        	    comment = new Comment();</span>
-<span class="nc" id="L170">	        	    comment.setId((int) myResult[0]);</span>
-<span class="nc" id="L171">	        	    comment.setContent((String) myResult[1]);</span>
-<span class="nc" id="L172">	        	    comment.setCreated_at((Date) myResult[2]);</span>
-<span class="nc" id="L173">	        	    comment.setModified_at((Date) myResult[3]);</span>
-<span class="nc" id="L174">	        	    comment.setUser(new User((int) myResult[4], (String) myResult[5], (int) myResult[6]));</span>
-<span class="nc" id="L175">	        	    listComments.add(comment);</span>
-<span class="nc" id="L176">	        	    logger.info(&quot;Comment in get all commente for user :&quot;+comment.getId());</span>
-	        	}
-<span class="nc" id="L178">		        return listComments;</span>
-	        }else{
-<span class="nc" id="L180">	        	return null;</span>
-	        }
-<span class="nc" id="L182">    	}catch(HibernateException ex){</span>
-<span class="nc" id="L183">    		ex.printStackTrace();</span>
-<span class="nc" id="L184">    		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L185">    	}finally {</span>
-<span class="nc" id="L186">    		   session.close();</span>
-<span class="nc" id="L187">    	}</span>
-	}
+<span class="fc" id="L44">    private static final Logger logger = LoggerFactory.getLogger(CommentDAOImpl.class);</span>
+
+    /**
+     * get_all_comment_for_post use to get all comment for post.
+     *
+     * @param post_id
+     *            : id of post for search
+     * @param isOwnerPost
+     *            : result of check current user owner or not
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Override
+    @Transactional
+    public List&lt;Comment&gt; getAllCommentForPost(int post_id, Boolean isOwnerPost)
+            throws HandlerException
+    {
+        try {
+<span class="fc" id="L63">            session = this.sessionFactory.getCurrentSession();</span>
+
+<span class="fc" id="L65">            Criteria criteria = session.createCriteria(Comment.class, &quot;comment&quot;);</span>
+            
+            // create inner join with user table
+<span class="fc" id="L68">            criteria.createAlias(&quot;user&quot;, &quot;us&quot;);</span>
+            
+            //get specific column 
+<span class="fc" id="L71">            criteria.setProjection(Projections.projectionList()</span>
+                    .add(Projections.property(&quot;id&quot;).as(&quot;id&quot;))
+                    .add(Projections.property(&quot;content&quot;).as(&quot;content&quot;))
+                    .add(Projections.property(&quot;created_at&quot;).as(&quot;created_at&quot;))
+                    .add(Projections.property(&quot;modified_at&quot;).as(&quot;modified_at&quot;))
+                    .add(Projections.property(&quot;us.id&quot;)).add(Projections.property(&quot;us.username&quot;))
+                    .add(Projections.property(&quot;us.status&quot;)));
+
+            // create inner join with post table
+<span class="fc" id="L80">            criteria.createAlias(&quot;post&quot;, &quot;pt&quot;);</span>
+            // set post_id condition
+<span class="fc" id="L82">            criteria.add(Restrictions.eq(&quot;pt.id&quot;, post_id));</span>
+            // if user is not owner post, get only post have active status 
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            if (!isOwnerPost) {</span>
+<span class="fc" id="L85">                criteria.add(Restrictions.eq(&quot;pt.status&quot;, Constraints.POST_ACTIVE));</span>
+            }
+
+            // set condition: order by created at
+<span class="fc" id="L89">            criteria.addOrder(Order.desc(&quot;created_at&quot;));</span>
+
+            // declare list comments
+<span class="fc" id="L92">            List&lt;Comment&gt; listComments = new ArrayList&lt;Comment&gt;();</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            if (!criteria.list().isEmpty()) {</span>
+                
+                // get list data to list object
+<span class="fc" id="L96">                List&lt;Object[]&gt; result = criteria.list();</span>
+<span class="fc" id="L97">                Comment comment = null;</span>
+                // get every array object in result, and transfer to comment
+<span class="fc bfc" id="L99" title="All 2 branches covered.">                for (Iterator&lt;Object[]&gt; it = result.iterator(); it.hasNext();) {</span>
+<span class="fc" id="L100">                    Object[] myResult = (Object[]) it.next();</span>
+<span class="fc" id="L101">                    comment = new Comment();</span>
+<span class="fc" id="L102">                    comment.setId((int) myResult[0]);</span>
+<span class="fc" id="L103">                    comment.setContent((String) myResult[1]);</span>
+<span class="fc" id="L104">                    comment.setCreated_at((Date) myResult[2]);</span>
+<span class="fc" id="L105">                    comment.setModified_at((Date) myResult[3]);</span>
+<span class="fc" id="L106">                    comment.setUser(new User((int) myResult[4], (String) myResult[5],</span>
+                            (int) myResult[6]));
+                    // add comment to list object
+<span class="fc" id="L109">                    listComments.add(comment);</span>
+<span class="fc" id="L110">                }</span>
+
+<span class="fc bfc" id="L112" title="All 2 branches covered.">                for (Comment cm : listComments) {</span>
+<span class="fc" id="L113">                    logger.info(&quot;Post in get all post :&quot; + cm.getId());</span>
+<span class="fc" id="L114">                }</span>
+            }
+<span class="fc" id="L116">            return listComments;</span>
+<span class="nc" id="L117">        } catch (HibernateException ex) {</span>
+
+<span class="nc" id="L119">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * get_all_comment_for_user use to get all comment for user
+     *
+     * @param post_id
+     *            : id of post for search
+     * @param isOwnerUser
+     *            : result of check current user owner or not
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Override
+    @Transactional
+    public List&lt;Comment&gt; getAllCommentForUser(int user_id, Boolean isOwnerUser)
+            throws HandlerException
+    {
+
+        try {
+<span class="fc" id="L141">            session = this.sessionFactory.getCurrentSession();</span>
+
+<span class="fc" id="L143">            Criteria criteria = session.createCriteria(Comment.class, &quot;comment&quot;);</span>
+            
+            // create inner join with user table
+<span class="fc" id="L146">            criteria.createAlias(&quot;user&quot;, &quot;us&quot;);</span>
+<span class="fc" id="L147">            criteria.setProjection(Projections.projectionList().add(Projections.property(&quot;id&quot;))</span>
+                    .add(Projections.property(&quot;content&quot;)).add(Projections.property(&quot;created_at&quot;))
+                    .add(Projections.property(&quot;modified_at&quot;)).add(Projections.property(&quot;us.id&quot;))
+                    .add(Projections.property(&quot;us.username&quot;))
+                    .add(Projections.property(&quot;us.status&quot;)));
+
+            // set condition user_id
+<span class="fc" id="L154">            criteria.add(Restrictions.eq(&quot;us.id&quot;, user_id));</span>
+            // create inner join with post table
+<span class="fc" id="L156">            criteria.createAlias(&quot;post&quot;, &quot;pt&quot;);</span>
+            // create inner join with user table from post table
+<span class="fc" id="L158">            criteria.createAlias(&quot;post.user&quot;, &quot;pu&quot;);</span>
+            
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            if (isOwnerUser) {</span>
+                //if get all comment for currnet login user, set user_id to condition
+                // between post and user table
+<span class="fc" id="L163">                Criterion criterionPostUserActive = Restrictions.eq(&quot;pu.id&quot;, user_id);</span>
+                // set condition status active for other post that user is not owner
+<span class="fc" id="L165">                Criterion criterionCurrentActive = Restrictions.eq(&quot;pt.status&quot;,</span>
+                        Constraints.POST_ACTIVE);
+                // set condition get all comment of current login user and comment of post active
+<span class="fc" id="L168">                criteria.add(Restrictions.or(criterionPostUserActive, criterionCurrentActive));</span>
+<span class="fc" id="L169">            } else {</span>
+                // if not current login user, get all commet from post active
+<span class="fc" id="L171">                criteria.add(Restrictions.eq(&quot;pt.status&quot;, Constraints.POST_ACTIVE));</span>
+            }
+
+            // set order comment by created time 
+<span class="fc" id="L175">            criteria.addOrder(Order.desc(&quot;created_at&quot;));</span>
+
+<span class="fc" id="L177">            List&lt;Comment&gt; listComments = new ArrayList&lt;Comment&gt;();</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">            if (!criteria.list().isEmpty()) {</span>
+                
+                // get list data to list object (result)
+<span class="fc" id="L181">                List&lt;Object[]&gt; result = criteria.list();</span>
+<span class="fc" id="L182">                Comment comment = null;</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">                for (Iterator&lt;Object[]&gt; it = result.iterator(); it.hasNext();) {</span>
+                    
+                    // get every array object in result, and transfer to comment
+<span class="fc" id="L186">                    Object[] myResult = (Object[]) it.next();</span>
+<span class="fc" id="L187">                    comment = new Comment();</span>
+<span class="fc" id="L188">                    comment.setId((int) myResult[0]);</span>
+<span class="fc" id="L189">                    comment.setContent((String) myResult[1]);</span>
+<span class="fc" id="L190">                    comment.setCreated_at((Date) myResult[2]);</span>
+<span class="fc" id="L191">                    comment.setModified_at((Date) myResult[3]);</span>
+<span class="fc" id="L192">                    comment.setUser(new User((int) myResult[4], (String) myResult[5],</span>
+                            (int) myResult[6]));
+                    
+                    // add comment to list comments
+<span class="fc" id="L196">                    listComments.add(comment);</span>
+<span class="fc" id="L197">                    logger.info(&quot;Comment in get all commente for user :&quot; + comment.getId());</span>
+<span class="fc" id="L198">                }</span>
+            }
+<span class="fc" id="L200">            return listComments;</span>
+<span class="nc" id="L201">        } catch (HibernateException ex) {</span>
+
+<span class="nc" id="L203">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * findByContent use for find comment by content in the database for unit
+     * test
+     *
+     * @param content
+     *            : content of comment
+     * @return Comment
+     * @exception HandlerException
+     */
+    @Override
+    @Transactional
+    public Comment findByContent(String content) throws HandlerException
+    {
+<span class="fc" id="L220">        Comment comment = null;</span>
+
+        try {
+<span class="fc" id="L223">            session = this.sessionFactory.getCurrentSession();</span>
+
+<span class="fc" id="L225">            Criteria criteria = session.createCriteria(Comment.class);</span>
+<span class="fc" id="L226">            criteria.add(Restrictions.eq(&quot;content&quot;, content));</span>
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc" id="L228">                comment = (Comment) criteria.list().get(0);</span>
+<span class="fc" id="L229">                logger.info(&quot;Find user successfully, user details=&quot; + comment);</span>
+            }
+<span class="fc" id="L231">            return comment;</span>
+<span class="nc" id="L232">        } catch (HibernateException ex) {</span>
+
+<span class="nc" id="L234">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+
+<span class="nc" id="L236">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

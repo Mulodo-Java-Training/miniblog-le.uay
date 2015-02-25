@@ -19,60 +19,102 @@ import com.mulodo.miniblog.contraints.Constraints;
  * The ValidatorUtils use to validate data
  * 
  * @author UayLU
- * 
  */
-<span class="nc" id="L24">public final class ValidatorUtils {</span>
-	
-	public static Boolean isNotNullNotEmptyNotWhiteSpace(String string){
-<span class="fc bfc" id="L27" title="All 6 branches covered.">		return string != null &amp;&amp; !string.isEmpty() &amp;&amp; !string.trim().isEmpty(); </span>
-	}
-	
-	public static Boolean isValidLength(String string, int min, int max){
-<span class="pc bpc" id="L31" title="1 of 4 branches missed.">		if(min &gt; 0 &amp;&amp; string.length() &lt; min){</span>
-<span class="fc" id="L32">			return false;</span>
-<span class="fc bfc" id="L33" title="All 4 branches covered.">		}else if(max &gt; 0 &amp;&amp; string.length() &gt; max){</span>
-<span class="fc" id="L34">			return false;</span>
-		}
-<span class="fc" id="L36">		return true;</span>
-	}
+<span class="nc" id="L23">public final class ValidatorUtils</span>
+{
 
-	
-	public static Boolean isPositiveInteger (String string){
+    /**
+     * isNotNullNotEmptyNotWhiteSpace use for check not null, not empty, not white space
+     *
+     * @param string : string use for checking
+     * 
+     * @return Boolean
+     */
+    public static Boolean isNotNullNotEmptyNotWhiteSpace(String string)
+    {
+<span class="fc bfc" id="L35" title="All 6 branches covered.">        return string != null &amp;&amp; !string.isEmpty() &amp;&amp; !string.trim().isEmpty();</span>
+    }
 
-		try{
-<span class="fc" id="L43">			int i = Integer.parseInt(string);</span>
-<span class="pc bpc" id="L44" title="1 of 2 branches missed.">			if(i &gt; 0){</span>
-<span class="fc" id="L45">				return true;</span>
-			}else{
-<span class="nc" id="L47">				return false;</span>
-			}
-			
-<span class="fc" id="L50">		}catch(NumberFormatException ex){</span>
-<span class="fc" id="L51">			return false;</span>
-		}
-	}
-	
-	public static Boolean isStatusInteger (String string){
-		try{
-<span class="fc" id="L57">			int i = Integer.parseInt(string);</span>
-<span class="fc bfc" id="L58" title="All 4 branches covered.">			if(i == 0 || i == 1){</span>
-<span class="fc" id="L59">				return true;</span>
-			}else{
-<span class="fc" id="L61">				return false;</span>
-			}
-			
-<span class="fc" id="L64">		}catch(NumberFormatException ex){</span>
-<span class="fc" id="L65">			return false;</span>
-		}
-	}
-	
-	public static Boolean isValidEmail(String email){
-<span class="pc bpc" id="L70" title="1 of 2 branches missed.">		if(email == null){</span>
-<span class="nc" id="L71">			return false;</span>
-		}
-<span class="fc" id="L73">		Pattern pattern = Pattern.compile(Constraints.EMAIL_PATTERN);</span>
-<span class="fc" id="L74">		Matcher matcher = pattern.matcher(email);</span>
-<span class="fc" id="L75">		return matcher.matches();</span>
-	}
+    
+    /**
+     * isValidLength use for check valid length of variable
+     *
+     * @param string : string use for checking
+     * @parem min    : min of string
+     * @parem max    : max of string
+     * 
+     * @return Boolean
+     */
+    public static Boolean isValidLength(String string, int min, int max)
+    {
+<span class="pc bpc" id="L50" title="1 of 4 branches missed.">        if (min &gt; 0 &amp;&amp; string.length() &lt; min) {</span>
+<span class="fc" id="L51">            return false;</span>
+<span class="fc bfc" id="L52" title="All 4 branches covered.">        } else if (max &gt; 0 &amp;&amp; string.length() &gt; max) {</span>
+<span class="fc" id="L53">            return false;</span>
+        }
+<span class="fc" id="L55">        return true;</span>
+    }
+
+    /**
+     * isPositiveInteger use for check valid number like id of posts
+     *
+     * @param string : string use for checking
+     * 
+     * @return Boolean
+     */
+    public static Boolean isPositiveInteger(String string)
+    {
+
+        try {
+<span class="fc" id="L69">            int i = Integer.parseInt(string);</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            if (i &gt; 0) {</span>
+<span class="fc" id="L71">                return true;</span>
+            } else {
+<span class="fc" id="L73">                return false;</span>
+            }
+
+<span class="fc" id="L76">        } catch (NumberFormatException ex) {</span>
+<span class="fc" id="L77">            return false;</span>
+        }
+    }
+
+    /**
+     * isStatusInteger use for check valid status
+     *
+     * @param string : string of status from client
+     * 
+     * @return Boolean
+     */
+    public static Boolean isStatusInteger(String string)
+    {
+        try {
+<span class="fc" id="L91">            int i = Integer.parseInt(string);</span>
+<span class="fc bfc" id="L92" title="All 4 branches covered.">            if (i == 0 || i == 1) {</span>
+<span class="fc" id="L93">                return true;</span>
+            } else {
+<span class="fc" id="L95">                return false;</span>
+            }
+
+<span class="fc" id="L98">        } catch (NumberFormatException ex) {</span>
+<span class="fc" id="L99">            return false;</span>
+        }
+    }
+
+    /**
+     * isValidEmail use for check valid email format
+     *
+     * @param email : string of email from client
+     * 
+     * @return Boolean
+     */
+    public static Boolean isValidEmail(String email)
+    {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if (!isNotNullNotEmptyNotWhiteSpace(email)) {</span>
+<span class="fc" id="L113">            return false;</span>
+        }
+<span class="fc" id="L115">        Pattern pattern = Pattern.compile(Constraints.EMAIL_PATTERN);</span>
+<span class="fc" id="L116">        Matcher matcher = pattern.matcher(email);</span>
+<span class="fc" id="L117">        return matcher.matches();</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -28,122 +28,138 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * The post entity work with hibernate 
+ * The post entity work with hibernate
  * 
  * @author UayLU
- * 
  */
 @Entity
 @Table(name = &quot;Post&quot;)
-public class Post {
+public class Post
+{
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(nullable = false)
-	private int id;
-	
-	@Column(nullable = false, name= &quot;title&quot;, length= 150)
-	private String title;
-	
-	@Column(nullable = false, name= &quot;content&quot;, length= 5000)
-	private String content;
-	
-	@Column(nullable = false, name = &quot;created_at&quot;, columnDefinition=&quot;DATETIME&quot;)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created_at;
-	
-	@Column(nullable = false, name = &quot;modified_at&quot;, columnDefinition=&quot;DATETIME&quot;)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date modified_at;
-	
-	@Column(nullable = false, name = &quot;status&quot;, columnDefinition=&quot;TINYINT&quot;)
-	private int status;
-	
-	@ManyToOne
-    @JoinColumn(nullable = false,name = &quot;author_id&quot;, referencedColumnName = &quot;id&quot;)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
+    private int id;
+
+    @Column(nullable = false, name = &quot;title&quot;, length = 150)
+    private String title;
+
+    @Column(nullable = false, name = &quot;content&quot;, length = 5000)
+    private String content;
+
+    @Column(nullable = false, name = &quot;created_at&quot;, columnDefinition = &quot;DATETIME&quot;)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created_at;
+
+    @Column(nullable = false, name = &quot;modified_at&quot;, columnDefinition = &quot;DATETIME&quot;)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modified_at;
+
+    @Column(nullable = false, name = &quot;status&quot;, columnDefinition = &quot;TINYINT&quot;)
+    private int status;
+
+    @ManyToOne
+    @JoinColumn(nullable = false, name = &quot;author_id&quot;, referencedColumnName = &quot;id&quot;)
     private User user;
-	
-	@OneToMany(targetEntity=Comment.class ,mappedBy = &quot;post&quot;,fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+
+    @OneToMany(targetEntity = Comment.class, mappedBy = &quot;post&quot;, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List&lt;Comment&gt; comments;
-	
-	public List&lt;Comment&gt; getComments() {
-<span class="fc" id="L70">		return comments;</span>
-	}
 
-	public void setComments(List&lt;Comment&gt; comments) {
-<span class="nc" id="L74">		this.comments = comments;</span>
-<span class="nc" id="L75">	}</span>
+    public List&lt;Comment&gt; getComments()
+    {
+<span class="fc" id="L71">        return comments;</span>
+    }
 
-	public User getUser() {
-<span class="fc" id="L78">		return user;</span>
-	}
+    public void setComments(List&lt;Comment&gt; comments)
+    {
+<span class="nc" id="L76">        this.comments = comments;</span>
+<span class="nc" id="L77">    }</span>
 
-	public void setUser(User user) {
-<span class="fc" id="L82">		this.user = user;</span>
-<span class="fc" id="L83">	}</span>
+    public User getUser()
+    {
+<span class="fc" id="L81">        return user;</span>
+    }
 
-	public int getId() {
-<span class="fc" id="L86">		return id;</span>
-	}
+    public void setUser(User user)
+    {
+<span class="fc" id="L86">        this.user = user;</span>
+<span class="fc" id="L87">    }</span>
 
-	public void setId(int id) {
-<span class="fc" id="L90">		this.id = id;</span>
-<span class="fc" id="L91">	}</span>
+    public int getId()
+    {
+<span class="fc" id="L91">        return id;</span>
+    }
 
-	public String getTitle() {
-<span class="fc" id="L94">		return title;</span>
-	}
+    public void setId(int id)
+    {
+<span class="fc" id="L96">        this.id = id;</span>
+<span class="fc" id="L97">    }</span>
 
-	public void setTitle(String title) {
-<span class="fc" id="L98">		this.title = title;</span>
-<span class="fc" id="L99">	}</span>
+    public String getTitle()
+    {
+<span class="fc" id="L101">        return title;</span>
+    }
 
-	public String getContent() {
-<span class="fc" id="L102">		return content;</span>
-	}
+    public void setTitle(String title)
+    {
+<span class="fc" id="L106">        this.title = title;</span>
+<span class="fc" id="L107">    }</span>
 
-	public void setContent(String content) {
-<span class="fc" id="L106">		this.content = content;</span>
-<span class="fc" id="L107">	}</span>
+    public String getContent()
+    {
+<span class="fc" id="L111">        return content;</span>
+    }
 
-	public Date getCreated_at() {
-<span class="fc" id="L110">		return created_at;</span>
-	}
+    public void setContent(String content)
+    {
+<span class="fc" id="L116">        this.content = content;</span>
+<span class="fc" id="L117">    }</span>
 
-	public void setCreated_at(Date created_at) {
-<span class="fc" id="L114">		this.created_at = created_at;</span>
-<span class="fc" id="L115">	}</span>
+    public Date getCreated_at()
+    {
+<span class="fc" id="L121">        return created_at;</span>
+    }
 
-	public Date getModified_at() {
-<span class="fc" id="L118">		return modified_at;</span>
-	}
+    public void setCreated_at(Date created_at)
+    {
+<span class="fc" id="L126">        this.created_at = created_at;</span>
+<span class="fc" id="L127">    }</span>
 
-	public void setModified_at(Date modified_at) {
-<span class="fc" id="L122">		this.modified_at = modified_at;</span>
-<span class="fc" id="L123">	}</span>
+    public Date getModified_at()
+    {
+<span class="fc" id="L131">        return modified_at;</span>
+    }
 
-	public int getStatus() {
-<span class="fc" id="L126">		return status;</span>
-	}
+    public void setModified_at(Date modified_at)
+    {
+<span class="fc" id="L136">        this.modified_at = modified_at;</span>
+<span class="fc" id="L137">    }</span>
 
-	public void setStatus(int status) {
-<span class="fc" id="L130">		this.status = status;</span>
-<span class="fc" id="L131">	}</span>
-	
-	public Post() {
-<span class="fc" id="L134">		super();</span>
-<span class="fc" id="L135">	}</span>
+    public int getStatus()
+    {
+<span class="fc" id="L141">        return status;</span>
+    }
 
-	public Post(String title, String content, Date created_at,
-			Date modified_at, int status, User user) {
-<span class="fc" id="L139">		super();</span>
-<span class="fc" id="L140">		this.title = title;</span>
-<span class="fc" id="L141">		this.content = content;</span>
-<span class="fc" id="L142">		this.created_at = created_at;</span>
-<span class="fc" id="L143">		this.modified_at = modified_at;</span>
-<span class="fc" id="L144">		this.status = status;</span>
-<span class="fc" id="L145">		this.user = user;</span>
-<span class="fc" id="L146">	}</span>
-	
+    public void setStatus(int status)
+    {
+<span class="fc" id="L146">        this.status = status;</span>
+<span class="fc" id="L147">    }</span>
+
+    public Post() {
+<span class="fc" id="L150">        super();</span>
+<span class="fc" id="L151">    }</span>
+
+    public Post(String title, String content, Date created_at, Date modified_at, int status,
+            User user) {
+<span class="fc" id="L155">        super();</span>
+<span class="fc" id="L156">        this.title = title;</span>
+<span class="fc" id="L157">        this.content = content;</span>
+<span class="fc" id="L158">        this.created_at = created_at;</span>
+<span class="fc" id="L159">        this.modified_at = modified_at;</span>
+<span class="fc" id="L160">        this.status = status;</span>
+<span class="fc" id="L161">        this.user = user;</span>
+<span class="fc" id="L162">    }</span>
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

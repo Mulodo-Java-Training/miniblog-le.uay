@@ -20,47 +20,65 @@ import com.mulodo.miniblog.object.Meta;
  * The Build json object for build json response data
  * 
  * @author UayLU
- * 
  */
-<span class="nc" id="L25">public class BuildJSON {</span>
+<span class="nc" id="L24">public class BuildJSON</span>
+{
 
-	public final static JSONObject buildReturn(Meta meta, Data data){
-<span class="fc" id="L28">		JSONObject metaJSON = null;</span>
-<span class="fc" id="L29">		JSONObject dataJSON = null;</span>
-		
-<span class="fc bfc" id="L31" title="All 2 branches covered.">		if(meta != null){</span>
-<span class="fc" id="L32">			metaJSON = new JSONObject(meta);</span>
-<span class="pc bpc" id="L33" title="1 of 4 branches missed.">			if(meta.getMessages().isEmpty() ||meta.getMessages().get(0).getCode() == 0 ){</span>
-<span class="fc" id="L34">				metaJSON.remove(Constraints.MESSAGES);</span>
-			}
-		}
-		
-<span class="fc bfc" id="L38" title="All 2 branches covered.">		if(data != null){</span>
-			
-<span class="fc" id="L40">			dataJSON= new JSONObject(data);</span>
-<span class="fc" id="L41">			boolean isValid = false;</span>
-				
-<span class="fc bfc" id="L43" title="All 2 branches covered.">			if(dataJSON.has(&quot;listPost&quot;)){</span>
-<span class="fc" id="L44">				isValid = true;</span>
-<span class="fc bfc" id="L45" title="All 2 branches covered.">			}else if(dataJSON.has(&quot;listUser&quot;)){</span>
-<span class="fc" id="L46">				isValid = true;</span>
-<span class="pc bpc" id="L47" title="1 of 2 branches missed.">			}else if(dataJSON.has(&quot;listComment&quot;)){</span>
-<span class="nc" id="L48">				isValid = true;</span>
-			}
-			
-<span class="fc bfc" id="L51" title="All 2 branches covered.">			if(!isValid){</span>
-<span class="fc" id="L52">				dataJSON.remove(Constraints.LIMIT_ROW_STRING);</span>
-<span class="fc" id="L53">				dataJSON.remove(Constraints.PAGE_NUM);</span>
-<span class="fc" id="L54">				dataJSON.remove(Constraints.TOTAL_PAGE);</span>
-<span class="fc" id="L55">				dataJSON.remove(Constraints.TOTAL_ROW);</span>
-			}
-			
-		}
-<span class="fc" id="L59">		JSONObject result = new JSONObject();</span>
-<span class="fc" id="L60">		result.put(Constraints.META, metaJSON);</span>
-<span class="fc" id="L61">		result.put(Constraints.DATA, dataJSON);</span>
-<span class="fc" id="L62">		return result;</span>
-	}
-	
+    /**
+     * buildReturn use for build json object
+     *
+     * @param meta : data object for return error or message
+     * @parem data : data of return like get post, get comment..
+     * 
+     * @return String
+     */
+    public final static JSONObject buildReturn(Meta meta, Data data)
+    {
+       
+<span class="fc" id="L38">        JSONObject metaJSON = null;</span>
+<span class="fc" id="L39">        JSONObject dataJSON = null;</span>
+
+        // if meta is not null, transfer meta to JSON object
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (meta != null) {</span>
+<span class="fc" id="L43">            metaJSON = new JSONObject(meta);</span>
+            // remove message json object for success response
+<span class="pc bpc" id="L45" title="1 of 4 branches missed.">            if (meta.getMessages().isEmpty() || meta.getMessages().get(0).getCode() == 0) {</span>
+<span class="fc" id="L46">                metaJSON.remove(Constraints.MESSAGES);</span>
+            }
+        }
+
+        // if data is not null, transfer data to JSON object
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (data != null) {</span>
+
+<span class="fc" id="L53">            dataJSON = new JSONObject(data);</span>
+            
+            // isvalid : use for check the have : listpost, listUser, listComment or not 
+<span class="fc" id="L56">            boolean isValid = false;</span>
+
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            if (dataJSON.has(&quot;listPost&quot;)) {</span>
+<span class="fc" id="L59">                isValid = true;</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            } else if (dataJSON.has(&quot;listUser&quot;)) {</span>
+<span class="fc" id="L61">                isValid = true;</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">            } else if (dataJSON.has(&quot;listComment&quot;)) {</span>
+<span class="fc" id="L63">                isValid = true;</span>
+            }
+
+            // if invalid one of them, remove
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            if (!isValid) {</span>
+<span class="fc" id="L68">                dataJSON.remove(Constraints.LIMIT_ROW_STRING);</span>
+<span class="fc" id="L69">                dataJSON.remove(Constraints.PAGE_NUM);</span>
+<span class="fc" id="L70">                dataJSON.remove(Constraints.TOTAL_PAGE);</span>
+<span class="fc" id="L71">                dataJSON.remove(Constraints.TOTAL_ROW);</span>
+            }
+
+        }
+        
+        // build json object from meteJSON and dataJSON
+<span class="fc" id="L77">        JSONObject result = new JSONObject();</span>
+<span class="fc" id="L78">        result.put(Constraints.META, metaJSON);</span>
+<span class="fc" id="L79">        result.put(Constraints.DATA, dataJSON);</span>
+<span class="fc" id="L80">        return result;</span>
+    }
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

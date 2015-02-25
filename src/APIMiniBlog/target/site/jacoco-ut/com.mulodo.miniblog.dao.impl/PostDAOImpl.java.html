@@ -10,7 +10,6 @@
  */
 package com.mulodo.miniblog.dao.impl;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -25,6 +24,7 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.PostDAO;
@@ -36,231 +36,254 @@ import com.mulodo.miniblog.model.User;
  * The post dao impl
  * 
  * @author UayLU
- * 
  */
 @Repository(&quot;postDAO&quot;)
-<span class="fc" id="L42">public class PostDAOImpl extends GenericDAOImpl&lt;Post&gt; implements PostDAO</span>
+<span class="fc" id="L41">public class PostDAOImpl extends GenericDAOImpl&lt;Post&gt; implements PostDAO</span>
 {
 
-<span class="fc" id="L45">	private static final Logger logger = LoggerFactory.getLogger(PostDAOImpl.class);</span>
-	
-	/**
-	 *  get_all_post use to get all post from database
-	 *	
-	 *	@param	author_id : user id that owner post
-	 *  @param  isForUser : result of check current user owner or not
-	 *  @param  pageNume: the number of page you want to get
-	 *
-	 *	@return List&lt;Post&gt;
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@SuppressWarnings(&quot;unchecked&quot;)
-	@Override
-	public List&lt;Post&gt; getAllPost(int pageNum, int author_id, String description, Boolean isForUser, Boolean isOwnerUser) throws HandlerException {
-<span class="fc" id="L62">		List&lt;Post&gt; listPost = null;</span>
-		try{
-<span class="fc" id="L64">	        session = this.sessionFactory.openSession();</span>
-	        
-<span class="fc" id="L66">	        Criteria criteria = session.createCriteria(Post.class, &quot;post&quot;);</span>
-	        
-<span class="pc bpc" id="L68" title="1 of 2 branches missed.">	        if(pageNum &gt; 0){</span>
-<span class="fc" id="L69">	        	criteria.setFirstResult((pageNum - 1)* Constraints.LIMIT_ROW);</span>
-<span class="fc" id="L70">		        criteria.setMaxResults(Constraints.LIMIT_ROW);</span>
-	        }
-	        
-<span class="fc" id="L73">	        criteria.createAlias(&quot;user&quot;, &quot;us&quot;);</span>
-<span class="fc" id="L74">	        criteria.setProjection(Projections.projectionList()</span>
-<span class="fc" id="L75">		        		.add(Projections.property(&quot;id&quot;).as(&quot;id&quot;))</span>
-<span class="fc" id="L76">		        		.add(Projections.property(&quot;title&quot;).as(&quot;title&quot;))</span>
-<span class="fc" id="L77">		        		.add(Projections.property(&quot;content&quot;).as(&quot;content&quot;))</span>
-<span class="fc" id="L78">		        		.add(Projections.property(&quot;created_at&quot;).as(&quot;created_at&quot;))</span>
-<span class="fc" id="L79">		        		.add(Projections.property(&quot;modified_at&quot;).as(&quot;modified_at&quot;))</span>
-<span class="fc" id="L80">		        		.add(Projections.property(&quot;status&quot;).as(&quot;status&quot;))</span>
-<span class="fc" id="L81">		        		.add(Projections.property(&quot;us.id&quot;).as(&quot;author_id&quot;))</span>
-<span class="fc" id="L82">		        		.add(Projections.property(&quot;us.username&quot;).as(&quot;username&quot;))</span>
-<span class="fc" id="L83">		        		.add(Projections.property(&quot;us.status&quot;).as(&quot;status&quot;))); </span>
-	 
-<span class="pc bpc" id="L85" title="1 of 4 branches missed.">	        if(author_id &gt; 0 &amp;&amp; isForUser){</span>
-<span class="fc bfc" id="L86" title="All 2 branches covered.">	        	if(isOwnerUser){</span>
-<span class="fc" id="L87">	        		criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
-<span class="fc" id="L88">	        	}else{</span>
-<span class="fc" id="L89">	        		criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
-<span class="fc" id="L90">	        		criteria.add(Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));</span>
-<span class="fc" id="L91">	        		criteria.add(Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE));</span>
-	        	}
-<span class="pc bpc" id="L93" title="2 of 4 branches missed.">	        }else if (author_id &gt; 0 &amp;&amp; !isForUser){</span>
-<span class="fc" id="L94">	        	Criterion criterionPostUserActive = Restrictions.and(Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE),</span>
-<span class="fc" id="L95">	        			Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));</span>
-<span class="fc" id="L96">	        	Criterion criterionCurrentActive = Restrictions.eq(&quot;us.id&quot;, author_id);</span>
-<span class="fc" id="L97">	        	criteria.add(Restrictions.or(criterionCurrentActive, criterionPostUserActive));</span>
-	        }
-	        
-<span class="fc bfc" id="L100" title="All 2 branches covered.">	        if(description != null){</span>
-<span class="fc" id="L101">	        	criteria.add(Restrictions.disjunction()</span>
-<span class="fc" id="L102">		        			.add(Restrictions.like(&quot;title&quot;, &quot;%&quot;+description+&quot;%&quot;))</span>
-<span class="fc" id="L103">		        			.add(Restrictions.like(&quot;content&quot;,&quot;%&quot;+description+&quot;%&quot;)));</span>
-	        }
-	        
-<span class="fc" id="L106">	        criteria.addOrder(Order.desc(&quot;created_at&quot;));</span>
-	        
-	               
-<span class="fc bfc" id="L109" title="All 2 branches covered.">	        if(!criteria.list().isEmpty()){</span>
-<span class="fc" id="L110">	        	listPost = new ArrayList&lt;Post&gt;();</span>
-<span class="fc" id="L111">	        	List&lt;Object[]&gt; result = criteria.list();</span>
-<span class="fc" id="L112">	        	System.out.println(&quot;size &quot;+ criteria.list().size());</span>
-<span class="fc" id="L113">	        	Post post = null;</span>
-<span class="fc bfc" id="L114" title="All 2 branches covered.">	        	for (Iterator&lt;Object[]&gt; it = result.iterator(); it.hasNext();) {</span>
-<span class="fc" id="L115">	        	    Object[] myResult = (Object[]) it.next();</span>
-<span class="fc" id="L116">	        	    post = new Post();</span>
-<span class="fc" id="L117">	        	    post.setId((int) myResult[0]);</span>
-<span class="fc" id="L118">	        	    post.setTitle((String) myResult[1]);</span>
-<span class="fc" id="L119">	        	    post.setContent((String) myResult[2]);</span>
-<span class="fc" id="L120">	        	    post.setCreated_at((Date) myResult[3]);</span>
-<span class="fc" id="L121">	        	    post.setModified_at((Date) myResult[4]);</span>
-<span class="fc" id="L122">	        	    post.setStatus((int) myResult[5]);</span>
-<span class="fc" id="L123">	        	    post.setUser(new User((int) myResult[6], (String) myResult[7], (int) myResult[8]));</span>
-<span class="fc" id="L124">	        	    listPost.add(post);</span>
-<span class="fc" id="L125">	        	    logger.info(&quot;Comment in get all commente for user :&quot;+post.getId());</span>
-	        	}
-<span class="fc" id="L127">		        return listPost;</span>
-	        }else{
-<span class="fc" id="L129">	        	return null;</span>
-	        }
-<span class="nc" id="L131">    	}catch(HibernateException ex){</span>
-<span class="nc" id="L132">    		ex.printStackTrace();</span>
-<span class="nc" id="L133">    		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L134">    	}finally {</span>
-<span class="pc" id="L135">    		   session.close();</span>
-<span class="nc" id="L136">    	}</span>
-	}
+<span class="fc" id="L44">    private static final Logger logger = LoggerFactory.getLogger(PostDAOImpl.class);</span>
 
-	/**
-	 *  get_all_post_size use to get size of post with owner user from database
-	 *	
-	 *	@param	author_id : user id that owner post
-	 *  @param  isForUser : result of get post for user
-	 *  @param  isOwnerUser : result of check current user owner or not
-	 *
-	 *	@return int
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public int getAllPostSize(int author_id, String description,
-			Boolean isForUser, Boolean isOwnerUser) throws HandlerException {
-		try{
-<span class="fc" id="L155">	        session = this.sessionFactory.openSession();</span>
-	        
-<span class="fc" id="L157">	        Criteria criteria = session.createCriteria(Post.class, &quot;post&quot;);</span>
-	        
-<span class="fc" id="L159">	        criteria.createAlias(&quot;user&quot;, &quot;us&quot;);</span>
-	     	        	 
-<span class="pc bpc" id="L161" title="1 of 4 branches missed.">	        if(author_id &gt; 0 &amp;&amp; isForUser){</span>
-<span class="fc bfc" id="L162" title="All 2 branches covered.">	        	if(isOwnerUser){</span>
-<span class="fc" id="L163">	        		criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
-<span class="fc" id="L164">	        	}else{</span>
-<span class="fc" id="L165">	        		criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
-<span class="fc" id="L166">	        		criteria.add(Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));</span>
-<span class="fc" id="L167">	        		criteria.add(Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE));</span>
-	        	}
-<span class="pc bpc" id="L169" title="2 of 4 branches missed.">	        }else if (author_id &gt; 0 &amp;&amp; !isForUser){</span>
-<span class="fc" id="L170">	        	Criterion criterionPostUserActive = Restrictions.and(Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE),</span>
-<span class="fc" id="L171">	        			Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));</span>
-<span class="fc" id="L172">	        	Criterion criterionCurrentActive = Restrictions.eq(&quot;us.id&quot;, author_id);</span>
-<span class="fc" id="L173">	        	criteria.add(Restrictions.or(criterionCurrentActive, criterionPostUserActive));</span>
-	        }
-	        
-<span class="fc bfc" id="L176" title="All 2 branches covered.">	        if(description != null){</span>
-<span class="fc" id="L177">	        	criteria.add(Restrictions.disjunction()</span>
-<span class="fc" id="L178">	        			.add(Restrictions.like(&quot;title&quot;, &quot;%&quot;+description+&quot;%&quot;))</span>
-<span class="fc" id="L179">	        			.add(Restrictions.like(&quot;content&quot;,&quot;%&quot;+description+&quot;%&quot;)));</span>
-	        }
-	        
-<span class="fc" id="L182">	        Integer totalPost = ((Number)criteria.setProjection(Projections.rowCount()).uniqueResult()).intValue();  </span>
-<span class="fc" id="L183">	        return totalPost;</span>
-<span class="nc" id="L184">    	}catch(HibernateException ex){</span>
-<span class="nc" id="L185">    		ex.printStackTrace();</span>
-<span class="nc" id="L186">    		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L187">    	}finally {</span>
-<span class="pc" id="L188">    		   session.close();</span>
-<span class="nc" id="L189">    	}</span>
-	}
+    /**
+     * get_all_post use to get all post from database
+     *
+     * @param author_id
+     *            : user id that owner post
+     * @param isForUser
+     *            : result of check current user owner or not
+     * @param pageNume
+     *            : the number of page you want to get
+     * @return List&lt;Post&gt;
+     * @exception HandlerException
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Override
+    @Transactional
+    public List&lt;Post&gt; getAllPost(int pageNum, int author_id, String description, Boolean isForUser,
+            Boolean isOwnerUser) throws HandlerException
+    {
+<span class="fc" id="L64">        List&lt;Post&gt; listPost = null;</span>
+        try {
+<span class="fc" id="L66">            session = this.sessionFactory.getCurrentSession();</span>
 
-	/**
-	 *  deleteByTitle use for delete post by title in the database
-	 *	
-	 *	@param	title : title of post
-	 *
-	 *	@return void
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public void deleteByTitle(String title) throws HandlerException {
-		try{ 
-<span class="fc" id="L204"> 	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L205"> 	        tx = session.beginTransaction();</span>
-<span class="fc" id="L206">			Criteria criteria = session.createCriteria(Post.class);</span>
-		
-<span class="fc" id="L208">        	criteria.add(Restrictions.eq(&quot;title&quot;,title));</span>
-<span class="fc bfc" id="L209" title="All 2 branches covered.">        	if(!criteria.list().isEmpty()){</span>
-<span class="fc" id="L210">	        	Post post = (Post) criteria.list().get(0);</span>
-<span class="fc" id="L211">				session.delete(post);</span>
-<span class="fc" id="L212">				logger.info(&quot;Post deleted successfully, post details=&quot;+post);</span>
-        	}
-<span class="fc" id="L214">        	tx.commit();</span>
-		
-			   
-<span class="pc" id="L217">     	}catch(HibernateException ex){</span>
-<span class="nc" id="L218">     		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
-<span class="nc bnc" id="L219" title="All 2 branches missed.">     		if(tx != null)	tx.rollback();</span>
-<span class="nc" id="L220">     		ex.printStackTrace();</span>
-<span class="nc" id="L221">     		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L222">     	}finally {</span>
-<span class="pc" id="L223">     		session.close();</span>
-<span class="nc" id="L224">     	}</span>
-		
-<span class="fc" id="L226">	}</span>
+<span class="fc" id="L68">            Criteria criteria = session.createCriteria(Post.class, &quot;post&quot;);</span>
 
-	/**
-	 *  findByTitle use for find post by title in the database for unit test
-	 *	
-	 *	@param	title : title of post
-	 *
-	 *	@return Post
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Post findByTitle(String title) throws HandlerException {
-		try{ 
-<span class="fc" id="L240"> 	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L241"> 	        tx = session.beginTransaction();</span>
-<span class="fc" id="L242">			Criteria criteria = session.createCriteria(Post.class);</span>
-			
-<span class="fc" id="L244">        	criteria.add(Restrictions.eq(&quot;title&quot;,title));</span>
-<span class="fc" id="L245">        	Post post = null;</span>
-<span class="fc bfc" id="L246" title="All 2 branches covered.">        	if(criteria.list().isEmpty()){</span>
-<span class="fc" id="L247">        		return null;</span>
-        	}else{
-<span class="fc" id="L249">        		post = (Post) criteria.list().get(0);</span>
-        	}
-      
-<span class="fc" id="L252"> 	        tx.commit();</span>
-<span class="fc" id="L253"> 	        logger.info(&quot;Post find by title successfully, post details=&quot;+post);</span>
-<span class="fc" id="L254"> 	        return post;</span>
-			
-<span class="nc" id="L256">     	}catch(HibernateException ex){</span>
-<span class="nc" id="L257">     		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
-<span class="nc bnc" id="L258" title="All 2 branches missed.">     		if(tx != null)	tx.rollback();</span>
-<span class="nc" id="L259">     		ex.printStackTrace();</span>
-<span class="nc" id="L260">     		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L261">     	}finally {</span>
-<span class="pc" id="L262">     		session.close();</span>
-<span class="nc" id="L263">     	}</span>
-	}
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">            if (pageNum &gt; 0) {</span>
+<span class="fc" id="L71">                criteria.setFirstResult((pageNum - 1) * Constraints.LIMIT_ROW);</span>
+<span class="fc" id="L72">                criteria.setMaxResults(Constraints.LIMIT_ROW);</span>
+            }
+
+            // create inner join user table
+<span class="fc" id="L76">            criteria.createAlias(&quot;user&quot;, &quot;us&quot;);</span>
+            // get specific column
+<span class="fc" id="L78">            criteria.setProjection(Projections.projectionList()</span>
+                    .add(Projections.property(&quot;id&quot;).as(&quot;id&quot;))
+                    .add(Projections.property(&quot;title&quot;).as(&quot;title&quot;))
+                    .add(Projections.property(&quot;content&quot;).as(&quot;content&quot;))
+                    .add(Projections.property(&quot;created_at&quot;).as(&quot;created_at&quot;))
+                    .add(Projections.property(&quot;modified_at&quot;).as(&quot;modified_at&quot;))
+                    .add(Projections.property(&quot;status&quot;).as(&quot;status&quot;))
+                    .add(Projections.property(&quot;us.id&quot;).as(&quot;author_id&quot;))
+                    .add(Projections.property(&quot;us.username&quot;).as(&quot;username&quot;))
+                    .add(Projections.property(&quot;us.status&quot;).as(&quot;status&quot;)));
+
+            // if author id positive integer and get post for user
+<span class="pc bpc" id="L90" title="1 of 4 branches missed.">            if (author_id &gt; 0 &amp;&amp; isForUser) {</span>
+                // get all post for user
+<span class="fc bfc" id="L92" title="All 2 branches covered.">                if (isOwnerUser) {</span>
+                    // get all post for current user that user owner
+<span class="fc" id="L94">                    criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
+                } else {
+                    // get all post for other user with condition:
+                    // user active and post of that user is active
+<span class="fc" id="L98">                    criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
+<span class="fc" id="L99">                    criteria.add(Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));</span>
+<span class="fc" id="L100">                    criteria.add(Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE));</span>
+                }
+<span class="pc bpc" id="L102" title="2 of 4 branches missed.">            } else if (author_id &gt; 0 &amp;&amp; !isForUser) {</span>
+                // if get post not for user, follow condition:
+                // 1: get post of other user :post have active status and user is active user  
+                // 2: get post of current login user: all post of current login user
+<span class="fc" id="L106">                Criterion criterionPostUserActive = Restrictions.and(</span>
+                        Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE),
+                        Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));
+<span class="fc" id="L109">                Criterion criterionCurrentActive = Restrictions.eq(&quot;us.id&quot;, author_id);</span>
+<span class="fc" id="L110">                criteria.add(Restrictions.or(criterionCurrentActive, criterionPostUserActive));</span>
+            }
+            // set condition title and content like description
+<span class="fc bfc" id="L113" title="All 2 branches covered.">            if (description != null) {</span>
+<span class="fc" id="L114">                criteria.add(Restrictions.disjunction()</span>
+                        .add(Restrictions.like(&quot;title&quot;, &quot;%&quot; + description + &quot;%&quot;))
+                        .add(Restrictions.like(&quot;content&quot;, &quot;%&quot; + description + &quot;%&quot;)));
+            }
+            
+            // add order post by created time
+<span class="fc" id="L120">            criteria.addOrder(Order.desc(&quot;created_at&quot;));</span>
+
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc" id="L123">                listPost = new ArrayList&lt;Post&gt;();</span>
+                // get list post from data to list object(result)
+<span class="fc" id="L125">                List&lt;Object[]&gt; result = criteria.list();</span>
+                
+<span class="fc" id="L127">                Post post = null;</span>
+
+<span class="fc bfc" id="L129" title="All 2 branches covered.">                for (Iterator&lt;Object[]&gt; it = result.iterator(); it.hasNext();) {</span>
+                    
+                    // get every array object in result, and transfer to comment
+<span class="fc" id="L132">                    Object[] myResult = (Object[]) it.next();</span>
+<span class="fc" id="L133">                    post = new Post();</span>
+<span class="fc" id="L134">                    post.setId((int) myResult[0]);</span>
+<span class="fc" id="L135">                    post.setTitle((String) myResult[1]);</span>
+<span class="fc" id="L136">                    post.setContent((String) myResult[2]);</span>
+<span class="fc" id="L137">                    post.setCreated_at((Date) myResult[3]);</span>
+<span class="fc" id="L138">                    post.setModified_at((Date) myResult[4]);</span>
+<span class="fc" id="L139">                    post.setStatus((int) myResult[5]);</span>
+<span class="fc" id="L140">                    post.setUser(new User((int) myResult[6], (String) myResult[7],</span>
+                            (int) myResult[8]));
+                    
+                    //add post to list post
+<span class="fc" id="L144">                    listPost.add(post);</span>
+<span class="fc" id="L145">                    logger.info(&quot;Comment in get all commente for user :&quot; + post.getId());</span>
+<span class="fc" id="L146">                }</span>
+<span class="fc" id="L147">                return listPost;</span>
+            } else {
+<span class="fc" id="L149">                return null;</span>
+            }
+<span class="nc" id="L151">        } catch (HibernateException ex) {</span>
+<span class="nc" id="L152">            ex.printStackTrace();</span>
+<span class="nc" id="L153">            throw new HandlerException(ex.getMessage());</span>
+        }
+
+    }
+
+    /**
+     * get_all_post_size use to get size of post with owner user from database
+     *
+     * @param author_id
+     *            : user id that owner post
+     * @param isForUser
+     *            : result of get post for user
+     * @param isOwnerUser
+     *            : result of check current user owner or not
+     * @return int
+     * @exception HandlerException
+     */
+    @Override
+    @Transactional
+    public int getAllPostSize(int author_id, String description, Boolean isForUser,
+            Boolean isOwnerUser) throws HandlerException
+    {
+        try {
+<span class="fc" id="L176">            session = this.sessionFactory.getCurrentSession();</span>
+
+<span class="fc" id="L178">            Criteria criteria = session.createCriteria(Post.class, &quot;post&quot;);</span>
+
+<span class="fc" id="L180">            criteria.createAlias(&quot;user&quot;, &quot;us&quot;);</span>
+
+            // if author id positive integer and get post for user
+<span class="pc bpc" id="L183" title="1 of 4 branches missed.">            if (author_id &gt; 0 &amp;&amp; isForUser) {</span>
+                
+                //get all post for user
+<span class="fc bfc" id="L186" title="All 2 branches covered.">                if (isOwnerUser) {</span>
+<span class="fc" id="L187">                    criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
+                } else {
+                    // get all post for other user with condition:
+                    // user active and post of that user is active
+<span class="fc" id="L191">                    criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
+<span class="fc" id="L192">                    criteria.add(Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));</span>
+<span class="fc" id="L193">                    criteria.add(Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE));</span>
+                }
+<span class="pc bpc" id="L195" title="2 of 4 branches missed.">            } else if (author_id &gt; 0 &amp;&amp; !isForUser) {</span>
+                // if get post not for user, follow condition:
+                // 1: get post of other user :post have active status and user is active user  
+                // 2: get post of current login user: all post of current login user
+<span class="fc" id="L199">                Criterion criterionPostUserActive = Restrictions.and(</span>
+                        Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE),
+                        Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));
+<span class="fc" id="L202">                Criterion criterionCurrentActive = Restrictions.eq(&quot;us.id&quot;, author_id);</span>
+<span class="fc" id="L203">                criteria.add(Restrictions.or(criterionCurrentActive, criterionPostUserActive));</span>
+            }
+
+            // set condition title and content like description
+<span class="fc bfc" id="L207" title="All 2 branches covered.">            if (description != null) {</span>
+<span class="fc" id="L208">                criteria.add(Restrictions.disjunction()</span>
+                        .add(Restrictions.like(&quot;title&quot;, &quot;%&quot; + description + &quot;%&quot;))
+                        .add(Restrictions.like(&quot;content&quot;, &quot;%&quot; + description + &quot;%&quot;)));
+            }
+
+<span class="fc" id="L213">            Integer totalPost = ((Number) criteria.setProjection(Projections.rowCount())</span>
+                    .uniqueResult()).intValue();
+<span class="fc" id="L215">            return totalPost;</span>
+<span class="nc" id="L216">        } catch (HibernateException ex) {</span>
+<span class="nc" id="L217">            ex.printStackTrace();</span>
+<span class="nc" id="L218">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * deleteByTitle use for delete post by title in the database
+     *
+     * @param title
+     *            : title of post
+     * @return void
+     * @exception HandlerException
+     */
+    @Override
+    @Transactional
+    public void deleteByTitle(String title) throws HandlerException
+    {
+        try {
+<span class="fc" id="L235">            session = this.sessionFactory.getCurrentSession();</span>
+
+<span class="fc" id="L237">            Criteria criteria = session.createCriteria(Post.class);</span>
+
+<span class="fc" id="L239">            criteria.add(Restrictions.eq(&quot;title&quot;, title));</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc" id="L241">                Post post = (Post) criteria.list().get(0);</span>
+<span class="fc" id="L242">                session.delete(post);</span>
+<span class="fc" id="L243">                logger.info(&quot;Post deleted successfully, post details=&quot; + post);</span>
+            }
+
+<span class="nc" id="L246">        } catch (HibernateException ex) {</span>
+<span class="nc" id="L247">            ex.printStackTrace();</span>
+<span class="nc" id="L248">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+<span class="nc" id="L249">            throw new HandlerException(ex.getMessage());</span>
+<span class="fc" id="L250">        }</span>
+
+<span class="fc" id="L252">    }</span>
+
+    /**
+     * findByTitle use for find post by title in the database for unit test
+     *
+     * @param title
+     *            : title of post
+     * @return Post
+     * @exception HandlerException
+     */
+    @Override
+    @Transactional
+    public Post findByTitle(String title) throws HandlerException
+    {
+        try {
+<span class="fc" id="L267">            session = this.sessionFactory.getCurrentSession();</span>
+
+<span class="fc" id="L269">            Criteria criteria = session.createCriteria(Post.class);</span>
+
+<span class="fc" id="L271">            criteria.add(Restrictions.eq(&quot;title&quot;, title));</span>
+<span class="fc" id="L272">            Post post = null;</span>
+<span class="fc bfc" id="L273" title="All 2 branches covered.">            if (criteria.list().isEmpty()) {</span>
+<span class="fc" id="L274">                return null;</span>
+            } else {
+<span class="fc" id="L276">                post = (Post) criteria.list().get(0);</span>
+            }
+
+<span class="fc" id="L279">            logger.info(&quot;Post find by title successfully, post details=&quot; + post);</span>
+<span class="fc" id="L280">            return post;</span>
+
+<span class="nc" id="L282">        } catch (HibernateException ex) {</span>
+<span class="nc" id="L283">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+<span class="nc" id="L284">            ex.printStackTrace();</span>
+<span class="nc" id="L285">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

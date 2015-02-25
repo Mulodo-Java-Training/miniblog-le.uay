@@ -14,6 +14,10 @@
     <param-value>false</param-value>
   </context-param>
   <context-param>
+    <param-name>resteasy.providers</param-name>
+    <param-value>com.mulodo.miniblog.rest.security.SecurityInterceptor</param-value>
+  </context-param>
+  <context-param>
     <param-name>resteasy.servlet.mapping.prefix</param-name>
     <param-value>/api</param-value>
   </context-param>
@@ -37,8 +41,5 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>/WEB-INF/applicationContext.xml</param-value>
   </context-param>
-  <context-param>
-    <param-name>resteasy.providers</param-name>
-    <param-value>com.mulodo.miniblog.rest.security.SecurityInterceptor</param-value>
-  </context-param>
+  
 </web-app>

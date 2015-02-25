@@ -17,6 +17,7 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mulodo.miniblog.dao.TokenDAO;
 import com.mulodo.miniblog.exeption.HandlerException;
@@ -27,114 +28,103 @@ import com.mulodo.miniblog.model.User;
  * The token dao impl
  * 
  * @author UayLU
- * 
  */
 @Repository(&quot;tokenDAO&quot;)
-<span class="fc" id="L33">public class TokenDAOImpl extends GenericDAOImpl&lt;Token&gt; implements TokenDAO{</span>
+<span class="fc" id="L33">public class TokenDAOImpl extends GenericDAOImpl&lt;Token&gt; implements TokenDAO</span>
+{
 
-<span class="fc" id="L35">	private static final Logger logger = LoggerFactory.getLogger(TokenDAOImpl.class);</span>
-	
-	/**
-	 *  delete_by_access_key use to delete token exist in database
-	 *	
-	 *	@param	access_key : access_key in token table
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Boolean deleteByAccessKey(String access_key) throws HandlerException {
-		try{ 
-<span class="fc" id="L50"> 	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L51"> 	        tx = session.beginTransaction();</span>
-<span class="fc" id="L52">			Criteria criteria = session.createCriteria(Token.class);</span>
-			
-<span class="fc" id="L54">        	criteria.add(Restrictions.eq(&quot;access_key&quot;,access_key));</span>
-<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        	if(criteria.list().isEmpty()){</span>
-<span class="nc" id="L56">				return false;</span>
-			}else{
-<span class="fc" id="L58">				Token token = (Token) criteria.list().get(0);</span>
-<span class="fc" id="L59">				session.delete(token);</span>
-<span class="fc" id="L60">	 	        tx.commit();</span>
-<span class="fc" id="L61">	 	        logger.info(&quot;Token deleted successfully, token details=&quot;+token);</span>
-<span class="fc" id="L62">	 	        return true;</span>
-			}
-<span class="nc" id="L64">     	}catch(HibernateException ex){</span>
-<span class="nc bnc" id="L65" title="All 2 branches missed.">     		if(tx != null)	{</span>
-<span class="nc" id="L66">     			tx.rollback();</span>
-     		}
-<span class="nc" id="L68">     		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L69">     	}finally {</span>
-<span class="pc" id="L70">     		session.close();</span>
-<span class="nc" id="L71">     	}</span>
-	}
+<span class="fc" id="L36">    private static final Logger logger = LoggerFactory.getLogger(TokenDAOImpl.class);</span>
 
-	/**
-	 *  find_by_access_key use to find token exist in database
-	 *	
-	 *	@param	access_key : access_key in token table
-	 *
-	 *	@return Token
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Token findByAccessKey(String access_key) throws HandlerException {
-		try{ 
-<span class="fc" id="L87"> 	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L88"> 	        tx = session.beginTransaction();</span>
-<span class="fc" id="L89">			Criteria criteria = session.createCriteria(Token.class);</span>
-			
-<span class="fc" id="L91">        	criteria.add(Restrictions.eq(&quot;access_key&quot;,access_key));</span>
-<span class="fc" id="L92">        	Token token = null;</span>
-<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        	if(!criteria.list().isEmpty()){</span>
-<span class="fc" id="L94">				token = (Token) criteria.list().get(0);</span>
-<span class="fc" id="L95">				logger.info(&quot;Token searching successfully, token details=&quot;+token);</span>
-			}
-<span class="fc" id="L97">        	return token;</span>
-<span class="nc" id="L98">     	}catch(HibernateException ex){</span>
-<span class="nc bnc" id="L99" title="All 2 branches missed.">     		if(tx != null) {</span>
-<span class="nc" id="L100">     			tx.rollback();</span>
-     		}
-<span class="nc" id="L102">     		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L103">     	}finally {</span>
-<span class="pc" id="L104">     		session.close();</span>
-<span class="nc" id="L105">     	}</span>
-	}
+    /**
+     * delete_by_access_key use to delete token exist in database
+     *
+     * @param access_key
+     *            : access_key in token table
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    @Transactional
+    public Boolean deleteByAccessKey(String access_key) throws HandlerException
+    {
+        try {
+<span class="fc" id="L51">            session = this.sessionFactory.getCurrentSession();</span>
+            
+<span class="fc" id="L53">            Criteria criteria = session.createCriteria(Token.class);</span>
 
-	/**
-	 *  delete_by_user use to delete all token exist with specific user in database
-	 *	
-	 *	@param	user : user that owner access_key in token table
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Boolean deleteByUser(User user) throws HandlerException {
-		
-		try{ 
-<span class="fc" id="L122"> 	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L123"> 	        tx = session.beginTransaction();</span>
-<span class="fc" id="L124"> 	        Query query = session.createQuery(&quot;delete Token where user_id = :user_id&quot;);</span>
-<span class="fc" id="L125"> 	        query.setParameter(&quot;user_id&quot;, user.getId());</span>
-<span class="fc" id="L126">			query.executeUpdate();</span>
-<span class="fc" id="L127">			tx.commit();</span>
-<span class="fc" id="L128"> 	        return true;</span>
-<span class="nc" id="L129">     	}catch(HibernateException ex){</span>
-<span class="nc bnc" id="L130" title="All 2 branches missed.">     		if(tx != null)	{</span>
-<span class="nc" id="L131">     			tx.rollback();</span>
-     		}
-<span class="nc" id="L133">     		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L134">     	}finally {</span>
-<span class="pc" id="L135">     		session.close();</span>
-<span class="nc" id="L136">     	}</span>
-	}
+<span class="fc" id="L55">            criteria.add(Restrictions.eq(&quot;access_key&quot;, access_key));</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">            if (criteria.list().isEmpty()) {</span>
+<span class="nc" id="L57">                return false;</span>
+            } else {
+<span class="fc" id="L59">                Token token = (Token) criteria.list().get(0);</span>
+<span class="fc" id="L60">                session.delete(token);</span>
+                
+<span class="fc" id="L62">                logger.info(&quot;Token deleted successfully, token details=&quot; + token);</span>
+<span class="fc" id="L63">                return true;</span>
+            }
+<span class="nc" id="L65">        } catch (HibernateException ex) {</span>
+            
+<span class="nc" id="L67">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * find_by_access_key use to find token exist in database
+     *
+     * @param access_key
+     *            : access_key in token table
+     * @return Token
+     * @exception HandlerException
+     */
+    @Override
+    @Transactional
+    public Token findByAccessKey(String access_key) throws HandlerException
+    {
+        try {
+<span class="fc" id="L84">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L85">            Criteria criteria = session.createCriteria(Token.class);</span>
+            
+<span class="fc" id="L87">            criteria.add(Restrictions.eq(&quot;access_key&quot;, access_key));</span>
+<span class="fc" id="L88">            Token token = null;</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc" id="L90">                token = (Token) criteria.list().get(0);</span>
+<span class="fc" id="L91">                logger.info(&quot;Token searching successfully, token details=&quot; + token);</span>
+            }
+            
+<span class="fc" id="L94">            return token;</span>
+<span class="nc" id="L95">        } catch (HibernateException ex) {           </span>
+            
+<span class="nc" id="L97">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * delete_by_user use to delete all token exist with specific user in
+     * database
+     *
+     * @param user
+     *            : user that owner access_key in token table
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    @Transactional
+    public Boolean deleteByUser(User user) throws HandlerException
+    {
+
+        try {
+<span class="fc" id="L116">            session = this.sessionFactory.getCurrentSession();</span>
+            
+<span class="fc" id="L118">            Query query = session.createQuery(&quot;delete Token where user_id = :user_id&quot;);</span>
+<span class="fc" id="L119">            query.setParameter(&quot;user_id&quot;, user.getId());</span>
+<span class="fc" id="L120">            query.executeUpdate();</span>
+            
+<span class="fc" id="L122">            return true;</span>
+<span class="nc" id="L123">        } catch (HibernateException ex) {</span>
+            
+<span class="nc" id="L125">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

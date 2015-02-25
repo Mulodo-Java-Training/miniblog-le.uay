@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.PostDAO;
 import com.mulodo.miniblog.exeption.HandlerException;
-import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Post;
 import com.mulodo.miniblog.object.Data;
 import com.mulodo.miniblog.service.PostService;
@@ -29,142 +28,148 @@ import com.mulodo.miniblog.service.PostService;
  * The post service impl
  * 
  * @author UayLU
- * 
  */
 @Service
-<span class="fc" id="L35">public class PostServiceImpl extends GenericServiceImpl&lt;Post&gt; implements PostService{</span>
-	
-	private PostDAO postDAO;
-	
-	/**
-	 *  setPostDAO use to set datasource from applicationcontent.xml
-	 *	
-	 *	@param	pd : PostDAO from datasource
-	 *
-	 *	@return void
-	 */
-	@Autowired
-	@Qualifier(&quot;postDAO&quot;)
-	public void setPostDAO(PostDAO pd){
-<span class="fc" id="L49">		this.postDAO = pd;</span>
-<span class="fc" id="L50">	}</span>
+<span class="fc" id="L33">public class PostServiceImpl extends GenericServiceImpl&lt;Post&gt; implements PostService</span>
+{
 
-	/**
-	 *  get_all_post use for get all post in the database limit by 10 post per request
-	 *	
-	 *	@param	author_id : user id that owner post
-	 *  @param  pageNume: the number of page you want to get
-	 *
-	 *	@return List&lt;Post&gt;
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Data getAllPostForUser(int pageNum, int author_id, Boolean isOwerUser)
-			throws HandlerException {
-<span class="fc" id="L65">		Data data = null;</span>
-<span class="fc" id="L66">		List&lt;Post&gt; listPost = null; </span>
-<span class="fc" id="L67">		int totalPost = 0;</span>
-<span class="pc bpc" id="L68" title="1 of 2 branches missed.">		if(pageNum &gt; 0){</span>
-			//get list post folow page number
-			//get total post follow condition
-<span class="fc" id="L71">			listPost =  this.postDAO.getAllPost(pageNum, author_id, null, true, isOwerUser);</span>
-<span class="fc" id="L72">			totalPost = this.postDAO.getAllPostSize(author_id, null, true, isOwerUser);</span>
-		}
-<span class="fc bfc" id="L74" title="All 2 branches covered.">		if(listPost != null){</span>
-<span class="fc" id="L75">			int totalPage = (int) Math.round(totalPost/Constraints.LIMIT_ROW + 0.5);</span>
-			//set list post to data object
-<span class="fc" id="L77">			data = new Data();</span>
-<span class="fc" id="L78">			data.setLimitRow(Constraints.LIMIT_ROW);</span>
-<span class="fc" id="L79">			data.setTotalPage(totalPage);</span>
-<span class="fc" id="L80">			data.setTotalRow(totalPost);</span>
-<span class="fc" id="L81">			data.setPageNum(pageNum);</span>
-<span class="fc" id="L82">			data.setListPost(listPost);</span>
-<span class="fc" id="L83">		}else{</span>
-			//if have no data match with condition.
-			//return all variable is zero
-<span class="fc" id="L86">			data = new Data();</span>
-<span class="fc" id="L87">			data.setListPost(new ArrayList&lt;Post&gt;());</span>
-<span class="fc" id="L88">			data.setTotalPage(0);</span>
-<span class="fc" id="L89">			data.setTotalRow(0);</span>
-<span class="fc" id="L90">			data.setPageNum(0);</span>
-<span class="fc" id="L91">			data.setLimitRow(0);</span>
-		}
-<span class="fc" id="L93">		return data;</span>
-	}
+    private PostDAO postDAO;
 
-	/**
-	 *  get_all_post_for_user use for get all post in the database limit by 10 post per request
-	 *	
-	 *	@param	author_id : user id that owner post
-	 *  @param  pageNume: the number of page you want to get
-	 *
-	 *	@return List&lt;Post&gt;
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Data getAllPost(int pageNum, int current_user_id, String description) throws HandlerException {
-<span class="fc" id="L108">		Data data = null;</span>
-<span class="fc" id="L109">		List&lt;Post&gt; listPost = null; </span>
-<span class="fc" id="L110">		int totalPost = 0;</span>
-<span class="pc bpc" id="L111" title="1 of 2 branches missed.">		if(pageNum &gt; 0){</span>
-			//get list post folow page number
-			//get total post follow condition
-<span class="fc" id="L114">			listPost =  this.postDAO.getAllPost(pageNum, current_user_id, description, false, false);</span>
-<span class="fc" id="L115">			totalPost = this.postDAO.getAllPostSize(current_user_id, description, false, false);</span>
-		}
-<span class="fc bfc" id="L117" title="All 2 branches covered.">		if(listPost != null){</span>
-<span class="fc" id="L118">			int totalPage = (int) Math.round(totalPost/Constraints.LIMIT_ROW + 0.5);</span>
-			//set value to data object
-<span class="fc" id="L120">			data = new Data();</span>
-<span class="fc" id="L121">			data.setLimitRow(Constraints.LIMIT_ROW);</span>
-<span class="fc" id="L122">			data.setTotalPage(totalPage);</span>
-<span class="fc" id="L123">			data.setTotalRow(totalPost);</span>
-<span class="fc" id="L124">			data.setPageNum(pageNum);</span>
-<span class="fc" id="L125">			data.setListPost(listPost);</span>
-<span class="fc" id="L126">		}else{</span>
-			//if have no data match with condition.
-			//return all variable is zero
-<span class="fc" id="L129">			data = new Data();</span>
-<span class="fc" id="L130">			data.setListPost(new ArrayList&lt;Post&gt;());</span>
-<span class="fc" id="L131">			data.setTotalPage(0);</span>
-<span class="fc" id="L132">			data.setTotalRow(0);</span>
-<span class="fc" id="L133">			data.setPageNum(0);</span>
-<span class="fc" id="L134">			data.setLimitRow(0);</span>
-		}
-<span class="fc" id="L136">		return data;</span>
-	
-	}
+    /**
+     * setPostDAO use to set datasource from applicationcontent.xml
+     *
+     * @param pd
+     *            : PostDAO from datasource
+     * @return void
+     */
+    @Autowired
+    @Qualifier(&quot;postDAO&quot;)
+    public void setPostDAO(PostDAO pd)
+    {
+<span class="fc" id="L49">        this.postDAO = pd;</span>
+<span class="fc" id="L50">    }</span>
 
-	/**
-	 *  deleteByTitle use for delete post by title in the database
-	 *	
-	 *	@param	title : title of post
-	 *
-	 *	@return void
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public void deleteByTitle(String title) throws HandlerException {
-<span class="fc" id="L151">		this.postDAO.deleteByTitle(title);	</span>
-<span class="fc" id="L152">	}</span>
+    /**
+     * get_all_post use for get all post in the database limit by 10 post per
+     * request
+     *
+     * @param author_id
+     *            : user id that owner post
+     * @param pageNume
+     *            : the number of page you want to get
+     * @return List&lt;Post&gt;
+     * @exception HandlerException
+     */
+    @Override
+    public Data getAllPostForUser(int pageNum, int author_id, Boolean isOwerUser)
+            throws HandlerException
+    {
+<span class="fc" id="L67">        Data data = null;</span>
+<span class="fc" id="L68">        List&lt;Post&gt; listPost = null;</span>
+<span class="fc" id="L69">        int totalPost = 0;</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if (pageNum &gt; 0) {</span>
+            // get list post folow page number
+            // get total post follow condition
+<span class="fc" id="L73">            listPost = this.postDAO.getAllPost(pageNum, author_id, null, true, isOwerUser);</span>
+<span class="fc" id="L74">            totalPost = this.postDAO.getAllPostSize(author_id, null, true, isOwerUser);</span>
+        }
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (listPost != null) {</span>
+<span class="fc" id="L77">            int totalPage = (int) Math.round(totalPost / Constraints.LIMIT_ROW + 0.5);</span>
+            // set list post to data object
+<span class="fc" id="L79">            data = new Data();</span>
+<span class="fc" id="L80">            data.setLimitRow(Constraints.LIMIT_ROW);</span>
+<span class="fc" id="L81">            data.setTotalPage(totalPage);</span>
+<span class="fc" id="L82">            data.setTotalRow(totalPost);</span>
+<span class="fc" id="L83">            data.setPageNum(pageNum);</span>
+<span class="fc" id="L84">            data.setListPost(listPost);</span>
+<span class="fc" id="L85">        } else {</span>
+            // if have no data match with condition.
+            // return all variable is zero
+<span class="fc" id="L88">            data = new Data();</span>
+<span class="fc" id="L89">            data.setListPost(new ArrayList&lt;Post&gt;());</span>
+<span class="fc" id="L90">            data.setTotalPage(0);</span>
+<span class="fc" id="L91">            data.setTotalRow(0);</span>
+<span class="fc" id="L92">            data.setPageNum(0);</span>
+<span class="fc" id="L93">            data.setLimitRow(0);</span>
+        }
+<span class="fc" id="L95">        return data;</span>
+    }
 
-	/**
-	 *  findByTitle use for find post by title in the database for unit test
-	 *	
-	 *	@param	title : title of post
-	 *
-	 *	@return Post
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Post findByTitle(String title) throws HandlerException {
-		
-<span class="fc" id="L166">		return this.postDAO.findByTitle(title);</span>
-		
-	}
+    /**
+     * get_all_post_for_user use for get all post in the database limit by 10
+     * post per request
+     *
+     * @param author_id
+     *            : user id that owner post
+     * @param pageNume
+     *            : the number of page you want to get
+     * @return List&lt;Post&gt;
+     * @exception HandlerException
+     */
+    @Override
+    public Data getAllPost(int pageNum, int current_user_id, String description)
+            throws HandlerException
+    {
+<span class="fc" id="L113">        Data data = null;</span>
+<span class="fc" id="L114">        List&lt;Post&gt; listPost = null;</span>
+<span class="fc" id="L115">        int totalPost = 0;</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if (pageNum &gt; 0) {</span>
+            // get list post folow page number
+            // get total post follow condition
+<span class="fc" id="L119">            listPost = this.postDAO.getAllPost(pageNum, current_user_id, description, false, false);</span>
+<span class="fc" id="L120">            totalPost = this.postDAO.getAllPostSize(current_user_id, description, false, false);</span>
+        }
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (listPost != null) {</span>
+<span class="fc" id="L123">            int totalPage = (int) Math.round(totalPost / Constraints.LIMIT_ROW + 0.5);</span>
+            // set value to data object
+<span class="fc" id="L125">            data = new Data();</span>
+<span class="fc" id="L126">            data.setLimitRow(Constraints.LIMIT_ROW);</span>
+<span class="fc" id="L127">            data.setTotalPage(totalPage);</span>
+<span class="fc" id="L128">            data.setTotalRow(totalPost);</span>
+<span class="fc" id="L129">            data.setPageNum(pageNum);</span>
+<span class="fc" id="L130">            data.setListPost(listPost);</span>
+<span class="fc" id="L131">        } else {</span>
+            // if have no data match with condition.
+            // return all variable is zero
+<span class="fc" id="L134">            data = new Data();</span>
+<span class="fc" id="L135">            data.setListPost(new ArrayList&lt;Post&gt;());</span>
+<span class="fc" id="L136">            data.setTotalPage(0);</span>
+<span class="fc" id="L137">            data.setTotalRow(0);</span>
+<span class="fc" id="L138">            data.setPageNum(0);</span>
+<span class="fc" id="L139">            data.setLimitRow(0);</span>
+        }
+<span class="fc" id="L141">        return data;</span>
+
+    }
+
+    /**
+     * deleteByTitle use for delete post by title in the database
+     *
+     * @param title
+     *            : title of post
+     * @return void
+     * @exception HandlerException
+     */
+    @Override
+    public void deleteByTitle(String title) throws HandlerException
+    {
+<span class="fc" id="L156">        this.postDAO.deleteByTitle(title);</span>
+<span class="fc" id="L157">    }</span>
+
+    /**
+     * findByTitle use for find post by title in the database for unit test
+     *
+     * @param title
+     *            : title of post
+     * @return Post
+     * @exception HandlerException
+     */
+    @Override
+    public Post findByTitle(String title) throws HandlerException
+    {
+
+<span class="fc" id="L171">        return this.postDAO.findByTitle(title);</span>
+
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -17,6 +17,7 @@ import org.hibernate.classic.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mulodo.miniblog.dao.GenericDAO;
 import com.mulodo.miniblog.exeption.HandlerException;
@@ -49,24 +50,22 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T>
      * @exception HandlerException
      */
     @Override
+    @Transactional
     public Boolean add(T entity) throws HandlerException
     {
         try {
-            session = this.sessionFactory.openSession();
-            tx = session.beginTransaction();
+            session = this.sessionFactory.getCurrentSession();
+            
             session.persist(entity);
-            tx.commit();
+            
             logger.info("Entity saved successfully, Entity Details=" + entity);
             return true;
         } catch (HibernateException ex) {
-            if (tx != null)
-                tx.rollback();
+            
             logger.info("Hibernate exception, Details=" + ex.getMessage());
-            ex.printStackTrace();
             throw new HandlerException(ex.getMessage());
-        } finally {
-            session.close();
         }
+        
     }
 
     /**
@@ -78,23 +77,21 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T>
      * @exception HandlerException
      */
     @Override
+    @Transactional
     public Boolean update(T entity) throws HandlerException
     {
         try {
-            session = this.sessionFactory.openSession();
-            tx = session.beginTransaction();
+            session = this.sessionFactory.getCurrentSession();
+            
             session.update(entity);
-            tx.commit();
+            
             logger.info("Entity updated successfully, Entity Details=" + entity);
             return true;
         } catch (HibernateException ex) {
+            
             logger.info("Hibernate exception, Details=" + ex.getMessage());
-            tx.rollback();
-            ex.printStackTrace();
             throw new HandlerException(ex.getMessage());
-        } finally {
-            session.close();
-        }
+        } 
     }
 
     /**
@@ -107,31 +104,30 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T>
      */
     @Override
     @SuppressWarnings("unchecked")
+    @Transactional
     public Boolean delete(int id) throws HandlerException
     {
         try {
 
             this.genericType = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(),
                     GenericDAOImpl.class);
-            session = this.sessionFactory.openSession();
-            tx = session.beginTransaction();
+            session = this.sessionFactory.getCurrentSession();
+            
             T p = (T) session.load(this.genericType, id);
             if (p != null) {
                 session.delete(p);
+            }else{
+                return false;
             }
-            tx.commit();
+            
             logger.info("Entity deleted successfully, Entity details=" + p);
             return true;
         } catch (HibernateException ex) {
-            if (tx != null) {
-                tx.rollback();
-            }
+            
+            
             logger.info("Hibernate exception, Details=" + ex.getMessage());
-            ex.printStackTrace();
             throw new HandlerException(ex.getMessage());
-        } finally {
-            session.close();
-        }
+        } 
     }
 
     /**
@@ -144,24 +140,23 @@ public abstract class GenericDAOImpl<T> implements GenericDAO<T>
      */
     @SuppressWarnings("unchecked")
     @Override
+    @Transactional
     public T findOne(int id) throws HandlerException
     {
         try {
             this.genericType = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(),
                     GenericDAOImpl.class);
-            session = this.sessionFactory.openSession();
+            session = this.sessionFactory.getCurrentSession();
             T p = (T) session.get(this.genericType, id);
             if (p != null) {
                 logger.info("Entity loaded successfully, Entity details=" + p);
             }
             return p;
         } catch (HibernateException ex) {
+            
             logger.info("Hibernate exception, Details=" + ex.getMessage());
-            ex.printStackTrace();
             throw new HandlerException(ex.getMessage());
-        } finally {
-            session.close();
-        }
+        } 
     }
 
 }

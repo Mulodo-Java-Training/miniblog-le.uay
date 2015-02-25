@@ -25,62 +25,77 @@ import com.mulodo.miniblog.service.CommentService;
  * The comment service impl
  * 
  * @author UayLU
- * 
  */
 @Service
-<span class="fc" id="L31">public class CommentServiceImpl extends GenericServiceImpl&lt;Comment&gt; implements CommentService{</span>
-	
-	private CommentDAO commentDAO;
-	
-	/**
-	 *  setCommentDAO use to set datasource from applicationcontent.xml
-	 *	
-	 *	@param	cd : CommentDAO from datasource
-	 *
-	 *	@return void
-	 */
-	@Autowired
-	@Qualifier(&quot;commentDAO&quot;)
-	public void setCommentDAO(CommentDAO cd){
-<span class="fc" id="L45">		this.commentDAO = cd;</span>
-<span class="fc" id="L46">	}</span>
+<span class="fc" id="L30">public class CommentServiceImpl extends GenericServiceImpl&lt;Comment&gt; implements CommentService</span>
+{
 
-	/**
-	 *  get_all_comment_for_post use to call get all comment for post function in 
-	 *  commentdao for post.
-	 *	
-	 *	@param	post_id : id of post for search
-	 *  @param  isOwnerPost : result of check current user owner or not
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public List&lt;Comment&gt; getAllCommentForPost(int post_id, Boolean isOwnerPost)
-			throws HandlerException {
-<span class="nc" id="L63">		return this.commentDAO.getAllCommentForPost(post_id, isOwnerPost);</span>
-		
-	}
+    private CommentDAO commentDAO;
 
-	/**
-	 *  get_all_comment_for_user use to call get all comment for user function in 
-	 *  commentdao for post.
-	 *	
-	 *	@param	post_id : id of post for search
-	 *  @param  isOwnerPost : result of check current user owner or not
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public List&lt;Comment&gt; getAllCommentForUser(int user_id, Boolean isOwnerUser)
-			throws HandlerException {
-<span class="nc" id="L82">		return this.commentDAO.getAllCommentForUser(user_id, isOwnerUser);</span>
-		
-	}
+    /**
+     * setCommentDAO use to set datasource from applicationcontent.xml
+     *
+     * @param cd
+     *            : CommentDAO from datasource
+     * @return void
+     */
+    @Autowired
+    @Qualifier(&quot;commentDAO&quot;)
+    public void setCommentDAO(CommentDAO cd)
+    {
+<span class="fc" id="L46">        this.commentDAO = cd;</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * get_all_comment_for_post use to call get all comment for post function in
+     * commentdao for post.
+     *
+     * @param post_id
+     *            : id of post for search
+     * @param isOwnerPost
+     *            : result of check current user owner or not
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    public List&lt;Comment&gt; getAllCommentForPost(int post_id, Boolean isOwnerPost)
+            throws HandlerException
+    {
+<span class="fc" id="L64">        return this.commentDAO.getAllCommentForPost(post_id, isOwnerPost);</span>
+
+    }
+
+    /**
+     * get_all_comment_for_user use to call get all comment for user function in
+     * commentdao for post.
+     *
+     * @param post_id
+     *            : id of post for search
+     * @param isOwnerPost
+     *            : result of check current user owner or not
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    public List&lt;Comment&gt; getAllCommentForUser(int user_id, Boolean isOwnerUser)
+            throws HandlerException
+    {
+<span class="fc" id="L83">        return this.commentDAO.getAllCommentForUser(user_id, isOwnerUser);</span>
+
+    }
+
+    /**
+     * findByTitle use for find comment by content in the database for unit test
+     *
+     * @param content
+     *            : content of comment
+     * @return Comment
+     * @exception HandlerException
+     */
+    @Override
+    public Comment findByContent(String content) throws HandlerException
+    {
+<span class="fc" id="L98">        return this.commentDAO.findByContent(content);</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -15,13 +15,13 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.ObjectNotFoundException;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.UserDAO;
@@ -32,246 +32,227 @@ import com.mulodo.miniblog.model.User;
  * The user dao impl
  * 
  * @author UayLU
- * 
  */
 @Repository(&quot;userDAO&quot;)
-<span class="fc" id="L38">public class UserDAOImpl extends GenericDAOImpl&lt;User&gt; implements UserDAO{</span>
+<span class="fc" id="L37">public class UserDAOImpl extends GenericDAOImpl&lt;User&gt; implements UserDAO</span>
+{
 
-<span class="fc" id="L40">	private static final Logger logger = LoggerFactory.getLogger(UserDAOImpl.class);</span>
-	
-	
-	/**
-	 *  isUserExits use to check exist user in database
-	 *	
-	 *	@param	username : string username use to check
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Boolean isUserExits(String username) throws HandlerException {
-		try{
-			
-<span class="fc" id="L57">	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L58">	        tx = session.beginTransaction();</span>
-<span class="fc" id="L59">	        Criteria criteria = session.createCriteria(User.class);</span>
-	        
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">	        if(username != null){</span>
-<span class="fc" id="L62">	        	criteria.add(Restrictions.eq(&quot;username&quot;,username));</span>
-	        }
-	        
-<span class="fc bfc" id="L65" title="All 2 branches covered.">	        if(criteria.list().isEmpty()){</span>
-<span class="fc" id="L66">	        	return false;</span>
-	        }
-<span class="fc" id="L68">	        User user = (User) criteria.list().get(0);</span>
-<span class="fc" id="L69">	        logger.info(&quot;Check user successfully,  details=&quot;+user.getId());</span>
-<span class="fc" id="L70">	        tx.commit();</span>
-<span class="pc bpc" id="L71" title="2 of 4 branches missed.">	        return user.getId() != 0 &amp;&amp; user.getUsername().equals(username);</span>
-	   
-<span class="nc" id="L73">    	}catch(HibernateException ex){</span>
-<span class="nc" id="L74">    		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L75">    	}finally {</span>
-<span class="pc" id="L76">    		   session.close();</span>
-<span class="nc" id="L77">    	}</span>
-	}
+<span class="fc" id="L40">    private static final Logger logger = LoggerFactory.getLogger(UserDAOImpl.class);</span>
 
-	/**
-	 *  is_email_exits use to check exist email in database
-	 *	
-	 *	@param	email : email for check
-	 *  @param  user  : check email but not check email for this user
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Boolean isEmailExits(String email, User user) throws HandlerException {
-		
-		try{
-			
-<span class="fc" id="L96">	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L97">	        tx = session.beginTransaction();</span>
-<span class="fc" id="L98">	        Criteria criteria = session.createCriteria(User.class);</span>
-	        
-<span class="pc bpc" id="L100" title="1 of 2 branches missed.">	        if(email != null){</span>
-<span class="fc" id="L101">	        	criteria.add(Restrictions.eq(&quot;email&quot;,email));</span>
-	        }
-	        
-<span class="fc bfc" id="L104" title="All 2 branches covered.">	        if(criteria.list().isEmpty()){</span>
-<span class="fc" id="L105">	        	return false;</span>
-	        }
-<span class="fc" id="L107">	        User userDB = (User) criteria.list().get(0);</span>
-	        
-<span class="fc" id="L109">	        tx.commit();</span>
-<span class="pc bpc" id="L110" title="1 of 4 branches missed.">        	return !(user != null &amp;&amp; user.getId() == userDB.getId());</span>
-	        
-<span class="nc" id="L112">    	}catch(HibernateException ex){</span>
-<span class="nc" id="L113">    		ex.printStackTrace();</span>
-<span class="nc" id="L114">    		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L115">    	}finally {</span>
-<span class="pc" id="L116">    		   session.close();</span>
-<span class="nc" id="L117">    	}</span>
-	}
+    /**
+     * isUserExits use to check exist user in database
+     *
+     * @param username
+     *            : string username use to check
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    @Transactional
+    public Boolean isUserExits(String username) throws HandlerException
+    {
+        try {
 
-	/**
-	 *  isValidLogin check valid login
-	 *	
-	 *	@param	username : username for login
-	 *  @param  password : password for login
-	 *
-	 *	@return User
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public User isValidLogin(String username, String password) throws HandlerException{
-		try{
-<span class="fc" id="L134">			User user = null;</span>
-			 
-<span class="fc" id="L136">	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L137">	        tx = session.beginTransaction();</span>
-<span class="fc" id="L138">	        Criteria criteria = session.createCriteria(User.class);	        </span>
-	        
-<span class="fc" id="L140">        	criteria.add(Restrictions.eq(&quot;username&quot;,username));</span>
-<span class="fc" id="L141">        	criteria.add(Restrictions.eq(&quot;password&quot;,password));</span>
-	        
-<span class="fc bfc" id="L143" title="All 2 branches covered.">	        if(!criteria.list().isEmpty()){</span>
-<span class="fc" id="L144">	        	user = (User) criteria.list().get(0);</span>
-<span class="fc" id="L145">	        	logger.info(&quot;Person loaded successfully, Person details=&quot;+user);		        </span>
-	        }
-	       
-<span class="fc" id="L148">	        tx.commit();</span>
-<span class="fc" id="L149">	        return user;</span>
-<span class="nc" id="L150">		}catch(HibernateException ex){</span>
-<span class="nc" id="L151">			tx.rollback();</span>
-<span class="nc" id="L152">			throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L153">		}finally {</span>
-<span class="pc" id="L154">			   session.close();</span>
-<span class="nc" id="L155">		}</span>
-	}
+<span class="fc" id="L56">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L57">            Criteria criteria = session.createCriteria(User.class);</span>
 
-	/**
-	 *  find_by_name use for find user in database
-	 *	
-	 *	@param	name : name of username, firstname, lastname
-	 *
-	 *	@return List&lt;User&gt;
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@SuppressWarnings(&quot;unchecked&quot;)
-	@Override
-	public List&lt;User&gt; findByName(String name) throws HandlerException {
-		try{
-<span class="fc" id="L172">	        session = this.sessionFactory.openSession();</span>
-	        
-<span class="fc" id="L174">	        Criteria criteria = session.createCriteria(User.class);</span>
-	        
-<span class="fc" id="L176">        	criteria.add(Restrictions.disjunction()</span>
-<span class="fc" id="L177">	        			.add(Restrictions.like(&quot;username&quot;, &quot;%&quot;+name+&quot;%&quot;))</span>
-<span class="fc" id="L178">	        			.add(Restrictions.like(&quot;firstname&quot;,&quot;%&quot;+name+&quot;%&quot;))</span>
-<span class="fc" id="L179">	        			.add(Restrictions.like(&quot;lastname&quot;,&quot;%&quot;+name+&quot;%&quot;)))</span>
-<span class="fc" id="L180">	        		.add(Restrictions.eq(&quot;status&quot;,Constraints.USER_ACTIVE))</span>
-<span class="fc" id="L181">        			.setProjection(Projections.projectionList()</span>
-<span class="fc" id="L182">        			      .add(Projections.property(&quot;id&quot;), &quot;id&quot;)</span>
-<span class="fc" id="L183">        			      .add(Projections.property(&quot;username&quot;), &quot;username&quot;)</span>
-<span class="fc" id="L184">        			      .add(Projections.property(&quot;firstname&quot;), &quot;firstname&quot;)</span>
-<span class="fc" id="L185">        			      .add(Projections.property(&quot;lastname&quot;), &quot;lastname&quot;)</span>
-<span class="fc" id="L186">        			      .add(Projections.property(&quot;status&quot;), &quot;status&quot;)</span>
-<span class="fc" id="L187">        			      .add(Projections.property(&quot;email&quot;), &quot;email&quot;))</span>
-<span class="fc" id="L188">        			.setResultTransformer(Transformers.aliasToBean(User.class));</span>
-        
-<span class="fc" id="L190">	        List&lt;User&gt; usersList = new ArrayList&lt;User&gt;();</span>
-<span class="pc bpc" id="L191" title="1 of 2 branches missed.">	        if(!criteria.list().isEmpty()){</span>
-<span class="fc" id="L192">		        usersList = criteria.list();</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">		        for(User us : usersList){</span>
-<span class="fc" id="L194">		            logger.info(&quot;Person List::&quot;+us);</span>
-		        }
-	        }
-<span class="fc" id="L197">	        return usersList;</span>
-<span class="nc" id="L198">    	}catch(HibernateException ex){</span>
-<span class="nc" id="L199">    		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L200">    	}finally {</span>
-<span class="pc" id="L201">    		   session.close();</span>
-<span class="nc" id="L202">    	}</span>
-	}
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">            if (username != null) {</span>
+<span class="fc" id="L60">                criteria.add(Restrictions.eq(&quot;username&quot;, username));</span>
+            }
 
-	
-	/**
-	 *  deleteByUsername use to check delete user by username in database
-	 *	
-	 *	@param	username : string username use to check
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public Boolean deleteByUsername(String username) throws HandlerException {
-		try{ 
-<span class="fc" id="L219"> 	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L220"> 	        tx = session.beginTransaction();</span>
-<span class="fc" id="L221">			Criteria criteria = session.createCriteria(User.class);</span>
-			
-<span class="fc" id="L223">        	criteria.add(Restrictions.eq(&quot;username&quot;,username));</span>
-<span class="fc bfc" id="L224" title="All 2 branches covered.">        	if(criteria.list().isEmpty()){</span>
-<span class="fc" id="L225">				return false;</span>
-			}else{
-<span class="fc" id="L227">				User user = (User) criteria.list().get(0);</span>
-<span class="fc" id="L228">				session.delete(user);</span>
-<span class="fc" id="L229">	 	        tx.commit();</span>
-<span class="fc" id="L230">	 	        logger.info(&quot;User deleted successfully, user details=&quot;+user);</span>
-<span class="fc" id="L231">	 	        return true;</span>
-			}
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            if (criteria.list().isEmpty()) {</span>
+<span class="fc" id="L64">                return false;</span>
+            }
+<span class="fc" id="L66">            User user = (User) criteria.list().get(0);</span>
+<span class="fc" id="L67">            logger.info(&quot;Check user successfully,  details=&quot; + user.getId());</span>
+<span class="pc bpc" id="L68" title="2 of 4 branches missed.">            return user.getId() != 0 &amp;&amp; user.getUsername().equals(username);</span>
 
-<span class="nc" id="L234">     	}catch(HibernateException ex){</span>
-<span class="nc" id="L235"> 			tx.rollback();</span>
-<span class="nc" id="L236">     		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L237">     	}finally {</span>
-<span class="pc" id="L238">     		session.close();</span>
-<span class="nc" id="L239">     	}</span>
-	}
+<span class="nc" id="L70">        } catch (HibernateException ex) {</span>
+            
+<span class="nc" id="L72">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
 
-	
-	/**
-	 *  findByUsername use to check search user by username in database
-	 *	
-	 *	@param	username : string username use to search
-	 *
-	 *	@return Boolean
-	 *	
-	 *	
-	 *  @exception  HandlerException
-	 */
-	@Override
-	public User findByUsername(String username) throws HandlerException {
-<span class="fc" id="L255">		User user = null;</span>
-		
-		try{ 
-<span class="fc" id="L258"> 	        session = this.sessionFactory.openSession();</span>
-<span class="fc" id="L259"> 	        tx = session.beginTransaction();</span>
-<span class="fc" id="L260">			Criteria criteria = session.createCriteria(User.class);</span>
-<span class="fc" id="L261">        	criteria.add(Restrictions.eq(&quot;username&quot;,username));</span>
-<span class="pc bpc" id="L262" title="1 of 2 branches missed.">        	if(!criteria.list().isEmpty()){</span>
-<span class="fc" id="L263">        		user = (User) criteria.list().get(0);</span>
-<span class="fc" id="L264">	 	        tx.commit();</span>
-<span class="fc" id="L265">	 	        logger.info(&quot;Find user successfully, user details=&quot;+user);</span>
-			}
-<span class="fc" id="L267">			return user;</span>
-<span class="nc" id="L268">     	}catch(HibernateException ex){</span>
-<span class="nc" id="L269">     		logger.info(&quot;Hibernate exception, Details=&quot;+ex.getMessage());</span>
-<span class="nc" id="L270"> 			tx.rollback();</span>
-<span class="nc" id="L271">     		throw new HandlerException(ex.getMessage());</span>
-<span class="nc" id="L272">     	}finally {</span>
-<span class="pc" id="L273">     		session.close();</span>
-<span class="nc" id="L274">     	}</span>
-	}	
+    /**
+     * is_email_exits use to check exist email in database
+     *
+     * @param email
+     *            : email for check
+     * @param user
+     *            : check email but not check email for this user
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    @Transactional
+    public Boolean isEmailExits(String email, User user) throws HandlerException
+    {
+
+        try {
+
+<span class="fc" id="L93">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L94">            Criteria criteria = session.createCriteria(User.class);</span>
+
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">            if (email != null) {</span>
+<span class="fc" id="L97">                criteria.add(Restrictions.eq(&quot;email&quot;, email));</span>
+            }
+
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (criteria.list().isEmpty()) {</span>
+<span class="fc" id="L101">                return false;</span>
+            }
+<span class="fc" id="L103">            User userDB = (User) criteria.list().get(0);</span>
+
+<span class="pc bpc" id="L105" title="1 of 4 branches missed.">            return !(user != null &amp;&amp; user.getId() == userDB.getId());</span>
+
+<span class="nc" id="L107">        } catch (HibernateException ex) {</span>
+            
+<span class="nc" id="L109">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * isValidLogin check valid login
+     *
+     * @param username
+     *            : username for login
+     * @param password
+     *            : password for login
+     * @return User
+     * @exception HandlerException
+     */
+    @Override
+    @Transactional
+    public User isValidLogin(String username, String password) throws HandlerException
+    {
+        try {
+<span class="fc" id="L128">            User user = null;</span>
+
+<span class="fc" id="L130">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L131">            Criteria criteria = session.createCriteria(User.class);</span>
+
+<span class="fc" id="L133">            criteria.add(Restrictions.eq(&quot;username&quot;, username));</span>
+<span class="fc" id="L134">            criteria.add(Restrictions.eq(&quot;password&quot;, password));</span>
+
+<span class="fc bfc" id="L136" title="All 2 branches covered.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc" id="L137">                user = (User) criteria.list().get(0);</span>
+<span class="fc" id="L138">                logger.info(&quot;Person loaded successfully, Person details=&quot; + user);</span>
+            }
+<span class="fc" id="L140">            return user;</span>
+<span class="nc" id="L141">        } catch (HibernateException ex) {</span>
+            
+            
+<span class="nc" id="L144">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * find_by_name use for find user in database
+     *
+     * @param name
+     *            : name of username, firstname, lastname
+     * @return List&lt;User&gt;
+     * @exception HandlerException
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Override
+    @Transactional
+    public List&lt;User&gt; findByName(String name) throws HandlerException
+    {
+        try {
+<span class="fc" id="L162">            session = this.sessionFactory.getCurrentSession();</span>
+
+<span class="fc" id="L164">            Criteria criteria = session.createCriteria(User.class);</span>
+
+<span class="fc" id="L166">            criteria.add(</span>
+<span class="fc" id="L167">                    Restrictions.disjunction().add(Restrictions.like(&quot;username&quot;, &quot;%&quot; + name + &quot;%&quot;))</span>
+<span class="fc" id="L168">                            .add(Restrictions.like(&quot;firstname&quot;, &quot;%&quot; + name + &quot;%&quot;))</span>
+<span class="fc" id="L169">                            .add(Restrictions.like(&quot;lastname&quot;, &quot;%&quot; + name + &quot;%&quot;)))</span>
+<span class="fc" id="L170">                    .add(Restrictions.eq(&quot;status&quot;, Constraints.USER_ACTIVE))</span>
+<span class="fc" id="L171">                    .setProjection(</span>
+<span class="fc" id="L172">                            Projections.projectionList().add(Projections.property(&quot;id&quot;), &quot;id&quot;)</span>
+<span class="fc" id="L173">                                    .add(Projections.property(&quot;username&quot;), &quot;username&quot;)</span>
+<span class="fc" id="L174">                                    .add(Projections.property(&quot;firstname&quot;), &quot;firstname&quot;)</span>
+<span class="fc" id="L175">                                    .add(Projections.property(&quot;lastname&quot;), &quot;lastname&quot;)</span>
+<span class="fc" id="L176">                                    .add(Projections.property(&quot;status&quot;), &quot;status&quot;)</span>
+<span class="fc" id="L177">                                    .add(Projections.property(&quot;email&quot;), &quot;email&quot;))</span>
+<span class="fc" id="L178">                    .setResultTransformer(Transformers.aliasToBean(User.class));</span>
+
+<span class="fc" id="L180">            List&lt;User&gt; usersList = new ArrayList&lt;User&gt;();</span>
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc" id="L182">                usersList = criteria.list();</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">                for (User us : usersList) {</span>
+<span class="fc" id="L184">                    logger.info(&quot;Person List::&quot; + us);</span>
+                }
+            }
+<span class="fc" id="L187">            return usersList;</span>
+<span class="nc" id="L188">        } catch (HibernateException ex) {</span>
+            
+<span class="nc" id="L190">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * deleteByUsername use to check delete user by username in database
+     *
+     * @param username
+     *            : string username use to check
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    @Transactional
+    public Boolean deleteByUsername(String username) throws HandlerException
+    {
+        try {
+<span class="fc" id="L207">            session = this.sessionFactory.getCurrentSession();</span>
+            
+<span class="fc" id="L209">            Criteria criteria = session.createCriteria(User.class);</span>
+
+<span class="fc" id="L211">            criteria.add(Restrictions.eq(&quot;username&quot;, username));</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">            if (criteria.list().isEmpty()) {</span>
+<span class="fc" id="L213">                return false;</span>
+            } else {
+<span class="fc" id="L215">                User user = (User) criteria.list().get(0);</span>
+<span class="fc" id="L216">                session.delete(user);</span>
+                
+<span class="fc" id="L218">                logger.info(&quot;User deleted successfully, user details=&quot; + user);</span>
+<span class="fc" id="L219">                return true;</span>
+            }
+
+<span class="nc" id="L222">        } catch (HibernateException ex) {</span>
+                      
+<span class="nc" id="L224">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * findByUsername use to check search user by username in database
+     *
+     * @param username
+     *            : string username use to search
+     * @return Boolean
+     * @exception HandlerException
+     */
+    @Override
+    @Transactional
+    public User findByUsername(String username) throws HandlerException
+    {
+<span class="fc" id="L240">        User user = null;</span>
+
+        try {
+<span class="fc" id="L243">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L244">            Criteria criteria = session.createCriteria(User.class);</span>
+<span class="fc" id="L245">            criteria.add(Restrictions.eq(&quot;username&quot;, username));</span>
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc" id="L247">                user = (User) criteria.list().get(0);</span>
+<span class="fc" id="L248">                logger.info(&quot;Find user successfully, user details=&quot; + user);</span>
+            }
+<span class="fc" id="L250">            return user;</span>
+<span class="nc" id="L251">        } catch (HibernateException ex) {</span>
+            
+<span class="nc" id="L253">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+<span class="nc" id="L254">            throw new HandlerException(ex.getMessage());</span>
+        }
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>
