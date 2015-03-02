@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Edit Profile Page</title>
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" type="type/css" href="css/bootstrap.min.css">
+		<link rel="stylesheet" type="type/css" href="css/style.css">
+		<link rel="stylesheet" type="type/css" href="css/m-styles.min.css">
+
+		<script src="js/jquery-2.1.3.js"></script>
+		<script src="js/detectmobilebrowser.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery.bootpag.min.js"></script>
+		
+
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		<script type="text/javascript">
+			$(document).ready(function(){
+				
+				$('.panel-default').ready(function(){
+					if($.browser.mobile)
+					{
+						//set css of table, text-align in mobile 
+						$('.panel-default').css('width','100%');
+						$('.panel-default div div div div div div').css('padding','0px');
+					}
+				});
+				$('#body-content').ready(function(){
+					if($.browser.mobile)
+					{
+						$('#body-content').css('width','100%');
+						$('#body-content div:nth-child(2)').css('margin-left','0px');
+						$('#body-content div:nth-child(2)').css('margin-right','0px');
+						$('#body-content div:nth-child(2)').css('width','100%');
+					}
+				});
+				$('.mainbox').ready(function(){
+					if($.browser.mobile)
+					{
+						//set css of table, text-align in mobile 
+						$('.mainbox').css('padding-left','0px');
+						$('.mainbox').css('padding-right','0px');
+					}
+				});
+				
+			});
+		</script>
+	</head>
+	<body>
+		
+		<div class="container" style="margin:0 auto; background-color: #EEEEEE;min-height: 100%;">
+			<div class="row" id="header">
+				<nav class="navbar navbar-default navbar-fixed-top" id="header">
+                    <div class="container" style="background-color: #9fc78a;">
+                        <div class="navbar-header" id="header-button" >
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" >
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="#">Mini Blog</a>
+                        </div>
+                        <div id="navbar" class="navbar-collapse collapse" >
+                            
+                                <ul class="nav navbar-nav">
+                                    <li class="active"><a href="#">Main page</a></li>
+                                    <li id="header-button"><a href="#">My blog</a></li>
+                                    <li id="header-button"><a href="#">Add post</a></li>
+                                </ul>
+                                
+                                <form class="navbar-form" style=" display:inline-block;" method="get" id="search-form" name="search-form">
+                                    <div class="input-group" style="width:270px;">
+                                        <input type="text" style="border-radius: 0px;" class="form-control" placeholder="username, firstname, lastname" id="query"  name="query" value="">
+                                        <div class="input-group-btn">
+                                            <button type="submit" style="border-radius: 0px;" class="btn btn-danger">
+                                                <span class="glyphicon glyphicon-search"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>       
+                                <ul class="nav navbar-nav navbar-right" >
+                                    <li id="header-button"><a href="profile.html">Uay Le U</a></li>
+                                    <li id="header-button"><a href="homepage.html">Logout</a></li>
+                                </ul>    
+                        </div>
+                    </div>
+                    
+                </nav>
+			</div>
+
+			<div class="row" id="body-content"> 
+				<div class="row" style="margin-top:50px">
+                    <ul class="breadcrumb" style="border-radius: 0px;">
+                        <li ><a href="#">Main page</a></li>
+                        <li ><a href="#">Profile</a></li>
+                        <li class="active"><a href="#">Edit Profile</a></li>
+                    </ul>
+                </div>
+                <div class="row" style="display: table;margin:0 auto"> 
+					<div class="mainbox col-md-12 col-sm-12 ">
+	                    <div class="panel panel-default" style="border-radius: 0px;">
+	                        
+	                        <div class="panel-body">
+								<form role="form" action="#" method="POST">
+									<fieldset>
+										<div class="row">
+											<div class="col-sm-12 col-md-12" style="margin:0px; ">
+												<div class="form-group" id="group-input-message">
+				                                    <label for="firstname" class="col-md-3 control-label">First Name</label>
+				                                    <div class="col-md-9">
+				                                    	<div class="col-md-12">
+				                                        	<input type="text" class="form-control" name="firstname" placeholder="First Name">
+				                                        </div>
+				                                        <div class="col-md-12">
+				                                        	<p>Error message</p>			
+				                                        </div>
+				                                        
+				                                    </div>
+				                                </div>
+				                                <div class="form-group" id="group-input-message">
+				                                    <label for="lastname" class="col-md-3 control-label">Last Name</label>
+				                                    <div class="col-md-9">
+				                                    	<div class="col-md-12">
+				                                        	<input type="text" class="form-control" name="lastname" placeholder="Last Name">
+				                                        </div>
+				                                        <div class="col-md-12">
+				                                        	<p>Error message</p>			
+				                                        </div>
+				                                        
+				                                    </div>
+				                                </div>
+
+				                                <div class="form-group" id="group-input-message">
+				                                    <label for="email" class="col-md-3 control-label">Email</label>
+				                                    <div class="col-md-9">
+				                                    	<div class="col-md-12">
+				                                        	<input type="text" class="form-control" name="email" placeholder="Email">
+				                                        </div>
+				                                        <div class="col-md-12">
+				                                        	<p>Error message</p>			
+				                                        </div>
+				                                    </div>
+				                                </div>
+
+				                                <div class="form-group" id="group-input-message">
+				                                    <label for="password" class="col-md-3 control-label">Password</label>
+				                                    <div class="col-md-9">
+				                                    	<div class="col-md-12">
+				                                        	<input type="password" class="form-control" name="password" placeholder="Password">
+				                                        </div>
+				                                        <div class="col-md-12">
+				                                        	<p>Error message</p>			
+				                                        </div>
+				                                    </div>
+				                                </div>
+
+												
+												<div class="form-group" style="text-align:center;">
+													<input type="submit" class="m-btn blue" style="width:100px" value="Edit">
+													<input id="btn btn-danger" class="m-btn blue" style="width:100px" type="reset" value="Clear">
+												</div>
+											</div>
+										</div>
+									</fieldset>
+								</form>
+							</div>
+							
+		                </div>
+	                </div>
+                </div>
+        	</div>
+			
+		</div>
+		
+	</body>
+</html>
