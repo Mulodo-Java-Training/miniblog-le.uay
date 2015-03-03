@@ -26,30 +26,17 @@
 
 		<script type="text/javascript">
 			$(document).ready(function(){
-				$('#panel-default').ready(function(){
-					if($.browser.mobile)
-					{
-						$('.panel-default').css('width','100%');
-						$('.panel-default div div div div div div').css('padding','0px');
-					}
-				});
-				$('.container').ready(function(){
-					if($.browser.mobile)
-					{
-						$('.container').css('width','100%');
-						$('.container div:nth-child(2)').css('margin-left','0px');
-						$('.container div:nth-child(2)').css('margin-right','0px');
-					}
-				});
-				$('#signupbox').ready(function(){
-					if($.browser.mobile)
-					{
-						
-						$('#signupbox').css('padding-left','0px');
-						$('#signupbox').css('padding-right','0px');
-						
-					}
-				});
+				
+				if($.browser.mobile)
+				{
+					$('.panel-default').css('width','100%');
+					$('.panel-default div div div div div div').css('padding','0px');
+					$('.container div:nth-child(2)').css('margin-left','0px');
+					$('.container div:nth-child(2)').css('margin-right','0px');
+					$('#signupbox').css('padding-left','0px');
+					$('#signupbox').css('padding-right','0px');
+
+				}
 			});
 		</script>
 	</head>
@@ -89,7 +76,7 @@
                             <div style="float:right; font-size: 85%; position: relative; top:-10px"></div>
                         </div>  
                         <div class="panel-body">
-							<form role="form" action="#" method="POST">
+							<form role="form" action="#" method="POST" id="register">
 								<fieldset>
 									<div class="row">
 										<div class="center-block">

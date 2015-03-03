@@ -25,21 +25,14 @@
 		<![endif]-->
 		<script type="text/javascript">
 			$(document).ready(function(){
-				$('#body-profile').ready(function(){
-					if($.browser.mobile)
-					{
-						//set css of table, text-align in mobile 
-						$('#body-profile').css('width','100%');
-						
-					}
-				});
-				$('#body-content').ready(function(){
-					if($.browser.mobile)
-					{
-						$('#body-content').css('width','100%');
-					}
-				});
 				
+				if($.browser.mobile)
+				{
+					//set css of table, text-align in mobile 
+					$('#body-profile').css('width','100%');
+					$('#body-content').css('width','100%');
+				}
+
 			});
 		</script>
 	</head>
@@ -61,7 +54,7 @@
                         <div id="navbar" class="navbar-collapse collapse" >
                             
                                 <ul class="nav navbar-nav">
-                                    <li class="active"><a href="#">Main page</a></li>
+                                    <li id="header-button"><a href="#">Main page</a></li>
                                     <li id="header-button"><a href="#">My blog</a></li>
                                     <li id="header-button"><a href="#">Add post</a></li>
                                 </ul>
@@ -77,7 +70,7 @@
                                     </div>
                                 </form>       
                                 <ul class="nav navbar-nav navbar-right" >
-                                    <li id="header-button"><a href="profile.html">Uay Le U</a></li>
+                                    <li class="active"><a href="profile.html">Uay Le U</a></li>
                                     <li id="header-button"><a href="homepage.html">Logout</a></li>
                                 </ul>    
                         </div>
