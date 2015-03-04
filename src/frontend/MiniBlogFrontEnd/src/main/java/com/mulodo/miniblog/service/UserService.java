@@ -1,0 +1,12 @@
+package com.mulodo.miniblog.service;
+
+import com.mulodo.miniblog.object.ResponseData;
+
+public interface UserService  {
+	
+	public ResponseData register(String username, String firstname, String lastname,
+			String email, String password);
+	
+	public ResponseData login(String username, String password);
+	
+}
