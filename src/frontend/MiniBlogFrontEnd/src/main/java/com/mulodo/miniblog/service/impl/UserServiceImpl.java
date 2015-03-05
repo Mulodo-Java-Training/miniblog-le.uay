@@ -1,5 +1,9 @@
 package com.mulodo.miniblog.service.impl;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
@@ -32,6 +36,7 @@ public class UserServiceImpl implements UserService {
 		postUser.add("lastname", lastname);
 		postUser.add("email", email);
 		postUser.add("password", password);
+		
 		
 		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 		try{
@@ -66,6 +71,96 @@ public class UserServiceImpl implements UserService {
 			String header = responseEntity.getHeaders().getFirst(Constraints.ACCESS_KEY);
 			responseData.setHeader(header);
 			System.out.println("header = "+header);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+		
+		return responseData;
+	}
+
+	@Override
+	public ResponseData getUserInfo(String accessKey) {
+
+		restTemplate = new RestTemplate();
+		
+		ResponseData responseData = null;
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.set(Constraints.ACCESS_KEY, accessKey);
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		
+		HttpEntity<String> request = new HttpEntity<String>(headers);
+		
+		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+		
+		try{
+			responseEntity = restTemplate.exchange(Constraints.ROOT_URL+"users/getUserInfo", HttpMethod.GET, request, ResponseData.class);
+			responseData = new ResponseData();
+			responseData = responseEntity.getBody();
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+		
+		return responseData;
+	}
+	
+	@Override
+	public ResponseData editUserInfo(String firstname,
+			String lastname, String email, String password, String status, String accessKey) {
+		
+		restTemplate = new RestTemplate();
+		
+		ResponseData responseData = null;
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.set(Constraints.ACCESS_KEY, accessKey);
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		String requestBody = "password="+password+"&firstname="+firstname+"&lastname="+lastname+""
+				+ "&email="+email+"&status="+status;
+		
+		HttpEntity<String> request = new HttpEntity<String>(requestBody, headers);
+		
+		
+		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+		try{
+			
+			responseEntity = restTemplate.exchange(Constraints.ROOT_URL+"users/update", HttpMethod.PUT, request, ResponseData.class);
+			responseData = new ResponseData();
+			responseData = responseEntity.getBody();
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+		
+		return responseData;
+	}
+
+	@Override
+	public ResponseData changePassword(String currentPassword,
+			String newPassword, String accessKey) {
+		
+		
+restTemplate = new RestTemplate();
+		
+		ResponseData responseData = null;
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.set(Constraints.ACCESS_KEY, accessKey);
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		String requestBody = "oldPassword="+currentPassword+"&newPassword="+newPassword;
+		
+		HttpEntity<String> request = new HttpEntity<String>(requestBody, headers);
+		
+		
+		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+		try{
+			
+			responseEntity = restTemplate.exchange(Constraints.ROOT_URL+"users/chagnePassword", HttpMethod.PUT, request, ResponseData.class);
+			responseData = new ResponseData();
+			responseData = responseEntity.getBody();
+			
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}

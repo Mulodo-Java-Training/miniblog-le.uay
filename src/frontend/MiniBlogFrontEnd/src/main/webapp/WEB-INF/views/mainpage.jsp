@@ -50,7 +50,7 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="#">Mini Blog</a>
+                            <a class="navbar-brand" href="mainpage">Mini Blog</a>
                         </div>
                         <div id="navbar" class="navbar-collapse collapse" style="background-color: #9fc78a;">
                             
@@ -73,7 +73,7 @@
                                 
                             
                                 <ul class="nav navbar-nav navbar-right" >
-                                    <li id="header-button"><a href="profile.html">Uay Le U</a></li>
+                                    <li id="header-button"><a href="mainpage/profile">Uay Le U</a></li>
                                     <li id="header-button"><a href="logout">Logout</a></li>
                                 </ul>    
                             
@@ -86,7 +86,7 @@
             <div class="row" id="body-content">
                 <div class="row" style="margin-top:50px">
                     <ul class="breadcrumb" style="border-radius: 0px;">
-                        <li class="active"><a href="#">Main page</a></li>
+                        <li class="active"><a href="mainpage">Main page</a></li>
                         <li class="active"><a href="#"></a></li>
                     </ul>
                 </div>  

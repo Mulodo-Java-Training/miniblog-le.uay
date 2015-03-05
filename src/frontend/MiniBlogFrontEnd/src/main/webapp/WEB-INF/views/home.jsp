@@ -14,7 +14,6 @@
 
 		<script src="js/jquery-2.1.3.js"></script>
 		<script src="js/detectmobilebrowser.js"></script>
-		<script src="js/jquery.bootpag.min.js"></script>
 		<script src="js/jquery.validate.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 
@@ -114,30 +113,30 @@
 									<div class="row">
 										<div style="text-align:center;"><label class="message">${message}</label></div>
 										<div class="col-sm-12 col-md-10  col-md-offset-1 " >
-											<div class="form-group" id="group-input-message">
-												<div class="col-md-12">
+											<div class="form-group" id="group-input-message" style="height:69px;">
+												<div class="col-md-12" >
 													<div class="input-group">
 														<span class="input-group-addon">
 															<i class="glyphicon glyphicon-user"></i>
 														</span> 
-														<input class="form-control" placeholder="Username" name="username" type="text" autofocus>
+														<input class="form-control" placeholder="Username" name="username" id="username" type="text" autofocus>
 													</div>
 												</div>
 												<div class="col-md-12">
-													<p>Error message</p>
+													<div style="text-align:left;"><span class="message">${usernameError}</span></div>
 												</div>
 											</div>
-											<div class="form-group" id="group-input-message">
+											<div class="form-group" id="group-input-message" style="height:69px;">
 												<div class="col-md-12">
 													<div class="input-group">
 														<span class="input-group-addon">
 															<i class="glyphicon glyphicon-lock"></i>
 														</span>
-														<input class="form-control" placeholder="Password" name="password" type="password" value="">
+														<input class="form-control" placeholder="Password" name="password" id="password" type="password" value="">
 													</div>
 												</div>
 												<div class="col-md-12">
-													<p>Error message</p>
+													<div style="text-align:left;"><span class="message">${usernameError}</span></div>
 												</div>
 											</div>
 											<div class="form-group" style="text-align:center;">

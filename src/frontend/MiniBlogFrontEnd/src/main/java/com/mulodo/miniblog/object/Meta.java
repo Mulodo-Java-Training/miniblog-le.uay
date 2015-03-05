@@ -42,5 +42,17 @@ public class Meta
     {
         this.messages = message;
     }
+    
+    @Override
+    public String toString(){
+    	String meta = ""+code;
+	    	if(messages!= null){
+	    	for(Message ms :messages){
+	    		meta = meta + ms.getCode();
+	    	}
+    	}
+		return meta;
+    	
+    }
 
 }

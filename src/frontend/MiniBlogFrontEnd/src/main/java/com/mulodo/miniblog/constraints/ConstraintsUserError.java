@@ -20,7 +20,8 @@ public enum ConstraintsUserError {
 	CODE_2016(2016, "Invalid password"), 
 	CODE_1001(1001, "Login failed"),
 	CODE_1002(1002, "Access denied for this resource Make sure you already login and have permission to access this resource"),
-	CODE_1003(1003, "Your already login");
+	CODE_1003(1003, "Your already login"), 
+	CODE_1000(1000, "Authentication error");
 	
 	
 	private int key;

@@ -3,6 +3,9 @@ package com.mulodo.miniblog;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -16,6 +19,7 @@ import com.mulodo.miniblog.constraints.ConstraintsMessage;
 import com.mulodo.miniblog.constraints.ConstraintsUserError;
 import com.mulodo.miniblog.object.Message;
 import com.mulodo.miniblog.object.ResponseData;
+import com.mulodo.miniblog.object.User;
 import com.mulodo.miniblog.service.UserService;
 
 /**

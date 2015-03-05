@@ -14,7 +14,9 @@ public enum ConstraintsMessage {
 	CODE_209(209, "Delete post success"),
 	CODE_210(210, "Create comment success"),
 	CODE_211(211, "Update comment success"),
-	CODE_212(212, "Delete comment success");
+	CODE_212(212, "Delete comment success"),
+	USER_ACTIVE(1, "Active"),
+	USER_INACTIVE(0, "Inactive");
 	
 	
 	private int key;

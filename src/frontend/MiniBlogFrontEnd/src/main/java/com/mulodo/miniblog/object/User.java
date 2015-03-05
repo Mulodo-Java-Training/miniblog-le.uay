@@ -13,6 +13,8 @@ package com.mulodo.miniblog.object;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * The user entity work with hibernate
  * 
@@ -49,6 +51,7 @@ public class User
 
     private List<Token> tokens;
 
+
     public List<Comment> getComments() {
 		return comments;
 	}
@@ -72,30 +75,6 @@ public class User
 	public void setTokens(List<Token> tokens) {
 		this.tokens = tokens;
 	}
-
-	public User() {
-        super();
-    }
-
-    public User(int id, String username, int status) {
-        super();
-        this.id = id;
-        this.username = username;
-        this.status = status;
-    }
-
-    public User(String username, String password, String lastname, String firstname, String email,
-            Date created_at, Date modified_at, int status) {
-        super();
-        this.username = username;
-        this.password = password;
-        this.lastname = lastname;
-        this.firstname = firstname;
-        this.email = email;
-        this.created_at = created_at;
-        this.modified_at = modified_at;
-        this.status = status;
-    }
 
     public int getId()
     {
@@ -162,8 +141,10 @@ public class User
         return created_at;
     }
 
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     public void setCreated_at(Date created_at)
     {
+    	
         this.created_at = created_at;
     }
 
@@ -172,6 +153,7 @@ public class User
         return modified_at;
     }
 
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     public void setModified_at(Date modified_at)
     {
         this.modified_at = modified_at;

@@ -12,6 +12,8 @@ package com.mulodo.miniblog.object;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * The comment entity work with hibernate
  * 
@@ -77,6 +79,7 @@ public class Comment
         return created_at;
     }
 
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     public void setCreated_at(Date created_at)
     {
         this.created_at = created_at;
@@ -87,6 +90,7 @@ public class Comment
         return modified_at;
     }
 
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     public void setModified_at(Date modified_at)
     {
         this.modified_at = modified_at;
