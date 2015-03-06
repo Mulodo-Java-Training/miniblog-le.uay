@@ -36,7 +36,8 @@
 			                required: true
 			            },
 			            password: {
-			                required: true
+			                required: true,
+			                minlength: 6
 			            }
 			        },
 					messages: {
@@ -46,7 +47,8 @@
 							
 						},
 						password: {
-							required: "Password is required"
+							required: "Password is required",
+							minlength: "Invalid password - More than 6 character"
 						}
 					},
 			        highlight: function(element) {
@@ -95,7 +97,7 @@
 			    </nav>
 			</div>
 	
-			<div class="row" id="login-form">
+			<div class="row" id="login-content">
 				<div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">   
 					<div class="panel panel-default" style="border-radius: 0px;">
 						<div class="panel-heading" style="border-radius: 0px;background-color: #9fc78a">
@@ -136,7 +138,7 @@
 													</div>
 												</div>
 												<div class="col-md-12">
-													<div style="text-align:left;"><span class="message">${usernameError}</span></div>
+													<div style="text-align:left;"><span class="message">${passwordError}</span></div>
 												</div>
 											</div>
 											<div class="form-group" style="text-align:center;">

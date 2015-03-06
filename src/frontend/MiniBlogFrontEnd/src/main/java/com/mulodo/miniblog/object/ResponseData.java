@@ -13,13 +13,22 @@ public class ResponseData {
 		this.header = header;
 	}
 	public Meta getMeta() {
-		return meta;
+		if(meta !=  null){
+			return meta;
+		}else{
+			return null;
+		}
+		
 	}
 	public void setMeta(Meta meta) {
 		this.meta = meta;
 	}
 	public Data getData() {
-		return data;
+		if(data !=  null){
+			return data;
+		}else{
+			return null;
+		}
 	}
 	public void setData(Data data) {
 		this.data = data;

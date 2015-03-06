@@ -7,7 +7,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Main Page</title>
+        <title>User Page</title>
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" type="type/css" href="css/bootstrap.min.css">
@@ -31,7 +31,7 @@
                 if($.browser.mobile)
                 {
                     $('#body-content').css('width','100%');
-                }    
+                }
             });
         </script>
     </head>
@@ -50,19 +50,19 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="mainpage">Mini Blog</a>
+                            <a class="navbar-brand" href="#">Mini Blog</a>
                         </div>
                         <div id="navbar" class="navbar-collapse collapse" style="background-color: #9fc78a;">
                             
                                 <ul class="nav navbar-nav">
-                                    <li class="active"><a href="#">Main page</a></li>
-                                    <li id="header-button"><a href="#">My blog</a></li>
-                                    <li id="header-button"><a href="mainpage/addpost">Add post</a></li>
+                                    <li id="header-button"><a href="#">Main page</a></li>
+                                    <li class="active"><a href="#">My blog</a></li>
+                                    <li id="header-button"><a href="#">Add post</a></li>
                                 </ul>
                                 
-                                <form class="navbar-form" style=" display:inline-block;" action="mainpage/searchUser" method="get" id="search-form" name="search-form">
+                                <form class="navbar-form" style=" display:inline-block;" method="get" id="search-form" name="search-form">
                                     <div class="input-group" style="width:270px;">
-                                        <input type="text" style="border-radius: 0px;" class="form-control" placeholder="username, firstname, lastname" id="name"  name="name" value="">
+                                        <input type="text" style="border-radius: 0px;" class="form-control" placeholder="username, firstname, lastname" id="query"  name="query" value="">
                                         <div class="input-group-btn">
                                             <button type="submit" style="border-radius: 0px;" class="btn btn-danger">
                                                 <span class="glyphicon glyphicon-search"></span>
@@ -73,8 +73,8 @@
                                 
                             
                                 <ul class="nav navbar-nav navbar-right" >
-                                    <li id="header-button"><a href="mainpage/profile">Uay Le U</a></li>
-                                    <li id="header-button"><a href="logout">Logout</a></li>
+                                    <li id="header-button"><a href="profile.html">Uay Le U</a></li>
+                                    <li id="header-button"><a href="homepage.html">Logout</a></li>
                                 </ul>    
                             
                         </div>
@@ -84,14 +84,17 @@
             </div>
             
             <div class="row" id="body-content">
+
                 <div class="row" style="margin-top:50px">
                     <ul class="breadcrumb" style="border-radius: 0px;">
-                        <li class="active"><a href="mainpage">Main page</a></li>
-                        <li class="active"><a href="#"></a></li>
+                        <li><a href="mainpage.html">Main page</a></li>
+                        <li class="active"><a href="#">User page</a></li>
                     </ul>
-                </div>  
+                </div>
 
-                <div class="row" >
+                
+
+                <div class="row">
                     <form method="get" id="search-form" name="search-post-form">
                         <div class="input-group"  style="width:100%;margin: 0 auto; display: 0 auto; ">
                             <input type="text" style="border-radius: 0px;" class="form-control" placeholder="title, content of post" id="query"  name="query" value="" >
@@ -103,6 +106,10 @@
                         </div>
                     </form>
                 </div>
+
+                <div class="row" id="blog-name">
+                    <label>Uay Le U Blog</label>    
+                </div>  
 
                 <div class="row" id="content-posts">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="post-style">
@@ -121,7 +128,7 @@
                         <p>Software prototyping is the activity of creating prototypes of software applications, i.e., incomplete versions of the software program being developed. It is an activity that can occur in software development and is comparable to prototyping as known from other…</p>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="post-style">
-                        <p ><a href="#">Post 4</a></p>
+                        <p ><a href="#">Post 3</a></p>
                         <p >Date : 2015/02/03 12:15:20, Author: <a href="#">Uay Le U</a></p>
                         <p>Software prototyping is the activity of creating prototypes of software applications, i.e., incomplete versions of the software program being developed. It is an activity that can occur in software development and is comparable to prototyping as known from other…</p>
                     </div>

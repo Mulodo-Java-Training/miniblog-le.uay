@@ -1,5 +1,6 @@
 package com.mulodo.miniblog.constraints;
 
+
 public class Constraints {
 	public final static String ROOT_URL = "http://localhost:8080/APIMiniBlog/api/";
 	
@@ -30,4 +31,9 @@ public class Constraints {
     public static final int CODE_210 = 210;
     public static final int CODE_211 = 211;
     public static final int CODE_212 = 212;
+
+	public static final String REDIRECT_LOGIN = "";
+	public static final String REDIRECT= "redirect";
+
+	public static final String DATA = "data";
 }

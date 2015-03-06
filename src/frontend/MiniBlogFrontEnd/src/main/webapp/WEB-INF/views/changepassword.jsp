@@ -12,12 +12,15 @@
 		<link rel="stylesheet" type="type/css" href="../../css/bootstrap.min.css">
 		<link rel="stylesheet" type="type/css" href="../../css/style.css">
 		<link rel="stylesheet" type="type/css" href="../../css/m-styles.min.css">
+        <link rel="stylesheet" type="text/css" href="../../js/jquery-confirm/css/jquery-confirm.css" />
+        
 
-		<script src="../../js/jquery-2.1.3.js"></script>
-		<script src="../../js/detectmobilebrowser.js"></script>
-		<script src="../../js/bootstrap.min.js"></script>
-		<script src="../../js/jquery.bootpag.min.js"></script>
-		<script src="../../js/jquery.validate.js"></script>
+		<script type="text/javascript" src="../../js/jquery-2.1.3.js"></script>
+		<script type="text/javascript" src="../../js/detectmobilebrowser.js"></script>
+		<script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../js/jquery.bootpag.min.js"></script>
+		<script type="text/javascript" src="../../js/jquery.validate.js"></script>
+		<script type="text/javascript" src="../../js/jquery-confirm/js/jquery-confirm.js"></script>
 		
 
 		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -40,6 +43,7 @@
 					$('#body-content div:nth-child(2)').css('width','100%');
 					$('.mainbox').css('padding-left','0px');
 					$('.mainbox').css('padding-right','0px');
+					$('#change-passowrd-row').css('width','100%');
 				}
 				$('#change-password-form').validate({
 					rules: {
@@ -100,6 +104,20 @@
 							if(data.message){
 								$('#message').text(data.message);
 							}
+							if(data.redirect && data.redirect == true){
+								$.alert({
+								    title: 'Alert!',
+								    content: data.message + "--Redirecting to login page",
+								    confirm: function(){
+								    	window.location.reload(true);
+								    }
+								});
+								console.log(data.redirect);
+								setTimeout(function(){
+									window.location.reload(true);
+								}, 5000);
+								
+							}
 							if(data.passwordError){
 								$('#currentPasswordError').text(data.passwordError);
 							}
@@ -113,7 +131,7 @@
 			});
 			
 			$(document).ready(function(){
-			
+				
 			});
 			
 		</script>
@@ -131,12 +149,12 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="#">Mini Blog</a>
+                            <a class="navbar-brand" href="../../mainpage">Mini Blog</a>
                         </div>
                         <div id="navbar" class="navbar-collapse collapse" >
                             
                                 <ul class="nav navbar-nav">
-                                    <li class="active"><a href="#">Main page</a></li>
+                                    <li id="header-button"><a href="../../mainpage">Main page</a></li>
                                     <li id="header-button"><a href="#">My blog</a></li>
                                     <li id="header-button"><a href="#">Add post</a></li>
                                 </ul>
@@ -152,8 +170,8 @@
                                     </div>
                                 </form>       
                                 <ul class="nav navbar-nav navbar-right" >
-                                    <li id="header-button"><a href="profile.html">Uay Le U</a></li>
-                                    <li id="header-button"><a href="homepage.html">Logout</a></li>
+                                    <li class="active"><a href="profile">Uay Le U</a></li>
+                                    <li id="header-button"><a href="logout">Logout</a></li>
                                 </ul>    
                         </div>
                     </div>
@@ -164,16 +182,16 @@
 			<div class="row" id="body-content"> 
 				<div class="row" style="margin-top:50px">
                     <ul class="breadcrumb" style="border-radius: 0px;">
-                        <li ><a href="#">Main page</a></li>
-                        <li ><a href="#">Profile</a></li>
-                        <li class="active"><a href="#">Edit Profile</a></li>
+                        <li ><a href="../../mainpage">Main page</a></li>
+                        <li ><a href="../profile">Profile</a></li>
+                        <li class="active"><a href="">Change password</a></li>
                     </ul>
                 </div>
-                <div class="row" style="display: table;
+                <div class="row change-passowrd-row" style="width:75%;
     margin: 0 auto;
     ">
 					<div class="mainbox col-md-12 col-sm-12" >
-	                    <div class="panel panel-default" style="border-radius: 0px; width: 400px">
+	                    <div class="panel panel-default" style="border-radius: 0px;">
 	                        
 	                        <div class="panel-body">
 	                        	<div style="text-align:center;height:30px;"><label class="message" id="message">${message}</label></div>
@@ -182,7 +200,7 @@
 										<div class="row">
 											<div class="col-sm-12 col-md-12" style="margin:0px; ">
 												<div class="form-group" id="group-input-message">
-				                                    <label for="currentpassord" class="col-md-5 control-label" style="text-align:right">Current password</label>
+				                                    <label for="currentpassord" class="col-md-5 control-label" style="text-align:right">Current password:</label>
 				                                    <div class="col-md-7" style="height:69px;">
 				                                    	<div class="col-md-12">
 				                                        	<input type="password" class="form-control" name="currentPassword" id="currentPassword" placeholder="Current password">
@@ -190,11 +208,10 @@
 				                                        <div class="col-md-12">
 				                                        	<div style="text-align:left;"><span class="message" id="currentPasswordError">${currentPasswordError}</span></div>			
 				                                        </div>
-				                                        
 				                                    </div>
 				                                </div>
 				                                <div class="form-group" id="group-input-message">
-				                                    <label for="newPassword" class="col-md-5 control-label" style="text-align:right">New password</label>
+				                                    <label for="newPassword" class="col-md-5 control-label" style="text-align:right">New password:</label>
 				                                    <div class="col-md-7" style="height:69px;">
 				                                    	<div class="col-md-12">
 				                                        	<input type="password" class="form-control" name="newPassword" id="newPassword" placeholder="New Password">
@@ -207,7 +224,7 @@
 				                                </div>
 
 				                                <div class="form-group" id="group-input-message">
-				                                    <label for="confirmPassword" class="col-md-5 control-label" style="text-align:right">Confirm password</label>
+				                                    <label for="confirmPassword" class="col-md-5 control-label" style="text-align:right">Confirm password:</label>
 				                                    <div class="col-md-7" style="height:69px;">
 				                                    	<div class="col-md-12">
 				                                        	<input type="password" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm password">

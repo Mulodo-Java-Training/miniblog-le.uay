@@ -16,5 +16,7 @@ public interface UserService  {
 
 	public ResponseData changePassword(String currentPassword,
 			String newPassword, String accessKey);
+
+	public ResponseData searchUser(String name, String accessKey);
 	
 }
