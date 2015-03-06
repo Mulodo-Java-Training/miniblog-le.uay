@@ -55,17 +55,17 @@ import com.mulodo.miniblog.exeption.HandlerException;
     {
         try {
 <span class="fc" id="L57">            session = this.sessionFactory.getCurrentSession();</span>
-            
+
 <span class="fc" id="L59">            session.persist(entity);</span>
-            
+
 <span class="fc" id="L61">            logger.info(&quot;Entity saved successfully, Entity Details=&quot; + entity);</span>
 <span class="fc" id="L62">            return true;</span>
 <span class="nc" id="L63">        } catch (HibernateException ex) {</span>
-            
+
 <span class="nc" id="L65">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
 <span class="nc" id="L66">            throw new HandlerException(ex.getMessage());</span>
         }
-        
+
     }
 
     /**
@@ -82,16 +82,16 @@ import com.mulodo.miniblog.exeption.HandlerException;
     {
         try {
 <span class="fc" id="L84">            session = this.sessionFactory.getCurrentSession();</span>
-            
+
 <span class="fc" id="L86">            session.update(entity);</span>
-            
+
 <span class="fc" id="L88">            logger.info(&quot;Entity updated successfully, Entity Details=&quot; + entity);</span>
 <span class="fc" id="L89">            return true;</span>
 <span class="nc" id="L90">        } catch (HibernateException ex) {</span>
-            
+
 <span class="nc" id="L92">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
 <span class="nc" id="L93">            throw new HandlerException(ex.getMessage());</span>
-        } 
+        }
     }
 
     /**
@@ -112,22 +112,21 @@ import com.mulodo.miniblog.exeption.HandlerException;
 <span class="fc" id="L112">            this.genericType = (Class&lt;T&gt;) GenericTypeResolver.resolveTypeArgument(getClass(),</span>
 <span class="fc" id="L113">                    GenericDAOImpl.class);</span>
 <span class="fc" id="L114">            session = this.sessionFactory.getCurrentSession();</span>
-            
+
 <span class="fc" id="L116">            T p = (T) session.load(this.genericType, id);</span>
 <span class="pc bpc" id="L117" title="1 of 2 branches missed.">            if (p != null) {</span>
 <span class="fc" id="L118">                session.delete(p);</span>
-<span class="fc" id="L119">            }else{</span>
+<span class="fc" id="L119">            } else {</span>
 <span class="nc" id="L120">                return false;</span>
             }
-            
+
 <span class="fc" id="L123">            logger.info(&quot;Entity deleted successfully, Entity details=&quot; + p);</span>
 <span class="fc" id="L124">            return true;</span>
 <span class="nc" id="L125">        } catch (HibernateException ex) {</span>
-            
-            
-<span class="nc" id="L128">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
-<span class="nc" id="L129">            throw new HandlerException(ex.getMessage());</span>
-        } 
+
+<span class="nc" id="L127">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+<span class="nc" id="L128">            throw new HandlerException(ex.getMessage());</span>
+        }
     }
 
     /**
@@ -144,19 +143,19 @@ import com.mulodo.miniblog.exeption.HandlerException;
     public T findOne(int id) throws HandlerException
     {
         try {
-<span class="fc" id="L147">            this.genericType = (Class&lt;T&gt;) GenericTypeResolver.resolveTypeArgument(getClass(),</span>
-<span class="fc" id="L148">                    GenericDAOImpl.class);</span>
-<span class="fc" id="L149">            session = this.sessionFactory.getCurrentSession();</span>
-<span class="fc" id="L150">            T p = (T) session.get(this.genericType, id);</span>
-<span class="fc bfc" id="L151" title="All 2 branches covered.">            if (p != null) {</span>
-<span class="fc" id="L152">                logger.info(&quot;Entity loaded successfully, Entity details=&quot; + p);</span>
+<span class="fc" id="L146">            this.genericType = (Class&lt;T&gt;) GenericTypeResolver.resolveTypeArgument(getClass(),</span>
+<span class="fc" id="L147">                    GenericDAOImpl.class);</span>
+<span class="fc" id="L148">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L149">            T p = (T) session.get(this.genericType, id);</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            if (p != null) {</span>
+<span class="fc" id="L151">                logger.info(&quot;Entity loaded successfully, Entity details=&quot; + p);</span>
             }
-<span class="fc" id="L154">            return p;</span>
-<span class="nc" id="L155">        } catch (HibernateException ex) {</span>
-            
-<span class="nc" id="L157">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
-<span class="nc" id="L158">            throw new HandlerException(ex.getMessage());</span>
-        } 
+<span class="fc" id="L153">            return p;</span>
+<span class="nc" id="L154">        } catch (HibernateException ex) {</span>
+
+<span class="nc" id="L156">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+<span class="nc" id="L157">            throw new HandlerException(ex.getMessage());</span>
+        }
     }
 
 }

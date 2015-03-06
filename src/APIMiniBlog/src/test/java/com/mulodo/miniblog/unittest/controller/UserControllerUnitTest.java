@@ -445,7 +445,7 @@ public class UserControllerUnitTest
         assertEquals(Constraints.CODE_2000, jsonObject.get(Constraints.CODE));
         assertNotNull(jsonObject.getJSONArray(Constraints.MESSAGES));
         for (int i = 0; i < jsonObject.getJSONArray(Constraints.MESSAGES).length(); i++) {
-            assertEquals(Constraints.CODE_2012, jsonObject.getJSONArray(Constraints.MESSAGES)
+            assertEquals(Constraints.CODE_2016, jsonObject.getJSONArray(Constraints.MESSAGES)
                     .getJSONObject(i).get(Constraints.CODE));
         }
 

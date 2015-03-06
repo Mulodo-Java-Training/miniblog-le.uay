@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mulodo.miniblog.unittest.controller.CommentControllerUnitTest" time="1.68" tests="5" errors="0" skipped="0" failures="0">
+<testsuite name="com.mulodo.miniblog.unittest.controller.CommentControllerUnitTest" time="2.406" tests="5" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home/jre/lib"/>
@@ -24,7 +24,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="Mac OS X"/>
-    <property name="classworlds.conf" value="/Users/leuuay/mulodo/Spring/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf7846581728709909117.tmp"/>
+    <property name="classworlds.conf" value="/Users/leuuay/mulodo/Spring/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf935492947485912487.tmp"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
     <property name="java.library.path" value="/Users/leuuay/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
@@ -61,9 +61,9 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="getAllCommentForPost" classname="com.mulodo.miniblog.unittest.controller.CommentControllerUnitTest" time="0.463"/>
-  <testcase name="getAllCommentForUser" classname="com.mulodo.miniblog.unittest.controller.CommentControllerUnitTest" time="0.258"/>
-  <testcase name="addComment" classname="com.mulodo.miniblog.unittest.controller.CommentControllerUnitTest" time="0.282"/>
-  <testcase name="updateComment" classname="com.mulodo.miniblog.unittest.controller.CommentControllerUnitTest" time="0.378"/>
-  <testcase name="deleteComment" classname="com.mulodo.miniblog.unittest.controller.CommentControllerUnitTest" time="0.299"/>
+  <testcase name="getAllCommentForPost" classname="com.mulodo.miniblog.unittest.controller.CommentControllerUnitTest" time="0.657"/>
+  <testcase name="getAllCommentForUser" classname="com.mulodo.miniblog.unittest.controller.CommentControllerUnitTest" time="0.51"/>
+  <testcase name="addComment" classname="com.mulodo.miniblog.unittest.controller.CommentControllerUnitTest" time="0.316"/>
+  <testcase name="updateComment" classname="com.mulodo.miniblog.unittest.controller.CommentControllerUnitTest" time="0.356"/>
+  <testcase name="deleteComment" classname="com.mulodo.miniblog.unittest.controller.CommentControllerUnitTest" time="0.567"/>
 </testsuite>

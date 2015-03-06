@@ -221,7 +221,7 @@ public class UserController
                 if (!isValid) {
                     // if password did not match, return code error
                     jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,
-                            Constraints.CODE_2012), null);
+                            Constraints.CODE_2016), null);
                     return Response.status(Constraints.CODE_200).entity(jsonObject.toString())
                             .build();
                 }

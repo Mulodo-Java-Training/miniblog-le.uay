@@ -221,7 +221,7 @@ import com.mulodo.miniblog.validator.UserValidate;
 <span class="fc bfc" id="L221" title="All 2 branches covered.">                if (!isValid) {</span>
                     // if password did not match, return code error
 <span class="fc" id="L223">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2000,</span>
-<span class="fc" id="L224">                            Constraints.CODE_2012), null);</span>
+<span class="fc" id="L224">                            Constraints.CODE_2016), null);</span>
 <span class="fc" id="L225">                    return Response.status(Constraints.CODE_200).entity(jsonObject.toString())</span>
 <span class="fc" id="L226">                            .build();</span>
                 }
@@ -529,7 +529,7 @@ import com.mulodo.miniblog.validator.UserValidate;
      */
     private void setDataSource()
     {
-          
+
 <span class="fc" id="L533">        tokenService = (TokenService) SpringApplicationContext.getBean(&quot;tokenService&quot;);</span>
 <span class="fc" id="L534">        userService = (UserService) SpringApplicationContext.getBean(&quot;userService&quot;);</span>
 <span class="fc" id="L535">    }</span>

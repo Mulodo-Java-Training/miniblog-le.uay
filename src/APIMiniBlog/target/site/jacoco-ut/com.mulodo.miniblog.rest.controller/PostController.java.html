@@ -141,11 +141,11 @@ import com.mulodo.miniblog.validator.PostValidate;
                     // set success to response
 <span class="fc" id="L142">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_206, 0), null);</span>
                 }
-<span class="nc" id="L144">            } catch (Exception ex) {</span>
+<span class="pc" id="L144">            } catch (Exception ex) {</span>
 <span class="nc" id="L145">                ex.printStackTrace();</span>
 <span class="nc" id="L146">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                        Constraints.CODE_9001), null);
-<span class="fc" id="L148">            }</span>
+<span class="nc" id="L147">                        Constraints.CODE_9001), null);</span>
+            }
         }
 <span class="fc" id="L150">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
@@ -207,18 +207,18 @@ import com.mulodo.miniblog.validator.PostValidate;
 <span class="pc bpc" id="L207" title="1 of 4 branches missed.">                } else if (post != null &amp;&amp; post.getUser().getId() != token.getUser().getId()) {</span>
                     // return permission error code
 <span class="fc" id="L209">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                            Constraints.CODE_2509), null);
-                } else {
+<span class="fc" id="L210">                            Constraints.CODE_2509), null);</span>
+<span class="fc" id="L211">                } else {</span>
                     // return invalid error code
 <span class="fc" id="L213">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                            Constraints.CODE_2501), null);
+<span class="fc" id="L214">                            Constraints.CODE_2501), null);</span>
                 }
             }
-<span class="nc" id="L217">        } catch (Exception ex) {</span>
+<span class="pc" id="L217">        } catch (Exception ex) {</span>
 <span class="nc" id="L218">            ex.printStackTrace();</span>
 <span class="nc" id="L219">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L221">        }</span>
+<span class="nc" id="L220">                    Constraints.CODE_9001), null);</span>
+        }
 
 <span class="fc" id="L223">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
@@ -282,18 +282,18 @@ import com.mulodo.miniblog.validator.PostValidate;
 <span class="pc bpc" id="L282" title="1 of 4 branches missed.">                } else if (post != null &amp;&amp; post.getUser().getId() != token.getUser().getId()) {</span>
                     // return permission error code
 <span class="fc" id="L284">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                            Constraints.CODE_2509), null);
-                } else {
+<span class="fc" id="L285">                            Constraints.CODE_2509), null);</span>
+<span class="fc" id="L286">                } else {</span>
                     // return invalid error code
 <span class="fc" id="L288">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                            Constraints.CODE_2501), null);
+<span class="fc" id="L289">                            Constraints.CODE_2501), null);</span>
                 }
             }
-<span class="nc" id="L292">        } catch (Exception ex) {</span>
+<span class="pc" id="L292">        } catch (Exception ex) {</span>
 <span class="nc" id="L293">            ex.printStackTrace();</span>
 <span class="nc" id="L294">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L296">        }</span>
+<span class="nc" id="L295">                    Constraints.CODE_9001), null);</span>
+        }
 
 <span class="fc" id="L298">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
@@ -348,18 +348,18 @@ import com.mulodo.miniblog.validator.PostValidate;
 <span class="pc bpc" id="L348" title="1 of 4 branches missed.">                } else if (post != null &amp;&amp; post.getUser().getId() != token.getUser().getId()) {</span>
                     // return permission error code
 <span class="fc" id="L350">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                            Constraints.CODE_2509), null);
-                } else {
+<span class="fc" id="L351">                            Constraints.CODE_2509), null);</span>
+<span class="fc" id="L352">                } else {</span>
                     // return invalid error code
 <span class="fc" id="L354">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                            Constraints.CODE_2501), null);
+<span class="fc" id="L355">                            Constraints.CODE_2501), null);</span>
                 }
             }
-<span class="nc" id="L358">        } catch (Exception ex) {</span>
+<span class="pc" id="L358">        } catch (Exception ex) {</span>
 <span class="nc" id="L359">            ex.printStackTrace();</span>
 <span class="nc" id="L360">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L362">        }</span>
+<span class="nc" id="L361">                    Constraints.CODE_9001), null);</span>
+        }
 
 <span class="fc" id="L364">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
@@ -402,11 +402,11 @@ import com.mulodo.miniblog.validator.PostValidate;
             // get all post of current user and like description(if not null)
 <span class="fc" id="L403">            data = this.postService.getAllPost(pageNumInt, token.getUser().getId(), description);</span>
 <span class="fc" id="L404">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L405">        } catch (Exception ex) {</span>
+<span class="pc" id="L405">        } catch (Exception ex) {</span>
 <span class="nc" id="L406">            ex.printStackTrace();</span>
 <span class="nc" id="L407">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L409">        }</span>
+<span class="nc" id="L408">                    Constraints.CODE_9001), null);</span>
+        }
 
 <span class="fc" id="L411">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }
@@ -455,18 +455,18 @@ import com.mulodo.miniblog.validator.PostValidate;
             // active
 <span class="fc bfc" id="L456" title="All 2 branches covered.">            if (token.getUser().getId() == Integer.parseInt(user_id)) {</span>
 <span class="fc" id="L457">                data = this.postService</span>
-                        .getAllPostForUser(pageNumInt, token.getUser().getId(), true);
-            } else {
+<span class="fc" id="L458">                        .getAllPostForUser(pageNumInt, token.getUser().getId(), true);</span>
+<span class="fc" id="L459">            } else {</span>
 <span class="fc" id="L460">                data = this.postService.getAllPostForUser(pageNumInt, Integer.parseInt(user_id),</span>
-                        false);
+<span class="fc" id="L461">                        false);</span>
             }
 
 <span class="fc" id="L464">            jsonObject = BuildJSON.buildReturn(meta, data);</span>
-<span class="nc" id="L465">        } catch (Exception ex) {</span>
+<span class="pc" id="L465">        } catch (Exception ex) {</span>
 <span class="nc" id="L466">            ex.printStackTrace();</span>
 <span class="nc" id="L467">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L469">        }</span>
+<span class="nc" id="L468">                    Constraints.CODE_9001), null);</span>
+        }
 
 <span class="fc" id="L471">        return Response.status(200).entity(jsonObject.toString()).build();</span>
     }

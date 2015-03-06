@@ -26,7 +26,6 @@ import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.json.JSONObject;
 
 import com.mulodo.miniblog.contraints.Constraints;
-import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.object.Meta;
 import com.mulodo.miniblog.service.TokenService;
@@ -39,12 +38,12 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
  */
 @Provider
 @ServerInterceptor
-<span class="fc" id="L42">public class SecurityInterceptor implements javax.ws.rs.container.ContainerRequestFilter</span>
+<span class="fc" id="L41">public class SecurityInterceptor implements javax.ws.rs.container.ContainerRequestFilter</span>
 {
 
     // get data source from current application context
-<span class="fc" id="L46">    private TokenService tokenService = (TokenService) SpringApplicationContext</span>
-            .getBean(&quot;tokenService&quot;);
+<span class="fc" id="L45">    private TokenService tokenService = (TokenService) SpringApplicationContext</span>
+<span class="fc" id="L46">            .getBean(&quot;tokenService&quot;);</span>
 
     private ResourceMethodInvoker methodInvoker;
     private Method method;
@@ -54,113 +53,113 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
     {
 
         // get method invoker from request context
-<span class="fc" id="L57">        methodInvoker = (ResourceMethodInvoker) requestContext</span>
-                .getProperty(&quot;org.jboss.resteasy.core.ResourceMethodInvoker&quot;);
+<span class="fc" id="L56">        methodInvoker = (ResourceMethodInvoker) requestContext</span>
+<span class="fc" id="L57">                .getProperty(&quot;org.jboss.resteasy.core.ResourceMethodInvoker&quot;);</span>
 
         // get type of method in api (permission on every api)
-<span class="fc" id="L61">        method = methodInvoker.getMethod();</span>
+<span class="fc" id="L60">        method = methodInvoker.getMethod();</span>
 
         // get information from request context: access_key, url information
-<span class="fc" id="L64">        String access_key = getTokenHeader(requestContext);</span>
-<span class="fc" id="L65">        UriInfo uri = requestContext.getUriInfo();</span>
-<span class="fc" id="L66">        String matcherURL = uri.getPath();</span>
+<span class="fc" id="L63">        String access_key = getTokenHeader(requestContext);</span>
+<span class="fc" id="L64">        UriInfo uri = requestContext.getUriInfo();</span>
+<span class="fc" id="L65">        String matcherURL = uri.getPath();</span>
 
         // create token for get information of user from access_key
-<span class="fc" id="L69">        JSONObject jsonObject = null;</span>
+<span class="fc" id="L68">        JSONObject jsonObject = null;</span>
 
         try {
 
             // request have url same: /users/login
             // bonus 1 hours for token and return error 1003: already login
-<span class="fc bfc" id="L75" title="All 2 branches covered.">            if (matcherURL.equals(&quot;/users/login&quot;)) {</span>
-<span class="fc" id="L76">                Token tokenLogin = null;</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            if (matcherURL.equals(&quot;/users/login&quot;)) {</span>
+<span class="fc" id="L75">                Token tokenLogin = null;</span>
                 // get information from access_key
-<span class="pc bpc" id="L78" title="1 of 2 branches missed.">                if (access_key != null) {</span>
-<span class="fc" id="L79">                    tokenLogin = tokenService.findByAccessKey(access_key);</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">                if (access_key != null) {</span>
+<span class="fc" id="L78">                    tokenLogin = tokenService.findByAccessKey(access_key);</span>
                 }
 
-<span class="fc" id="L82">                Calendar cal = Calendar.getInstance();</span>
-<span class="pc bpc" id="L83" title="2 of 4 branches missed.">                if (tokenLogin != null &amp;&amp; cal.getTime().compareTo(tokenLogin.getExpired_at()) &lt;= 0) {</span>
+<span class="fc" id="L81">                Calendar cal = Calendar.getInstance();</span>
+<span class="pc bpc" id="L82" title="2 of 4 branches missed.">                if (tokenLogin != null &amp;&amp; cal.getTime().compareTo(tokenLogin.getExpired_at()) &lt;= 0) {</span>
 
                     // add one hours in token
-<span class="fc" id="L86">                    Calendar cal_expired_at = Calendar.getInstance();</span>
-<span class="fc" id="L87">                    cal_expired_at.add(Calendar.HOUR_OF_DAY, 1);</span>
-<span class="fc" id="L88">                    tokenLogin.setExpired_at(cal_expired_at.getTime());</span>
+<span class="fc" id="L85">                    Calendar cal_expired_at = Calendar.getInstance();</span>
+<span class="fc" id="L86">                    cal_expired_at.add(Calendar.HOUR_OF_DAY, 1);</span>
+<span class="fc" id="L87">                    tokenLogin.setExpired_at(cal_expired_at.getTime());</span>
                     // call update method for updating expired time
-<span class="fc" id="L90">                    this.tokenService.update(tokenLogin);</span>
-<span class="fc" id="L91">                    jsonObject = new JSONObject();</span>
+<span class="fc" id="L89">                    this.tokenService.update(tokenLogin);</span>
+<span class="fc" id="L90">                    jsonObject = new JSONObject();</span>
                     // build error code 1003 and return
-<span class="fc" id="L93">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,</span>
-                            Constraints.CODE_1003), null);
-<span class="fc" id="L95">                    requestContext.abortWith(Response.status(200).entity(jsonObject.toString())</span>
-                            .header(Constraints.ACCESS_KEY, access_key).build());
-<span class="fc" id="L97">                    return;</span>
+<span class="fc" id="L92">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,</span>
+<span class="fc" id="L93">                            Constraints.CODE_1003), null);</span>
+<span class="fc" id="L94">                    requestContext.abortWith(Response.status(200).entity(jsonObject.toString())</span>
+<span class="fc" id="L95">                            .header(Constraints.ACCESS_KEY, access_key).build());</span>
+<span class="fc" id="L96">                    return;</span>
                 }
             }
-<span class="fc" id="L100">        } catch (Exception ex) {</span>
+<span class="fc" id="L99">        } catch (Exception ex) {</span>
             // return code 9001 if have system error
-<span class="fc" id="L102">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,</span>
-                    Constraints.CODE_9001), null);
-<span class="fc" id="L104">            requestContext.abortWith(Response.status(500).entity(jsonObject.toString()).build());</span>
-<span class="fc" id="L105">            return;</span>
-<span class="fc" id="L106">        }</span>
+<span class="fc" id="L101">            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,</span>
+<span class="fc" id="L102">                    Constraints.CODE_9001), null);</span>
+<span class="fc" id="L103">            requestContext.abortWith(Response.status(500).entity(jsonObject.toString()).build());</span>
+<span class="fc" id="L104">            return;</span>
+        }
 
         // check if API require permission (in this project, it require: login)
-<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        if (method.isAnnotationPresent(RolesAllowed.class)) {</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (method.isAnnotationPresent(RolesAllowed.class)) {</span>
             // RolesAllowed rolesAnnotation =
             // method.getAnnotation(RolesAllowed.class);
             // Set&lt;String&gt; rolesSet = new
             // HashSet&lt;String&gt;(Arrays.asList(rolesAnnotation.value()));
-<span class="fc" id="L114">            Token token = null;</span>
+<span class="fc" id="L113">            Token token = null;</span>
             try {
                 // get token from access key
-<span class="pc bpc" id="L117" title="1 of 4 branches missed.">                if (access_key != null &amp;&amp; ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(access_key)) {</span>
-<span class="fc" id="L118">                    token = tokenService.findByAccessKey(access_key);</span>
-                } else {
+<span class="pc bpc" id="L116" title="1 of 4 branches missed.">                if (access_key != null &amp;&amp; ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(access_key)) {</span>
+<span class="fc" id="L117">                    token = tokenService.findByAccessKey(access_key);</span>
+<span class="fc" id="L118">                } else {</span>
                     // if access key is null, return message to client require
                     // permission
-<span class="fc" id="L122">                    jsonObject = new JSONObject();</span>
+<span class="fc" id="L121">                    jsonObject = new JSONObject();</span>
                     // build error code with code 1002
-<span class="fc" id="L124">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,</span>
-                            Constraints.CODE_1002), null);
-<span class="fc" id="L126">                    requestContext.abortWith(Response.status(401).entity(jsonObject.toString())</span>
-                            .build());
-<span class="fc" id="L128">                    return;</span>
+<span class="fc" id="L123">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,</span>
+<span class="fc" id="L124">                            Constraints.CODE_1002), null);</span>
+<span class="fc" id="L125">                    requestContext.abortWith(Response.status(401).entity(jsonObject.toString())</span>
+<span class="fc" id="L126">                            .build());</span>
+<span class="fc" id="L127">                    return;</span>
                 }
 
-<span class="fc" id="L131">                Calendar cal = Calendar.getInstance();</span>
+<span class="fc" id="L130">                Calendar cal = Calendar.getInstance();</span>
                 // if invlaid access key in database, return error code for
                 // requiring permission(login)
-<span class="fc bfc" id="L134" title="All 4 branches covered.">                if (token == null || cal.getTime().compareTo(token.getExpired_at()) &gt; 0) {</span>
-<span class="fc" id="L135">                    jsonObject = new JSONObject();</span>
+<span class="fc bfc" id="L133" title="All 4 branches covered.">                if (token == null || cal.getTime().compareTo(token.getExpired_at()) &gt; 0) {</span>
+<span class="fc" id="L134">                    jsonObject = new JSONObject();</span>
                     // build error code with code 1002
-<span class="fc" id="L137">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,</span>
-                            Constraints.CODE_1002), null);
-<span class="fc" id="L139">                    requestContext.abortWith(Response.status(401).entity(jsonObject.toString())</span>
-                            .build());
-<span class="fc" id="L141">                    return;</span>
+<span class="fc" id="L136">                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,</span>
+<span class="fc" id="L137">                            Constraints.CODE_1002), null);</span>
+<span class="fc" id="L138">                    requestContext.abortWith(Response.status(401).entity(jsonObject.toString())</span>
+<span class="fc" id="L139">                            .build());</span>
+<span class="fc" id="L140">                    return;</span>
                 } else {
                     // if valid access key in database, add one hour to token
-<span class="fc" id="L144">                    Calendar cal_expired_at = Calendar.getInstance();</span>
-<span class="fc" id="L145">                    cal_expired_at.add(Calendar.HOUR_OF_DAY, 1);</span>
-<span class="fc" id="L146">                    token.setExpired_at(cal_expired_at.getTime());</span>
+<span class="fc" id="L143">                    Calendar cal_expired_at = Calendar.getInstance();</span>
+<span class="fc" id="L144">                    cal_expired_at.add(Calendar.HOUR_OF_DAY, 1);</span>
+<span class="fc" id="L145">                    token.setExpired_at(cal_expired_at.getTime());</span>
                     // update expired time to database
-<span class="fc" id="L148">                    this.tokenService.update(token);</span>
+<span class="fc" id="L147">                    this.tokenService.update(token);</span>
                 }
-<span class="fc" id="L150">            } catch (Exception ex) {</span>
+<span class="fc" id="L149">            } catch (Exception ex) {</span>
                 // build error code when have system error
-<span class="fc" id="L152">                jsonObject = new JSONObject();</span>
+<span class="fc" id="L151">                jsonObject = new JSONObject();</span>
                 // build 9001 error code
-<span class="fc" id="L154">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,</span>
-                        Constraints.CODE_9001), null);
-<span class="fc" id="L156">                requestContext</span>
-                        .abortWith(Response.status(500).entity(jsonObject.toString()).build());
-<span class="fc" id="L158">                return;</span>
-<span class="fc" id="L159">            }</span>
+<span class="fc" id="L153">                jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_1000,</span>
+<span class="fc" id="L154">                        Constraints.CODE_9001), null);</span>
+<span class="fc" id="L155">                requestContext</span>
+<span class="fc" id="L156">                        .abortWith(Response.status(500).entity(jsonObject.toString()).build());</span>
+<span class="fc" id="L157">                return;</span>
+            }
 
         }
 
-<span class="fc" id="L163">    }</span>
+<span class="fc" id="L162">    }</span>
     
     /**
      * getTokenHeader use for get access key from header
@@ -172,19 +171,19 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
     private String getTokenHeader(ContainerRequestContext requestContext)
     {
         // get all valua in header to MultivalueMap
-<span class="fc" id="L175">        MultivaluedMap&lt;String, String&gt; listHeader = requestContext.getHeaders();</span>
+<span class="fc" id="L174">        MultivaluedMap&lt;String, String&gt; listHeader = requestContext.getHeaders();</span>
         // check valid access key in header
-<span class="fc" id="L177">        Boolean isValidToken = listHeader.containsKey(Constraints.ACCESS_KEY);</span>
-<span class="fc bfc" id="L178" title="All 2 branches covered.">        if (isValidToken) {</span>
+<span class="fc" id="L176">        Boolean isValidToken = listHeader.containsKey(Constraints.ACCESS_KEY);</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        if (isValidToken) {</span>
             //get value of access key from header
-<span class="fc" id="L180">            List&lt;String&gt; headers = listHeader.get(Constraints.ACCESS_KEY);</span>
-<span class="pc bpc" id="L181" title="1 of 2 branches missed.">            if (headers != null) {</span>
-<span class="fc" id="L182">                return headers.get(0);</span>
+<span class="fc" id="L179">            List&lt;String&gt; headers = listHeader.get(Constraints.ACCESS_KEY);</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">            if (headers != null) {</span>
+<span class="fc" id="L181">                return headers.get(0);</span>
             }
         }
         
         // return null if invalid
-<span class="fc" id="L187">        return null;</span>
+<span class="fc" id="L186">        return null;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

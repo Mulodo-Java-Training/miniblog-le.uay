@@ -69,12 +69,12 @@ import com.mulodo.miniblog.model.User;
             
             //get specific column 
 <span class="fc" id="L71">            criteria.setProjection(Projections.projectionList()</span>
-                    .add(Projections.property(&quot;id&quot;).as(&quot;id&quot;))
-                    .add(Projections.property(&quot;content&quot;).as(&quot;content&quot;))
-                    .add(Projections.property(&quot;created_at&quot;).as(&quot;created_at&quot;))
-                    .add(Projections.property(&quot;modified_at&quot;).as(&quot;modified_at&quot;))
-                    .add(Projections.property(&quot;us.id&quot;)).add(Projections.property(&quot;us.username&quot;))
-                    .add(Projections.property(&quot;us.status&quot;)));
+<span class="fc" id="L72">                    .add(Projections.property(&quot;id&quot;).as(&quot;id&quot;))</span>
+<span class="fc" id="L73">                    .add(Projections.property(&quot;content&quot;).as(&quot;content&quot;))</span>
+<span class="fc" id="L74">                    .add(Projections.property(&quot;created_at&quot;).as(&quot;created_at&quot;))</span>
+<span class="fc" id="L75">                    .add(Projections.property(&quot;modified_at&quot;).as(&quot;modified_at&quot;))</span>
+<span class="fc" id="L76">                    .add(Projections.property(&quot;us.id&quot;)).add(Projections.property(&quot;us.username&quot;))</span>
+<span class="fc" id="L77">                    .add(Projections.property(&quot;us.status&quot;)));</span>
 
             // create inner join with post table
 <span class="fc" id="L80">            criteria.createAlias(&quot;post&quot;, &quot;pt&quot;);</span>
@@ -104,14 +104,14 @@ import com.mulodo.miniblog.model.User;
 <span class="fc" id="L104">                    comment.setCreated_at((Date) myResult[2]);</span>
 <span class="fc" id="L105">                    comment.setModified_at((Date) myResult[3]);</span>
 <span class="fc" id="L106">                    comment.setUser(new User((int) myResult[4], (String) myResult[5],</span>
-                            (int) myResult[6]));
+<span class="fc" id="L107">                            (int) myResult[6]));</span>
                     // add comment to list object
 <span class="fc" id="L109">                    listComments.add(comment);</span>
-<span class="fc" id="L110">                }</span>
+                }
 
 <span class="fc bfc" id="L112" title="All 2 branches covered.">                for (Comment cm : listComments) {</span>
 <span class="fc" id="L113">                    logger.info(&quot;Post in get all post :&quot; + cm.getId());</span>
-<span class="fc" id="L114">                }</span>
+                }
             }
 <span class="fc" id="L116">            return listComments;</span>
 <span class="nc" id="L117">        } catch (HibernateException ex) {</span>
@@ -145,10 +145,10 @@ import com.mulodo.miniblog.model.User;
             // create inner join with user table
 <span class="fc" id="L146">            criteria.createAlias(&quot;user&quot;, &quot;us&quot;);</span>
 <span class="fc" id="L147">            criteria.setProjection(Projections.projectionList().add(Projections.property(&quot;id&quot;))</span>
-                    .add(Projections.property(&quot;content&quot;)).add(Projections.property(&quot;created_at&quot;))
-                    .add(Projections.property(&quot;modified_at&quot;)).add(Projections.property(&quot;us.id&quot;))
-                    .add(Projections.property(&quot;us.username&quot;))
-                    .add(Projections.property(&quot;us.status&quot;)));
+<span class="fc" id="L148">                    .add(Projections.property(&quot;content&quot;)).add(Projections.property(&quot;created_at&quot;))</span>
+<span class="fc" id="L149">                    .add(Projections.property(&quot;modified_at&quot;)).add(Projections.property(&quot;us.id&quot;))</span>
+<span class="fc" id="L150">                    .add(Projections.property(&quot;us.username&quot;))</span>
+<span class="fc" id="L151">                    .add(Projections.property(&quot;us.status&quot;)));</span>
 
             // set condition user_id
 <span class="fc" id="L154">            criteria.add(Restrictions.eq(&quot;us.id&quot;, user_id));</span>
@@ -163,7 +163,7 @@ import com.mulodo.miniblog.model.User;
 <span class="fc" id="L163">                Criterion criterionPostUserActive = Restrictions.eq(&quot;pu.id&quot;, user_id);</span>
                 // set condition status active for other post that user is not owner
 <span class="fc" id="L165">                Criterion criterionCurrentActive = Restrictions.eq(&quot;pt.status&quot;,</span>
-                        Constraints.POST_ACTIVE);
+<span class="fc" id="L166">                        Constraints.POST_ACTIVE);</span>
                 // set condition get all comment of current login user and comment of post active
 <span class="fc" id="L168">                criteria.add(Restrictions.or(criterionPostUserActive, criterionCurrentActive));</span>
 <span class="fc" id="L169">            } else {</span>
@@ -175,7 +175,7 @@ import com.mulodo.miniblog.model.User;
 <span class="fc" id="L175">            criteria.addOrder(Order.desc(&quot;created_at&quot;));</span>
 
 <span class="fc" id="L177">            List&lt;Comment&gt; listComments = new ArrayList&lt;Comment&gt;();</span>
-<span class="pc bpc" id="L178" title="1 of 2 branches missed.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">            if (!criteria.list().isEmpty()) {</span>
                 
                 // get list data to list object (result)
 <span class="fc" id="L181">                List&lt;Object[]&gt; result = criteria.list();</span>
@@ -190,12 +190,12 @@ import com.mulodo.miniblog.model.User;
 <span class="fc" id="L190">                    comment.setCreated_at((Date) myResult[2]);</span>
 <span class="fc" id="L191">                    comment.setModified_at((Date) myResult[3]);</span>
 <span class="fc" id="L192">                    comment.setUser(new User((int) myResult[4], (String) myResult[5],</span>
-                            (int) myResult[6]));
+<span class="fc" id="L193">                            (int) myResult[6]));</span>
                     
                     // add comment to list comments
 <span class="fc" id="L196">                    listComments.add(comment);</span>
 <span class="fc" id="L197">                    logger.info(&quot;Comment in get all commente for user :&quot; + comment.getId());</span>
-<span class="fc" id="L198">                }</span>
+                }
             }
 <span class="fc" id="L200">            return listComments;</span>
 <span class="nc" id="L201">        } catch (HibernateException ex) {</span>
