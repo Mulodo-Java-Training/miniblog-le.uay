@@ -26,7 +26,6 @@ import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.json.JSONObject;
 
 import com.mulodo.miniblog.contraints.Constraints;
-import com.mulodo.miniblog.exeption.HandlerException;
 import com.mulodo.miniblog.model.Token;
 import com.mulodo.miniblog.object.Meta;
 import com.mulodo.miniblog.service.TokenService;

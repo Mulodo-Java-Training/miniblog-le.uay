@@ -68,6 +68,7 @@ public class HomeController {
 			if(responseData.getMeta().getCode() == ConstraintsMessage.CODE_204.getKey()){
 				
 				session.setAttribute("access_key", responseData.getHeader());
+				session.setMaxInactiveInterval(3600);
 				UsernamePasswordAuthenticationToken authen = new UsernamePasswordAuthenticationToken(responseData.getHeader(),
 	                    null, AuthorityUtils.createAuthorityList("ROLE_USER"));
 				Authentication authentication = customAuthenticationProvider.authenticate(authen);

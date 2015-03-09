@@ -127,7 +127,6 @@ public class PostController
                     // get user from token
                     User user = token.getUser();
                     Calendar cal = Calendar.getInstance();
-
                     // add data to post variable
                     Post post = new Post();
                     post.setTitle(title);
@@ -146,6 +145,75 @@ public class PostController
                 jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,
                         Constraints.CODE_9001), null);
             }
+        }
+        return Response.status(200).entity(jsonObject.toString()).build();
+    }
+    
+    /**
+     * getPostInfo is api that user use for get detail post in miniblog
+     *
+     * @param postId
+     *            : id of post
+     *            
+     * @return Response
+     */
+    @RolesAllowed("ADMIN")
+    @GET
+    @Path("getPostInfo")
+    public Response getPostInfo(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
+            @QueryParam("id") String id)
+    {
+
+        if (tokenService == null || postService == null) {
+            setDataSource();
+        }
+
+        // declare jsonObject for build return data
+        JSONObject jsonObject = new JSONObject();
+        // validate data from client and add to meta
+        PostValidate postValidate = new PostValidate();
+        Meta meta = postValidate.validateGetPostInfo(id);
+        Data data = null;
+        // if have error, add error to jsonobject and return to client
+        if (meta != null) {
+            jsonObject = BuildJSON.buildReturn(meta, data);
+            return Response.status(200).entity(jsonObject.toString()).build();
+        }
+        try {
+            Token token = null;
+            if (access_key != null) {
+                token = this.tokenService.findByAccessKey(access_key);
+            }
+            if (token != null) {
+                int postId = Integer.parseInt(id);
+                Post post = this.postService.findOne(postId);
+                // if have post and current user have permission on it, call
+                // update function
+                // else if have post but not have permission on it, return
+                // permission error code (post from other user must have status active)
+                // else return invalid post error code
+                if (post != null && (post.getUser().getId() == token.getUser().getId() ||
+                       (post.getUser().getId() != token.getUser().getId() && post.getStatus() == 1 ))) {
+                    data = new Data();
+                    data.setPost(post);
+                    jsonObject = BuildJSON.buildReturn(meta, data);
+                    jsonObject.getJSONObject(Constraints.DATA).getJSONObject("post")
+                        .getJSONObject("user").remove("password");
+                } else if (post != null && post.getUser().getId() != token.getUser().getId()
+                        && post.getStatus() == 0) {
+                    // return permission error code
+                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,
+                            Constraints.CODE_2509), null);
+                } else {
+                    // return invalid error code
+                    jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,
+                            Constraints.CODE_2501), null);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            jsonObject = BuildJSON.buildReturn(new Meta(Constraints.CODE_2500,
+                    Constraints.CODE_9001), null);
         }
         return Response.status(200).entity(jsonObject.toString()).build();
     }
@@ -423,7 +491,8 @@ public class PostController
     @GET
     @Path("getPostForUser")
     public Response getAllPostForUser(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
-            @QueryParam("pageNum") String pageNum, @QueryParam("user_id") String user_id)
+            @QueryParam("pageNum") String pageNum, @QueryParam("user_id") String user_id,
+            @QueryParam("description") String description)
     {
 
         if (tokenService == null || postService == null) {
@@ -455,10 +524,11 @@ public class PostController
             // active
             if (token.getUser().getId() == Integer.parseInt(user_id)) {
                 data = this.postService
-                        .getAllPostForUser(pageNumInt, token.getUser().getId(), true);
+                        .getAllPostForUser(pageNumInt, token.getUser().getId(),
+                                description, true);
             } else {
                 data = this.postService.getAllPostForUser(pageNumInt, Integer.parseInt(user_id),
-                        false);
+                        description,false);
             }
 
             jsonObject = BuildJSON.buildReturn(meta, data);

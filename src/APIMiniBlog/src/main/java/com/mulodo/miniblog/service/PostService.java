@@ -47,7 +47,7 @@ public interface PostService extends GenericService<Post>
      * @return List<Post>
      * @exception HandlerException
      */
-    public Data getAllPostForUser(int pageNum, int author_id, Boolean isOwnerUser)
+    public Data getAllPostForUser(int pageNum, int author_id, String description, Boolean isOwnerUser)
             throws HandlerException;
 
     /**

@@ -260,4 +260,24 @@ public class PostValidate
         }
         return null;
     }
+
+    public Meta validateGetPostInfo(String postId)
+    {
+        
+     // List message contain error message validate
+        List<Message> listMessage = new ArrayList<Message>();
+        
+        Boolean isValid = ValidatorUtils.isPositiveInteger(postId);
+        if (!isValid) {
+            // check if have error, add message error to listmessage
+            listMessage.add(new Message(Constraints.CODE_2508));
+        }
+
+        if (!listMessage.isEmpty()) {
+            // check if have error, add message error to listmessage
+            Meta meta = new Meta(Constraints.CODE_2500, listMessage);
+            return meta;
+        }
+        return null;
+    }
 }

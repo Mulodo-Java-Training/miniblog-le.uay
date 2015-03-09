@@ -1,6 +1,7 @@
 package com.mulodo.miniblog.service.impl;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +29,8 @@ public class UserServiceImpl implements UserService {
 	
 	private RestTemplate restTemplate;
 	private ResponseEntity<ResponseData> responseEntity;
+	private Charset charset = Charset.forName("UTF-8");
+	private MediaType mediaType = new MediaType("application", "x-www-form-urlencoded", charset);
 	
 	@Override
 	public ResponseData register(String username, String firstname,
@@ -94,7 +97,7 @@ public class UserServiceImpl implements UserService {
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(Constraints.ACCESS_KEY, accessKey);
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.setContentType(mediaType);
 		
 		HttpEntity<String> request = new HttpEntity<String>(headers);
 		
@@ -123,7 +126,7 @@ public class UserServiceImpl implements UserService {
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(Constraints.ACCESS_KEY, accessKey);
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.setContentType(mediaType);
 
 		String requestBody = "password="+password+"&firstname="+firstname+"&lastname="+lastname+""
 				+ "&email="+email+"&status="+status;
@@ -158,7 +161,7 @@ public class UserServiceImpl implements UserService {
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(Constraints.ACCESS_KEY, accessKey);
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.setContentType(mediaType);
 
 		String requestBody = "oldPassword="+currentPassword+"&newPassword="+newPassword;
 		
@@ -190,7 +193,7 @@ public class UserServiceImpl implements UserService {
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(Constraints.ACCESS_KEY, accessKey);
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.setContentType(mediaType);
 
 		
 		HttpEntity<String> request = new HttpEntity<String>(headers);

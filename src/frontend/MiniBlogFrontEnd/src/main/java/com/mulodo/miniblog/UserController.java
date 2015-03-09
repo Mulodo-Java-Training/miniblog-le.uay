@@ -21,7 +21,6 @@ import com.mulodo.miniblog.constraints.ConstraintsMessage;
 import com.mulodo.miniblog.constraints.ConstraintsUserError;
 import com.mulodo.miniblog.object.Message;
 import com.mulodo.miniblog.object.ResponseData;
-import com.mulodo.miniblog.object.User;
 import com.mulodo.miniblog.service.UserService;
 import com.mulodo.miniblog.utils.InvalidateUtils;
 
@@ -36,7 +35,16 @@ public class UserController {
 	public String getUserInfo(Locale locale, Model model,
 			HttpServletRequest request) {
 
+		
+		return "profile";
+	}
+	
+	@RequestMapping(value = "/mainpage/getUserInfo", method = RequestMethod.GET)
+	@ResponseBody
+	public String getUserInfo(HttpServletRequest request) {
+
 		HttpSession session = request.getSession(true);
+		JSONObject jsonObject = new JSONObject();
 
 		String accessKey = (String) session
 				.getAttribute(Constraints.ACCESS_KEY);
@@ -46,89 +54,36 @@ public class UserController {
 		if(responseData == null){
 			System.out.println("response data null");
 		}
-		JSONObject jsonObject = new JSONObject(responseData);
-		System.out.println("JSON = "+jsonObject.toString());
 		
 		if (responseData.getMeta() != null) {
 			if (responseData.getMeta().getCode() == ConstraintsUserError.CODE_2000
 					.getKey()) {
-				model.addAttribute(Constraints.MESSAGE,
+				jsonObject.put(Constraints.MESSAGE,
 						ConstraintsUserError.CODE_2000.getValue());
 				isError = true;
 			} else if (responseData.getMeta().getCode() == ConstraintsUserError.CODE_1000
 					.getKey()) {
-				model.addAttribute(Constraints.MESSAGE,
+				jsonObject.put(Constraints.MESSAGE,
 						ConstraintsUserError.CODE_1000.getValue());
 				isError = true;
 			}
 		} else if (responseData.getData() != null) {
 			isError = false;
 		} else {
-			model.addAttribute(Constraints.MESSAGE, Constraints.COMMOM_ERROR);
+			jsonObject.put(Constraints.MESSAGE, Constraints.COMMOM_ERROR);
 		}
 
 		if (!isError) {
-			User user = responseData.getData().getUser();
-			model.addAttribute("username", user.getUsername());
-			model.addAttribute("firstname", user.getFirstname());
-			model.addAttribute("lastname", user.getLastname());
-			model.addAttribute("email", user.getEmail());
-			System.out.println("status ="+user.getStatus());
-			if (user.getStatus() == ConstraintsMessage.USER_ACTIVE.getKey()) {
-				model.addAttribute("status",
-						ConstraintsMessage.USER_ACTIVE.getValue());
-			} else {
-				model.addAttribute("status",
-						ConstraintsMessage.USER_INACTIVE.getValue());
-			}
+			JSONObject jsonUser = new JSONObject(responseData.getData().getUser());
+			jsonObject.put("user", jsonUser);
 		}
-		return "profile";
+		return jsonObject.toString();
 	}
 
 	@RequestMapping(value = "/mainpage/profile/edit", method = RequestMethod.GET)
 	public String editUserInfo(Locale locale, Model model,
 			HttpServletRequest request) {
 
-		HttpSession session = request.getSession(true);
-
-		String accessKey = (String) session
-				.getAttribute(Constraints.ACCESS_KEY);
-
-		ResponseData responseData = userService.getUserInfo(accessKey);
-		Boolean isError = false;
-
-		if (responseData.getMeta() != null) {
-			if (responseData.getMeta().getCode() == ConstraintsUserError.CODE_2000
-					.getKey()) {
-				model.addAttribute(Constraints.MESSAGE,
-						ConstraintsUserError.CODE_2000.getValue());
-				isError = true;
-			} else if (responseData.getMeta().getCode() == ConstraintsUserError.CODE_1000
-					.getKey()) {
-				model.addAttribute(Constraints.MESSAGE,
-						ConstraintsUserError.CODE_1000.getValue());
-				isError = true;
-			}
-		} else if (responseData.getData() != null) {
-			isError = false;
-		} else {
-			model.addAttribute(Constraints.MESSAGE, Constraints.COMMOM_ERROR);
-		}
-
-		if (!isError) {
-			User user = responseData.getData().getUser();
-			model.addAttribute("username", user.getUsername());
-			model.addAttribute("firstname", user.getFirstname());
-			model.addAttribute("lastname", user.getLastname());
-			model.addAttribute("email", user.getEmail());
-			if (user.getStatus() == ConstraintsMessage.USER_ACTIVE.getKey()) {
-				model.addAttribute("status",
-						ConstraintsMessage.USER_ACTIVE.getValue());
-			} else {
-				model.addAttribute("status",
-						ConstraintsMessage.USER_INACTIVE.getValue());
-			}
-		}
 		return "editprofile";
 	}
 
@@ -254,8 +209,9 @@ public class UserController {
 	
 	@RequestMapping(value = "/mainpage/searchUser", method = RequestMethod.GET)
 	public String searchUser(@RequestParam("name") String name, Locale locale, Model model, HttpServletRequest request) {
-		
-		model.addAttribute("name",name);
+		if(name != null){
+			model.addAttribute("name",name);
+		}
 		return "searchUser";
 	}
 	

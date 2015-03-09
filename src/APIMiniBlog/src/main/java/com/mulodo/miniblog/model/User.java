@@ -85,6 +85,15 @@ public class User
         this.username = username;
         this.status = status;
     }
+    
+    public User(int id, String username, String firstname, String lastname, int status) {
+        super();
+        this.id = id;
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.status = status;
+    }
 
     public User(String username, String password, String lastname, String firstname, String email,
             Date created_at, Date modified_at, int status) {

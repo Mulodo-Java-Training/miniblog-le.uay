@@ -1,0 +1,356 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="
+">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Add post Page</title>
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" type="type/css" href="../css/bootstrap.min.css">
+        <link rel="stylesheet" type="type/css" href="../css/style.css">
+        <link rel="stylesheet" type="type/css" href="../css/m-styles.min.css">
+        <link rel="stylesheet" type="text/css" href="../css/jquery.cleditor.css" />
+
+        <script src="../js/jquery-2.1.3.js"></script>
+        <script src="../js/detectmobilebrowser.js"></script>
+        <script src="../js/bootstrap.min.js"></script>
+        <script src="../js/jquery.bootpag.min.js"></script>
+        <script src="../js/tinymce/tinymce.min.js"></script>
+        <script src="../js/jquery.validate.js"></script>
+
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script type="text/javascript">
+            tinymce.init({
+                selector: "textarea",
+                plugins: [
+                        "autolink link image print preview",  
+                    ],
+                toolbar: "insertfile undo redo | styleselect | bold italic | link image | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent ",
+                autosave_ask_before_unload: false,
+                max_height: 200,
+                min_height: 160,
+                height : 180,
+                onchange_callback: function(editor) {
+        			tinyMCE.triggerSave();
+        			$("#" + editor.id).valid();
+        		}
+             });
+        	$(function() {
+        		var validator = $("#add-post").submit(function(e) {
+        			e.preventDefault();
+        			$('#spinner').fadeIn();
+        			tinyMCE.triggerSave();
+        			var content = tinyMCE.activeEditor.getContent(); // get the content
+        		    $('#content').val(content); // put it in the textarea
+        		    var title = $('#title').val();
+        		    var status = $('#status').val();
+        		    var postId = $('input#postId').val();
+        		    $.ajax({
+        				type:"POST",
+        				url:"post/edit",
+        				data:{postId: postId, title: title, content: content, status: status}
+        			}).done(function(data){
+        				$('#spinner').fadeOut();
+        				console.log('data='+data);
+        				var data = jQuery.parseJSON(data);
+        				if(data.message){
+        					$('#message').text(data.message);
+        				}
+        			}).fail(function (){
+        				$('#spinner').fadeOut();
+        				$('#message').text("Have some error AJAX--Please try again later");
+        			});
+        		}).validate({
+        			ignore: "",
+        			rules: {
+        				title: {
+        					minlength: 1,
+			                maxlength: 150,
+			                required: true
+        				},
+        				content: {
+        					minlength: 1,
+			                maxlength: 3000,
+			                required: true
+        				},
+        			},messages: {
+        				title: {
+        					required: "Title is required",
+        					maxlength: " Invalid title - Less than 150 character"
+        				},
+						content:{
+							required: "Content is required",
+							
+						} 
+					},
+			        highlight: function(element) {
+			            $(element).closest('.form-group').addClass('has-error');
+			        },
+			        unhighlight: function(element) {
+			            $(element).closest('.form-group').removeClass('has-error');
+			        },
+			        errorElement: 'span',
+			        errorClass: 'help-block',
+        			errorPlacement: function(label, element) {
+        				// position error label after generated textarea
+        				if (element.is("textarea")) {
+        					label.insertAfter(element.next());
+        				} else {
+        					label.insertAfter(element)
+        				}
+        			}
+        		});
+        		validator.focusInvalid = function() {
+        			// put focus on tinymce on submit validation
+        			if (this.settings.focusInvalid) {
+        				try {
+        					var toFocus = $(this.findLastActive() || this.errorList.length && this.errorList[0].element || []);
+        					if (toFocus.is("textarea")) {
+        						tinyMCE.get(toFocus.attr("id")).focus();
+        					} else {
+        						toFocus.filter(":visible").focus();
+        					}
+        				} catch (e) {
+        					// ignore IE throwing errors when focusing hidden elements
+        				}
+        			}
+        		}
+        	})
+            $(document).ready(function(){
+                if($.browser.mobile)
+                {
+                    $('#body-content').css('width','100%');
+                    $('#add-post div div:first-child label').css('text-align','left');
+                }
+                
+				getUserInfo();     	
+        		
+        		function getUserInfo() {
+        			//show loading spinner image
+        			$('#spinner').fadeIn();
+        			$.ajax({
+       					type : "GET",
+       					url : "getUserInfo"
+     				}).done(function(data) {
+     					var data = jQuery.parseJSON(data);
+     					console.log('log = '+data.user.id);
+     					//hide loading spinner image when ajax done
+     					//check valid message form server
+     					if (data.message) {
+     						$('#message').text(data.message);
+     					} else {
+     						$('.blog-name').text(data.user.firstname + ' ' + data.user.lastname);
+     					}
+     					$('#spinner').fadeOut();
+     				}).fail(function() {
+    					//hide loading spinner image
+    					$('#spinner').fadeOut();
+       				});
+        		}
+        		
+        		if(getUrlParameter('postId') && getUrlParameter('postId') != ''){
+                	console.log('log postId = '+getUrlParameter('postId'));
+                	getPostInfo(getUrlParameter('postId'));
+                }else{
+                	console.log('log message');
+                	$('#message').text('Invalid post Id');
+                }
+
+        		function getPostInfo(postId) {
+        			//show loading spinner image
+        			$('#spinner').fadeIn();
+        			$.ajax({
+        				type : "GET",
+        				url : "getPostInfo",
+        				data:{postId: postId}
+        			}).done(function(data) {
+        				console.log('log'+data);
+        				if(data.message){
+        					$('#message').text(data.message);
+        					$('#title').val('');
+        					tinyMCE.activeEditor.setContent('');
+        				}else{
+        					if (data.data.post.status == 1) {
+        						$('#statusHidden').val('Active');
+        					} else if (data.data.post.status == 0) {
+        						$('#statusHidden').val('Inactive');
+        					}
+        					
+        					$("select option").filter(function() {
+        						var statusHidden = $('#statusHidden').val();
+        						return $(this).text() == statusHidden;
+
+        					}).prop('selected', true);
+        					$('#title').val(data.data.post.title);
+        					tinyMCE.activeEditor.setContent(data.data.post.content);
+        					$('#content').val(data.data.post.content);
+        					$('#postId').val(data.data.post.id);
+        				}
+        				$('#spinner').fadeOut();
+        			}).fail(function() {
+        				//hide loading spinner image
+        				$('#message').text('Have some error--Try agian later');
+        				$('#spinner').fadeOut();
+        			});
+        		}
+        		
+        		function getUrlParameter(sParam)
+        		{
+        		    var sPageURL = window.location.search.substring(1);
+        		    var sURLVariables = sPageURL.split('&');
+        		    for (var i = 0; i < sURLVariables.length; i++) 
+        		    {
+        		        var sParameterName = sURLVariables[i].split('=');
+        		        if (sParameterName[0] == sParam) 
+        		        {
+        		            return sParameterName[1];
+        		        }
+        		    }
+        		}
+                
+            });
+
+        </script>
+
+        
+    </head>
+    <body>
+
+        <div class="container" style="margin:0 auto;background-color:#EEEEEE; min-height:100%">
+                
+            <div class="row" id="header" >
+                <!-- Fixed navbar -->
+                <nav class="navbar navbar-default navbar-fixed-top" id="header">
+                    <div class="container" >
+                        <div class="navbar-header" id="header-button">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" >
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="../mainpage">Mini Blog</a>
+                        </div>
+                        <div id="navbar" class="navbar-collapse collapse" style="background-color: #9fc78a;">
+                            
+                                <ul class="nav navbar-nav">
+                                    <li id="header-button"><a href="../mainpage">Main page</a></li>
+                                    <li id="header-button"><a href="../mainpage/userpage">My blog</a></li>
+                                    <li class="active"><a href="../mainpage/addpost">Add post</a></li>
+                                </ul>
+                                
+                                <form class="navbar-form" style=" display:inline-block;" method="get" action="../mainpage/searchUser" id="search-form" name="search-form">
+                                    <div class="input-group" style="width:270px;">
+                                        <input type="text" style="border-radius: 0px;" class="form-control" placeholder="username, firstname, lastname" id="name"  name="name" value="">
+                                        <div class="input-group-btn">
+                                            <button type="submit" style="border-radius: 0px;" class="btn btn-danger">
+                                                <span class="glyphicon glyphicon-search"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>       
+                                
+                            
+                                <ul class="nav navbar-nav navbar-right" >
+                                    <li id="header-button"><a href="profile" class="blog-name"></a></li>
+                                    <li id="header-button"><a href="../logout">Logout</a></li>
+                                </ul>    
+                            
+                        </div>
+                    </div>
+                    
+                </nav>
+            </div>
+            
+            <div class="row" id="body-content">
+
+                <div class="row" style="margin-top:50px">
+                    <ul class="breadcrumb" style="border-radius: 0px;">
+                        <li><a href="../mainpage">Main page</a></li>
+                        <li class="active"><a href="">Add post</a></li> 
+                    </ul>
+                </div>
+                
+                <div class="row">
+                	<div style="text-align: center; height: 30px;">
+						<label class="message" id="message">${message}</label>
+						<input type="hidden" id="postId">
+					</div>
+                    <form method="POST" name="add-post" id="add-post">
+                    	<div class="row form-group" style="height:50px">
+							<div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                                <label>Status</label>
+                            </div>
+							<div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+								<div class="col-md-12" style="margin-left:0px; padding-left:0px;">
+									<input type="hidden" id="statusHidden" name="password"
+										value="${status}">
+
+									<div class="btn-group">
+										<select class="btn btn-default dropdown-toggle"
+											name="status" id="status">
+											<option value="1">Active</option>
+											<option value="0">Inactive</option>
+										</select>
+									</div>
+
+								</div>
+								<div class="col-md-12">
+									<div style="text-align: left;">
+										<span class="message" id="statusError">${statusError}</span>
+									</div>
+								</div>
+							</div>
+						</div>
+                        <div class="row form-group" style="height:50px">
+                            <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                                <label>Title</label>
+                            </div>
+                            <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10" >
+                                <input type="text" id="title" name="title">
+                            </div>
+                        </div>
+                        <div class="row form-group" style="margin-top:10px;height:50px;">
+                            <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                                <label>Content</label>
+                            </div>
+                            <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                <textarea id="post-description" name="content" id="content"
+                                     placeholder="Type description here..."></textarea>
+                            </div>
+                        </div>
+                        <div class="row" style="text-align:center">
+                            <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                            </div>
+                            <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
+                                <input type="submit" class="m-btn blue" style="width:100px" value="Edit post">
+                                <input id="btn btn-danger" class="m-btn blue" style="width:100px" type="reset" value="Clear">
+                            </div>
+                        </div>
+                    </form>        
+                </div>
+            </div>
+            <div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 " >
+					<div id="spinner" style="display:none">
+						<div id="spinnerContent">
+							<img src="../images/spinner.gif">
+						</div>
+						<div id="spinnerExp"></div>
+					</div>
+				</div>
+			</div>
+        </div>
+    </body>
+</html>

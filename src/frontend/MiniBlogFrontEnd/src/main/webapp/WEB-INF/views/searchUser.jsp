@@ -49,16 +49,19 @@
                 
                 function searchUser(name){
         			console.log("name ="+name);
+        			$('#spinner').fadeIn();
         			$.ajax({
         				type:"GET",
         				url:"searchUserAJAX",
         				data:{name: name}
         			}).done(function(data){
+        				$('#spinner').fadeOut();
         				var data = jQuery.parseJSON( data );
         				if(data.data.listUser){
         					setDataTable(data.data.listUser);
         				}
         			}).fail(function (){
+        				$('#spinner').fadeOut();
         				$('#message').text("Have some error AJAX--Please try again later");
         			});
         		}
@@ -106,8 +109,8 @@
                             
                                 <ul class="nav navbar-nav">
                                     <li class="active"><a href="../mainpage">Main page</a></li>
-                                    <li id="header-button"><a href="#">My blog</a></li>
-                                    <li id="header-button"><a href="#">Add post</a></li>
+                                    <li id="header-button"><a href="../mainpage/userpage">My blog</a></li>
+                                    <li id="header-button"><a href="">Add post</a></li>
                                 </ul>
                                 
                                 <form class="navbar-form" style=" display:inline-block;" method="" id="search-form" name="search-form">
@@ -139,7 +142,7 @@
                 <div class="row" style="margin-top:50px">
                     <ul class="breadcrumb" style="border-radius: 0px;">
                         <li><a href="../mainpage">Main page</a></li>
-                        <li class="active"><a href="#">Search user page</a></li>
+                        <li class="active"><a href="">Search user page</a></li>
                         
                     </ul>
                 </div>
@@ -167,6 +170,16 @@
                     </div>
             </div>
             </div>
+            <div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 " >
+					<div id="spinner" style="display:none">
+						<div id="spinnerContent">
+							<img src="../images/spinner.gif">
+						</div>
+						<div id="spinnerExp"></div>
+					</div>
+				</div>
+			</div>
         </div>
     </body>
 </html>

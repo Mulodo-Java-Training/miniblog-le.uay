@@ -12,13 +12,19 @@ package com.mulodo.miniblog.object;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.mulodo.miniblog.utils.JsonDateDeserializer;
+import com.mulodo.miniblog.utils.JsonDateSerializer;
 
 /**
  * The comment entity work with hibernate
  * 
  * @author UayLU
  */
+@JsonAutoDetect
 public class Comment
 {
 
@@ -74,23 +80,25 @@ public class Comment
         this.content = content;
     }
 
+    @JsonSerialize(using=JsonDateSerializer.class)
     public Date getCreated_at()
     {
         return created_at;
     }
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = JsonDateDeserializer.class)
     public void setCreated_at(Date created_at)
     {
         this.created_at = created_at;
     }
 
+    @JsonSerialize(using=JsonDateSerializer.class)
     public Date getModified_at()
     {
         return modified_at;
     }
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = JsonDateDeserializer.class)
     public void setModified_at(Date modified_at)
     {
         this.modified_at = modified_at;

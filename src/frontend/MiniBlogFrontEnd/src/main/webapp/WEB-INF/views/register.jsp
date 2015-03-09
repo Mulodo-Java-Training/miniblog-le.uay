@@ -126,7 +126,7 @@
 			        </div>
 			        <div id="navbar" class="navbar-collapse collapse">
 			          <ul class="nav navbar-nav navbar-right">
-			            <li id="header-button"><a href="/mibiblog">Login</a></li>
+			            <li id="header-button"><a href="/miniblog">Login</a></li>
 			            <li class="active"><a href="#">Register</a></li>
 			          </ul>
 			        </div>

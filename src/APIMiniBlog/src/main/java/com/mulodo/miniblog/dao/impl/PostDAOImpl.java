@@ -84,6 +84,8 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO
                     .add(Projections.property("status").as("status"))
                     .add(Projections.property("us.id").as("author_id"))
                     .add(Projections.property("us.username").as("username"))
+                    .add(Projections.property("us.firstname").as("firstname"))
+                    .add(Projections.property("us.lastname").as("lastname"))
                     .add(Projections.property("us.status").as("status")));
 
             // if author id positive integer and get post for user
@@ -137,8 +139,8 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO
                     post.setCreated_at((Date) myResult[3]);
                     post.setModified_at((Date) myResult[4]);
                     post.setStatus((int) myResult[5]);
-                    post.setUser(new User((int) myResult[6], (String) myResult[7],
-                            (int) myResult[8]));
+                    post.setUser(new User((int) myResult[6], (String) myResult[7], 
+                            (String)  myResult[8], (String)  myResult[9], (int) myResult[10]));
                     
                     //add post to list post
                     listPost.add(post);

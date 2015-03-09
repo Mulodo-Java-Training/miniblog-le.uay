@@ -49,6 +49,7 @@
         	$(function() {
         		var validator = $("#add-post").submit(function(e) {
         			e.preventDefault();
+        			$('#spinner').fadeIn();
         			tinyMCE.triggerSave();
         			var content = tinyMCE.activeEditor.getContent(); // get the content
         		    $('#content').val(content); // put it in the textarea
@@ -58,12 +59,14 @@
         				url:"addpost",
         				data:{title: title,content: content}
         			}).done(function(data){
+        				$('#spinner').fadeOut();
         				console.log('data='+data);
         				var data = jQuery.parseJSON(data);
         				if(data.message){
         					$('#message').text(data.message);
         				}
         			}).fail(function (){
+        				$('#spinner').fadeOut();
         				$('#message').text("Have some error AJAX--Please try again later");
         			});
         		}).validate({
@@ -129,6 +132,31 @@
                     $('#add-post div div:first-child label').css('text-align','left');
                 }
                 
+				getUserInfo();     	
+        		
+        		function getUserInfo() {
+        			//show loading spinner image
+        			$('#spinner').fadeIn();
+        			$.ajax({
+       					type : "GET",
+       					url : "getUserInfo"
+     				}).done(function(data) {
+     					var data = jQuery.parseJSON(data);
+     					console.log('log = '+data.user.id);
+     					//hide loading spinner image when ajax done
+     					//check valid message form server
+     					if (data.message) {
+     						$('#message').text(data.message);
+     					} else {
+     						$('.blog-name').text(data.user.firstname + ' ' + data.user.lastname);
+     					}
+     					$('#spinner').fadeOut();
+     				}).fail(function() {
+    					//hide loading spinner image
+    					$('#spinner').fadeOut();
+       				});
+        		}
+                
             });
 
         </script>
@@ -150,19 +178,19 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="#">Mini Blog</a>
+                            <a class="navbar-brand" href="../mainpage">Mini Blog</a>
                         </div>
                         <div id="navbar" class="navbar-collapse collapse" style="background-color: #9fc78a;">
                             
                                 <ul class="nav navbar-nav">
-                                    <li id="header-button"><a href="../">Main page</a></li>
-                                    <li id="header-button"><a href="#">My blog</a></li>
-                                    <li class="active"><a href="">Add post</a></li>
+                                    <li id="header-button"><a href="../mainpage">Main page</a></li>
+                                    <li id="header-button"><a href="../mainpage/userpage">My blog</a></li>
+                                    <li class="active"><a href="../mainpage/addpost">Add post</a></li>
                                 </ul>
                                 
-                                <form class="navbar-form" style=" display:inline-block;" method="get" id="search-form" name="search-form">
+                                <form class="navbar-form" style=" display:inline-block;" method="get" action="../mainpage/searchUser" id="search-form" name="search-form">
                                     <div class="input-group" style="width:270px;">
-                                        <input type="text" style="border-radius: 0px;" class="form-control" placeholder="username, firstname, lastname" id="query"  name="query" value="">
+                                        <input type="text" style="border-radius: 0px;" class="form-control" placeholder="username, firstname, lastname" id="name"  name="name" value="">
                                         <div class="input-group-btn">
                                             <button type="submit" style="border-radius: 0px;" class="btn btn-danger">
                                                 <span class="glyphicon glyphicon-search"></span>
@@ -173,7 +201,7 @@
                                 
                             
                                 <ul class="nav navbar-nav navbar-right" >
-                                    <li id="header-button"><a href="profile">Uay Le U</a></li>
+                                    <li id="header-button"><a href="profile" class="blog-name"></a></li>
                                     <li id="header-button"><a href="../logout">Logout</a></li>
                                 </ul>    
                             
@@ -223,6 +251,16 @@
                     </form>        
                 </div>
             </div>
+            <div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 " >
+					<div id="spinner" style="display:none">
+						<div id="spinnerContent">
+							<img src="../images/spinner.gif">
+						</div>
+						<div id="spinnerExp"></div>
+					</div>
+				</div>
+			</div>
         </div>
     </body>
 </html>

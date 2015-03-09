@@ -122,7 +122,7 @@ public class CommentController
     public Response addComment(@HeaderParam(Constraints.ACCESS_KEY) String access_key,
             @FormParam("post_id") String post_id, @FormParam("content") String content)
     {
-
+        
         // get bean from application context if tokenSerivec, postService,
         // commentService was null
         if (tokenService == null || postService == null || commentService == null) {

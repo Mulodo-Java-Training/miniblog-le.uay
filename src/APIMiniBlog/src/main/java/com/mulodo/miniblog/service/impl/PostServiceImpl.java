@@ -61,7 +61,7 @@ public class PostServiceImpl extends GenericServiceImpl<Post> implements PostSer
      * @exception HandlerException
      */
     @Override
-    public Data getAllPostForUser(int pageNum, int author_id, Boolean isOwerUser)
+    public Data getAllPostForUser(int pageNum, int author_id, String description, Boolean isOwerUser)
             throws HandlerException
     {
         Data data = null;
@@ -70,8 +70,8 @@ public class PostServiceImpl extends GenericServiceImpl<Post> implements PostSer
         if (pageNum > 0) {
             // get list post folow page number
             // get total post follow condition
-            listPost = this.postDAO.getAllPost(pageNum, author_id, null, true, isOwerUser);
-            totalPost = this.postDAO.getAllPostSize(author_id, null, true, isOwerUser);
+            listPost = this.postDAO.getAllPost(pageNum, author_id, description, true, isOwerUser);
+            totalPost = this.postDAO.getAllPostSize(author_id, description, true, isOwerUser);
         }
         if (listPost != null) {
             int totalPage = (int) Math.round(totalPost / Constraints.LIMIT_ROW + 0.5);

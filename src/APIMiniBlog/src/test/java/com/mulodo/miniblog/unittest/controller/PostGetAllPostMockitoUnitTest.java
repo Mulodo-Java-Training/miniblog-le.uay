@@ -67,7 +67,7 @@ public class PostGetAllPostMockitoUnitTest
         Meta meta = new Meta(Constraints.CODE_2500, listMessage);
         when(postValidate.validateGetAllPostForUser("", "")).thenReturn(meta);
 
-        Response respone = postController.getAllPostForUser("", "", "");
+        Response respone = postController.getAllPostForUser("", "", "", "");
         assertEquals(Constraints.CODE_200, respone.getStatus());
 
         JSONObject jsonObject = new JSONObject(respone.getEntity().toString());

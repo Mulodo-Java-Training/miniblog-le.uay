@@ -1,6 +1,7 @@
 package com.mulodo.miniblog.service.impl;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +27,8 @@ public class PostServiceImpl implements PostService {
 
 	private RestTemplate restTemplate;
 	private ResponseEntity<ResponseData> responseEntity;
+	private Charset charset = Charset.forName("UTF-8");
+	private MediaType mediaType = new MediaType("application", "x-www-form-urlencoded", charset);
 
 	@Override
 	public ResponseData getAllPost(String accessKey, int pageNum,
@@ -37,20 +40,17 @@ public class PostServiceImpl implements PostService {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(Constraints.ACCESS_KEY, accessKey);
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-		String requestBody = "pageNum=" + pageNum + "&description="
-				+ description;
-
-		HttpEntity<String> request = new HttpEntity<String>(requestBody,
-				headers);
+		headers.setContentType(mediaType);
+		
+		HttpEntity<String> request = new HttpEntity<String>(headers);
 
 		restTemplate.getMessageConverters().add(
 				new MappingJackson2HttpMessageConverter());
 		try {
 
 			responseEntity = restTemplate.exchange(Constraints.ROOT_URL
-					+ "posts/getAllPost", HttpMethod.GET, request,
+					+ "posts/getAllPost?pageNum=" + pageNum + "&description="
+							+ description, HttpMethod.GET, request,
 					ResponseData.class);
 			responseData = new ResponseData();
 			responseData = responseEntity.getBody();
@@ -73,7 +73,7 @@ public class PostServiceImpl implements PostService {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(Constraints.ACCESS_KEY, accessKey);
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.setContentType(mediaType);
 
 		String requestBody = "title=" + title + "&content=" + content;
 
@@ -100,7 +100,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public ResponseData deletePost(String accessKey, String postId) {
+	public ResponseData deletePost(String accessKey, int postId) {
 
 		restTemplate = new RestTemplate();
 
@@ -108,7 +108,7 @@ public class PostServiceImpl implements PostService {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(Constraints.ACCESS_KEY, accessKey);
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.setContentType(mediaType);
 
 		HttpEntity<String> request = new HttpEntity<String>(headers);
 
@@ -140,7 +140,7 @@ public class PostServiceImpl implements PostService {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(Constraints.ACCESS_KEY, accessKey);
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.setContentType(mediaType);
 
 		String requestBody = "id=" + postId + "&title=" + title + "&content="
 				+ content;
@@ -184,7 +184,7 @@ public class PostServiceImpl implements PostService {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(Constraints.ACCESS_KEY, accessKey);
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.setContentType(mediaType);
 
 		String requestBody = "id=" + postId + "&status=" + status;
 
@@ -208,7 +208,73 @@ public class PostServiceImpl implements PostService {
 		}
 		return responseData;
 	}
+	
+	@Override
+	public ResponseData getAllPostForUser(String accessKey, int pageNum,
+			int userId, String description) {
+		
+		restTemplate = new RestTemplate();
 
+		ResponseData responseData = null;
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set(Constraints.ACCESS_KEY, accessKey);
+		headers.setContentType(mediaType);
+		
+		HttpEntity<String> request = new HttpEntity<String>(headers);
+
+		restTemplate.getMessageConverters().add(
+				new MappingJackson2HttpMessageConverter());
+		try {
+
+			responseEntity = restTemplate.exchange(Constraints.ROOT_URL
+					+ "posts/getPostForUser?pageNum=" + pageNum + "&user_id="
+					+ userId +"&description="+description, HttpMethod.GET, request,
+					ResponseData.class);
+			responseData = new ResponseData();
+			responseData = responseEntity.getBody();
+
+		} catch (HttpClientErrorException ex) {
+			responseData = getMetaWhenUnAuthor(ex);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return responseData;
+	}
+
+
+	@Override
+	public ResponseData getPostInfor(String accessKey, int postId) {
+		restTemplate = new RestTemplate();
+
+		ResponseData responseData = null;
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set(Constraints.ACCESS_KEY, accessKey);
+		headers.setContentType(mediaType);
+		
+		HttpEntity<String> request = new HttpEntity<String>(headers);
+
+		restTemplate.getMessageConverters().add(
+				new MappingJackson2HttpMessageConverter());
+		try {
+
+			responseEntity = restTemplate.exchange(Constraints.ROOT_URL
+					+ "posts/getPostInfo?id=" + postId, HttpMethod.GET, request,
+					ResponseData.class);
+			responseData = new ResponseData();
+			responseData = responseEntity.getBody();
+
+		} catch (HttpClientErrorException ex) {
+			responseData = getMetaWhenUnAuthor(ex);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return responseData;
+	}
+	
 	private ResponseData getMetaWhenUnAuthor(HttpClientErrorException ex) {
 		String responseString = null;
 		ResponseData responseData = null;

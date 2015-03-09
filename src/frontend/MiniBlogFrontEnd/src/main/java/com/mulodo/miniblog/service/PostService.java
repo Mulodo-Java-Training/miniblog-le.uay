@@ -8,10 +8,14 @@ public interface PostService {
 
 	ResponseData addPost(String accessKey, String title, String content);
 
-	ResponseData deletePost(String accessKey, String postId);
+	ResponseData deletePost(String accessKey, int postId);
 	
 	ResponseData editPost(String accessKey, int postId, String title, String content, int status);
 	
 	ResponseData activeDeactivePost(String accessKey, int postId, int status);
+
+	ResponseData getAllPostForUser(String accessKey, int pageNum, int userId, String description);
+	
+	ResponseData getPostInfor(String accessKey, int postId);
 
 }
