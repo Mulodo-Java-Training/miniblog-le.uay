@@ -278,7 +278,7 @@
                 <div class="row" style="margin-top:50px">
                     <ul class="breadcrumb" style="border-radius: 0px;">
                         <li><a href="../mainpage">Main page</a></li>
-                        <li class="active"><a href="">Add post</a></li> 
+                        <li class="active"><a href="../mainpage/editpost">Edit post</a></li> 
                     </ul>
                 </div>
                 

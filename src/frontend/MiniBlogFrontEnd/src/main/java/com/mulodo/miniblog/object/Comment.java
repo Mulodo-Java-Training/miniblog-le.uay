@@ -13,7 +13,6 @@ package com.mulodo.miniblog.object;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.mulodo.miniblog.utils.JsonDateDeserializer;

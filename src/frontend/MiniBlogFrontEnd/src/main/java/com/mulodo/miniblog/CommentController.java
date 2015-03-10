@@ -178,12 +178,15 @@ public class CommentController {
 					ConstraintsPostError.CODE_2500.getValue());
 			return jsonObject.toString();
 		}
+		
+		System.out.println("json "+ new JSONObject(responseData));
+		
 		Boolean isError = false;
 		if (responseData != null && responseData.getMeta() != null) {
 			if (responseData.getMeta().getCode() == ConstraintsMessage.CODE_211
 					.getKey()) {
 				jsonObject.put(Constraints.MESSAGE,
-						ConstraintsMessage.CODE_211.getValue());
+						ConstraintsMessage.CODE_211.getKey());
 				isError = false;
 			} else if (responseData.getMeta().getCode() == ConstraintsCommentError.CODE_3000
 					.getKey()) {

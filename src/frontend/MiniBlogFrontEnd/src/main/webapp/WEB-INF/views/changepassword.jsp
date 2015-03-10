@@ -16,7 +16,6 @@
 <link rel="stylesheet" type="text/css"
 	href="../../js/jquery-confirm/css/jquery-confirm.css" />
 
-
 <script type="text/javascript" src="../../js/jquery-2.1.3.js"></script>
 <script type="text/javascript" src="../../js/detectmobilebrowser.js"></script>
 <script type="text/javascript" src="../../js/bootstrap.min.js"></script>

@@ -141,7 +141,7 @@ public class CommentServiceImpl implements CommentService {
 		headers.set(Constraints.ACCESS_KEY, accessKey);
 		headers.setContentType(mediaType);
 
-		String requestBody = "id=" + commentId + "&content="
+		String requestBody = "comment_id=" + commentId + "&content="
 				+ content;
 
 		HttpEntity<String> request = new HttpEntity<String>(requestBody,

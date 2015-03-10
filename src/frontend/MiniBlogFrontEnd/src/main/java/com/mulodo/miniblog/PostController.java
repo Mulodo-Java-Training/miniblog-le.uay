@@ -1,6 +1,5 @@
 package com.mulodo.miniblog;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mulodo.miniblog.constraints.Constraints;
 import com.mulodo.miniblog.constraints.ConstraintsCommentError;
@@ -48,6 +45,7 @@ public class PostController {
 
 		HttpSession session = request.getSession(true);
 		JSONObject jsonObject = new JSONObject();
+		ObjectMapper objectMapper = new ObjectMapper();
 
 		String accessKey = (String) session
 				.getAttribute(Constraints.ACCESS_KEY);
@@ -71,7 +69,11 @@ public class PostController {
 				jsonObject.put(Constraints.MESSAGE, ConstraintsUserError.CODE_1000.getValue());
 			}
 		} else if (responseData.getData() != null) {
-			jsonObject = new JSONObject(responseData.getData());
+			try {
+				jsonObject = new JSONObject(objectMapper.writeValueAsString(responseData.getData()));
+			} catch (Exception e) {
+				jsonObject.put(Constraints.MESSAGE, Constraints.COMMOM_ERROR);
+			}
 		} else {
 			jsonObject.put(Constraints.MESSAGE, Constraints.COMMOM_ERROR);
 		}
@@ -92,6 +94,7 @@ public class PostController {
 
 		HttpSession session = request.getSession(true);
 		JSONObject jsonObject = new JSONObject();
+		ObjectMapper objectMapper = new ObjectMapper();
 
 		String accessKey = (String) session
 				.getAttribute(Constraints.ACCESS_KEY);
@@ -115,7 +118,11 @@ public class PostController {
 				jsonObject.put(Constraints.MESSAGE, ConstraintsUserError.CODE_1000.getValue());
 			}
 		} else if (responseData.getData() != null) {
-			jsonObject = new JSONObject(responseData.getData());
+			try {
+				jsonObject = new JSONObject(objectMapper.writeValueAsString(responseData.getData()));
+			} catch (Exception e) {
+				jsonObject.put(Constraints.MESSAGE, Constraints.COMMOM_ERROR);
+			}
 		} else {
 			jsonObject.put(Constraints.MESSAGE, Constraints.COMMOM_ERROR);
 		}
@@ -169,7 +176,7 @@ public class PostController {
 		return jsonObject.toString();
 	}
 
-	@RequestMapping(value = "/mainpage/post/delete", method = RequestMethod.POST)
+	@RequestMapping(value = "/mainpage/post/delete", method = RequestMethod.GET)
 	@ResponseBody
 	public String deletePost(@RequestParam("postId") String postId,
 			HttpServletRequest request) {
@@ -193,7 +200,7 @@ public class PostController {
 			if (responseData.getMeta().getCode() == ConstraintsMessage.CODE_209
 					.getKey()) {
 				jsonObject.put(Constraints.MESSAGE,
-						ConstraintsMessage.CODE_209.getValue());
+						ConstraintsMessage.CODE_209.getKey());
 			} else if (responseData.getMeta().getCode() == ConstraintsPostError.CODE_2500
 					.getKey()) {
 				jsonObject.put(Constraints.MESSAGE,

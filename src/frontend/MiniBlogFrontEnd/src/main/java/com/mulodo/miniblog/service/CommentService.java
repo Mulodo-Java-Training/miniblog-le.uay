@@ -10,5 +10,6 @@ public interface CommentService {
 
 	ResponseData addComment(String accessKey, int postId, String content); 
 	
-	ResponseData editComment(String accessKey, int commentId, String content); 
+	ResponseData editComment(String accessKey, int commentId, String content);
+	
 }

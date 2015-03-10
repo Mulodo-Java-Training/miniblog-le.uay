@@ -13,12 +13,14 @@
         <link rel="stylesheet" type="type/css" href="../css/bootstrap.min.css">
         <link rel="stylesheet" type="type/css" href="../css/style.css">
         <link rel="stylesheet" type="type/css" href="../css/m-styles.min.css">
+        <link rel="stylesheet" type="text/css" href="../js/jquery-confirm/css/jquery-confirm.css" />
 
         <script type="text/javascript" src="../js/jquery-2.1.3.js"></script>
         <script type="text/javascript" src="../js/detectmobilebrowser.js"></script>
         <script type="text/javascript" src="../js/bootstrap.min.js"></script>
         <script type="text/javascript" src="../js/jquery.bootpag.min.js"></script>
         <script type="text/javascript" src="../js/jquery.validate.js"></script>
+        <script type="text/javascript" src="../js/jquery-confirm/js/jquery-confirm.js"></script>
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -92,12 +94,23 @@
         		}
         		
         		function setPostData(post){
-        			$('#post-content-withoud-comment').empty();
-        			$('#comment-tbody').empty();
-        			var postBody = '';
-        			postBody += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 " >'
-	                    + '<label><a href="?postId='+post.id+'" >'+ post.title +'</a></label>'        
-	                    + '</div>'
+        		   console.log('user id = '+$('input#userId').val());
+        		   console.log('post user id = '+post.user.id);
+        		   $('#post-content-withoud-comment').empty();
+        	       $('#comment-tbody').empty();
+        		   var postBody = '';
+        		   postBody += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 " >';
+	               if(post.user.id == $('input#userId').val()){
+	            	   postBody += '<label><a href="?postId='+post.id+'" >'+ post.title +'</a></label>'
+	            	               + '<label style="  float: right;margin-right: 15%;"><a class="glyphicon glyphicon-pencil" href="../mainpage/editpost?postId='+post.id+'" ></a>'
+	            	               +    '&nbsp;&nbsp;'
+	                               +    '<a class="glyphicon glyphicon-trash" href="" id="deletePost_'+post.id+'" onClick="deletePost('+post.id+')" ></a>';
+	            	               + '</label>';
+	            		   
+	               }else{
+	            	   postBody +='<label><a href="?postId='+post.id+'" >'+ post.title +'</a></label>';
+	               }
+	               postBody += '</div>'
 	                    + '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'
 	                    +   '<p >Date create: ' + post.created_at + ', Date modified: ' + post.modified_at+ ', Author: <a href="../mainpage/userpage?userId='+post.user.id+'">'+post.user.username+'</a></p>'
 	                    + '</div>'    
@@ -108,12 +121,12 @@
 	                var commentBody = '';
 	                var comments = post.comments;
 	                if(comments){
-	                	console.log('user id='+$('input#userId').val());
+	                
 		                for (var i=0, size=comments.length; i<size; i++) {
 			                commentBody += 
 			                	'<tr>'
 			                    	+'<td>'
-				                    	+'<p>'+comments[i].content+'</p>'
+				                    	+'<p id="contentComment_'+comments[i].id+'">'+comments[i].content+'</p>'
 				                    	+ '<p >Date create: ' + comments[i].created_at + ', Date modified: ' + comments[i].modified_at+ ', Author: <a href="../userpage?userId='+comments[i].user.id+'">'+comments[i].user.username+'</a></p>'
 				                	+'</td>'
 				                	+'<td>'
@@ -121,9 +134,9 @@
 				             if($('input#userId').val() == comments[i].user.id){
 				            	 
 				             
-				          		commentBody +=    '<a class="glyphicon glyphicon-pencil" onclick=""></a>'
+				          		commentBody +=    '<a class="glyphicon glyphicon-pencil" href="#" id="editComment_('+comments[i].id+')" onclick="editComment('+comments[i].id+')"></a>'
 		                                +    '&nbsp;&nbsp;'
-		                                +    '<a class="glyphicon glyphicon-trash" href="#" id="deleteComment_'+comments[i].id+'" onClick="deleteComment('+comments[i].id+')" ></a>';
+		                                +    '<a class="glyphicon glyphicon-trash" href="" id="deleteComment_'+comments[i].id+'" onClick="deleteComment('+comments[i].id+')" ></a>';
 				             }
 				             commentBody += '</p>'
 				                	+'</td>'
@@ -185,11 +198,9 @@
   						event.preventDefault();
   				
   						var contentComment = $('#contentComment').val();
-  						console.log('comment content '
-  								+ contentComment);
+  						
   						var postId = $('input#postId').val();
-  						console.log('post id add ='+postId);
-  						console.log('comment ='+contentComment);
+  						
   						$.ajax(
   						{
   							type : "POST",
@@ -206,17 +217,92 @@
   								$('#postId').val();
   			                	getPostInfo($('#postId').val());
   								$('#spinner').fadeOut();	
-  							})
+  						})
   						.fail(function() {
-  									$('#spinner').fadeOut();														
-  									console.log('fail');														
+							$('#spinner').fadeOut();														
+																
   						});
   					}
 
   				});
+        		
+        		$('#edit-comment-form').validate(
+          				{
+          					rules : {
+          						contentCommentEdit : {
+          							required : true,
+          							minlength : 1,
+          							maxlength : 500
+          						}
+          					},
+          					messages : {
+          						contentCommentEdit : {
+          							required : "Comment's content is required",
+          							maxlength : "Comment is invalid - Less than 500 characters"
+          						}
+          					},
+          					highlight : function(element) {
+          						$(element).closest('.form-group').addClass('has-error');
+          					},
+          					unhighlight : function(element) {
+          						$(element).closest('.form-group').removeClass('has-error');
+          					},
+          					errorElement : 'span',
+          					errorClass : 'help-block',
+          					errorPlacement : function(error,
+          							element) {
+          						if (element.parent('.input-group').length) {
+          							error.insertAfter(element.parent());
+          						} else {
+          							error.insertAfter(element);
+          						}
+          					} ,
+          					submitHandler : function() {
+          						
+          						event.preventDefault();
+          				
+          						$('#spinner').fadeIn();
+          						var contentComment = $('#contentCommentEdit').val();
+          						
+          						var commentEditId = $('input#commentEditId').val();
+          						
+          						$.ajax(
+          						{
+          							type : "POST",
+          							url : "comments/editcomment",
+          							data : {
+          								content : contentComment,
+          								commentId : commentEditId
+          							}
+          						}).done(function(data) {
+          							console.log('data edit comment +'+data);
+       								var data = jQuery.parseJSON(data);
+       								
+       								if (data.message) {
+       									if(data.message == 211){
+       										getPostInfo($('#postId').val());
+       										$("#formComment").modal('toggle');
+       										$('#message').text('Update comment success.');
+       									}else{
+       										$('#editCommentMessage').text(data.message);	
+       									}
+       									
+       									
+       								}
+       								
+       								$('#spinner').fadeOut();	
+       							})
+          						.fail(function() {
+          							$('#editCommentMessage').text('Have some error--Try again later');
+  									$('#spinner').fadeOut();														
+  									console.log('fail');														
+          						});
+          					} 
+
+          				});
             });
             function deleteComment(id){
-    			
+    			event.preventDefault();
     			console.log('id = '+id);
     			
     			$('#spinner').fadeIn();
@@ -241,10 +327,51 @@
     				//hide loading spinner image
     				$('#spinner').fadeOut();
     			});
-    			
-    			
-    			
     		}
+			function deletePost(id){
+				event.preventDefault();
+    			console.log('id = '+id);
+    			$('#spinner').fadeIn();
+    			$.ajax({
+    				type : "GET",
+    				url : "post/delete",
+    				data:{postId: id}
+    			}).done(function(data) {
+    				console.log('log'+data);
+    				var data = jQuery.parseJSON(data);
+    				if(data.message){
+    					if(data.message == 209){
+    						$.alert({
+								title : 'Alert!',
+								content : "Delete post success"
+										+ "--Redirecting to main page",
+								confirm : function() {
+									window.location.href = "../mainpage";
+								}
+							});
+							console.log(data.redirect);
+							setTimeout(function() {
+								window.location.href = "../mainpage";
+									},5000);
+    					}else{
+    						$('#message').text(data.message);	
+    					}
+    					
+    				}	
+    				$('#spinner').fadeOut();
+    			}).fail(function() {
+    				//hide loading spinner image
+    				$('#spinner').fadeOut();
+    			});
+    		}
+            
+            function editComment(id) {
+            	console.log('id = '+id);
+            	$("#formComment").modal('show');
+        		var oldContent = $('#contentComment_'+id).text();
+        		$('#contentCommentEdit').text(oldContent);
+        		$('#commentEditId').val(id);
+        	};
         </script>
     </head>
     <body>
@@ -262,19 +389,19 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="#">Mini Blog</a>
+                            <a class="navbar-brand" href="../mainpage">Mini Blog</a>
                         </div>
                         <div id="navbar" class="navbar-collapse collapse" style="background-color: #9fc78a;">
                             
                                 <ul class="nav navbar-nav">
-                                    <li class="active"><a href="#">Main page</a></li>
-                                    <li id="header-button"><a href="#">My blog</a></li>
-                                    <li id="header-button"><a href="#">Add post</a></li>
+                                    <li class="active"><a href="../mainpage">Main page</a></li>
+                                    <li id="header-button"><a href="../mainpage/userpage">My blog</a></li>
+                                    <li id="header-button"><a href="../mainpage/addpost">Add post</a></li>
                                 </ul>
                                 
-                                <form class="navbar-form" style=" display:inline-block;" method="get" id="search-form" name="search-form">
+                                <form class="navbar-form" action="../mainpage/searchUser" style=" display:inline-block;" method="get" id="search-form" name="search-form">
                                     <div class="input-group" style="width:270px;">
-                                        <input type="text" style="border-radius: 0px;" class="form-control" placeholder="username, firstname, lastname" id="query"  name="query" value="">
+                                        <input type="text" style="border-radius: 0px;" class="form-control" placeholder="username, firstname, lastname" id="name"  name="name" value="">
                                         <div class="input-group-btn">
                                             <button type="submit" style="border-radius: 0px;" class="btn btn-danger">
                                                 <span class="glyphicon glyphicon-search"></span>
@@ -346,13 +473,16 @@
                     		<div class="form-group">   
 		                        <form method="POST" action="" accept-charset="UTF-8"
 		                            role="form" class="form-signin" id="add-comment-form">
+		                            <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
 		                                <input name="articles_id" id="postIdCommentHidden" type="text" value="${post.id}"
 		                                    required hidden="true">
-		                                    <label for="contentComment">Your comment (required)</label>
 		                                <textarea class="panel-body" rows="auto" id="contentComment" name="contentComment"
-		                                    style="width:80%;" placeholder="Your comment..." required></textarea>
+		                                    style="width:100%;" placeholder="Your comment..." required></textarea>
+		                            </div>
+		                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
 		                                <input class="btn btn-primary " type="submit" id="submitComment" value="Add"
 		                                    name="add" style="float: right" />
+                                    </div>
 		                        </form>
 	                        </div>
                         </div>
@@ -370,6 +500,34 @@
 					</div>
 				</div>
 			</div>
+			<form method="POST" action="" id="edit-comment-form" accept-charset="UTF-8"
+				name="edit-comment-form">
+				<div style="text-align: center; height: 20px;">
+						<label class="message" id="editCommentMessage">${editCommentMessage}</label>
+					
+				</div>
+				<div id="formComment" class="modal fade form-group">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-hidden="true">&times;</button>
+								<h4 class="modal-title">Edit Comment</h4>
+							</div>
+							<div class="modal-body">
+								<input name="id" type="hidden" id="commentEditId" required
+									>
+								<textarea class="panel-body"
+									placeholder="Your comment....!" id="contentCommentEdit" name="contentCommentEdit" style="width:100%"></textarea>
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-default" data-dismiss="modal" id="buttonEditComment">Close</button>
+								<button type="submit" class="btn btn-primary">Edit</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
         </div>
     </body>
 </html>

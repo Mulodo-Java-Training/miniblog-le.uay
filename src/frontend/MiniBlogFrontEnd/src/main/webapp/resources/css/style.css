@@ -75,7 +75,7 @@ html, body {
 	font-weight: bold;
 }
 
-#post-style p:nth-child(2){
+#post-style #postInfo{
 	color:#b5b5b5;
 	font-size: 12px;
 }

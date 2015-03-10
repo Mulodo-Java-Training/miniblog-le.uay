@@ -45,173 +45,212 @@
         		
     			getUserInfo();     	
         		
-        		function getUserInfo() {
-        			//show loading spinner image
-        			$('#spinner').fadeIn();
-        			$.ajax({
-       					type : "GET",
-       					url : "getUserInfo"
-     				}).done(function(data) {
-     					var data = jQuery.parseJSON(data);
-     					console.log('log = '+data.user.id);
-     					//hide loading spinner image when ajax done
-     					//check valid message form server
-     					if (data.message) {
-     						$('#message').text(data.message);
-     					} else {
-     						$('#username').val(data.user.username);
-     						$('#userStatus').val(data.user.status);
-     						$('#userId').val(data.user.id);
-     						$('#firstname').val(data.user.firstname);
-     						$('#lastname').val(data.user.lastname);
-     						$('#userEmail').val(data.user.email);
-     						$('#current-blog-name').text(data.user.firstname + ' ' + data.user.lastname);
-     						loadPage();
-     					}
-     				}).fail(function() {
-    					//hide loading spinner image
-    					$('#spinner').fadeOut();
-       				});
-        		}
         		
-        		function loadPage(){
-            		//load ajax when load page
-            		if(getUrlParameter('userId')){
-            			$('#userIdHidden').text(getUrlParameter('userId'));
-            			getListPost(1,getUrlParameter('userId'), '');	
-            		}else{
-            			console.log('user id= '+ $('input#userId').val());
-            			getListPost(1,$('#userId').val(), '');
-            		}
-        		}   
-        		
-
-        		//get list animal function
-        		function getListPost(pageNum, userId, description) {
-        			//set hidden searching animal type
-        			$('#userIdHidden').text(userId);
-        			//show loading spinner image
-        			$('#spinner').fadeIn();
-        			$.ajax({
-       					type : "GET",
-       					url : "getAllPostForUser",
-       					data : {
-       						pageNum : pageNum,
-       						userId : userId,
-       						description: description
-       					},
-       					}).done(function(data) {
-       						var data = jQuery.parseJSON(data);
-       						console.log('log = '+data);
-       						//hide loading spinner image when ajax done
-       						$('#spinner').fadeOut();
-       						//check valid message form server
-       						if (data.message) {
-       							$('#message').text(data.message);
-       						} else {
-       							//if have no message, jquery set data to table, hide message
-       							$('#message').text("");
-       							setDataTable(data.listPost);
-       							setInfoData(
-       									data.totalRow,
-       									data.limitRow,
-       									data.pageNum,
-       									data.totalPage);
-       							setPagination(
-       									data.totalPage,
-       									pageNum, userId);
-       						}
-       					}).fail(function() {
-       						//hide loading spinner image
-       						$('#spinner').fadeOut();
-       						//set message error
-       						$('#message')
-       								.text(
-       										"Have something error--Please try agian later");
-       						//remove data in table
-       						$("#content-posts").empty();
-       						$("#infor-data").empty();
-       						$("#page-selection").empty();
-       				});
-        		}
-
-        		//build hmlt data in table
-        		function setDataTable(listPost) {
-        			$("#content-posts").empty();
-        			$('.blog-name').text(listPost[0].user.firstname + ' ' + listPost[0].user.lastname
-        					+ '\'s Blog' );
-        			var body = '';
-        			for (var i = 0, size = listPost.length; i < size; i++) {
-
-        				body += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="post-style">'
-        						+ '<p ><a href="">'
-        						+ listPost[i].title
-        						+ '</a></p>'
-        						+ '<p >Date created : '
-        						+ listPost[i].created_at
-        						+ ', Date modifed: '
-        						+ listPost[i].modified_at
-        						+ ', Author: <a href="">'
-        						+ listPost[i].user.username
-        						+ '</a></p>'
-        						+ '<p>'+listPost[i].content+'</p>'
-        						+ '</div>'
-        			}
-
-        			$('#content-posts').append(body);
-        		}
-
-        		//set information of data in table
-        		function setInfoData(totalRow, limitRow, page,
-        				totalPage) {
-        			if (page * limitRow >= totalRow) {
-        				$("#infor-data").text(
-        						"Current page " + page + " of "
-        								+ totalPage + ", from "
-        								+ ((page - 1) * limitRow +1)
-        								+ " to " + totalRow + " of "
-        								+ totalRow);
-        			} else {
-        				$("#infor-data").text(
-        						"Current page " + page + " of "
-        								+ totalPage + ", from "
-        								+ ((page - 1) * limitRow + 1)
-        								+ " to " + page * limitRow
-        								+ " of " + totalRow);
-        			}
-
-        		}
-
-        		//set pagination to div page-selection 
-        		function setPagination(totalPage, pageNum, userId) {
-        			$('#page-selection').bootpag({
-        				total : totalPage,
-        				page : pageNum,
-        				maxVisible : 5
-        			});
-        		}
 
         		//handle click on pagination
         		$('#page-selection').bootpag().on("page",
         				function(event, num) {
         					var userId = $('#userId').text();
         					var description = $('#description').text();
-        					getListPost(pageNum, userId, description);
+        					getListPost(num, userId, description);
         		});
-        		function getUrlParameter(sParam)
-        		{
-        		    var sPageURL = window.location.search.substring(1);
-        		    var sURLVariables = sPageURL.split('&');
-        		    for (var i = 0; i < sURLVariables.length; i++) 
-        		    {
-        		        var sParameterName = sURLVariables[i].split('=');
-        		        if (sParameterName[0] == sParam) 
-        		        {
-        		            return sParameterName[1];
-        		        }
-        		    }
-        		} 
+        		
             });
+            
+            function getUserInfo() {
+    			//show loading spinner image
+    			$('#spinner').fadeIn();
+    			$.ajax({
+   					type : "GET",
+   					url : "getUserInfo"
+ 				}).done(function(data) {
+ 					var data = jQuery.parseJSON(data);
+ 					console.log('log = '+data.user.id);
+ 					//hide loading spinner image when ajax done
+ 					//check valid message form server
+ 					if (data.message) {
+ 						$('#message').text(data.message);
+ 					} else {
+ 						$('#username').val(data.user.username);
+ 						$('#userStatus').val(data.user.status);
+ 						$('#userId').val(data.user.id);
+ 						$('#firstname').val(data.user.firstname);
+ 						$('#lastname').val(data.user.lastname);
+ 						$('#userEmail').val(data.user.email);
+ 						$('#current-blog-name').text(data.user.firstname + ' ' + data.user.lastname);
+ 						loadPage();
+ 					}
+ 				}).fail(function() {
+					//hide loading spinner image
+					$('#spinner').fadeOut();
+   				});
+    		}
+    		
+    		function loadPage(){
+        		//load ajax when load page
+        		if(getUrlParameter('userId')){
+        			$('#userIdHidden').text(getUrlParameter('userId'));
+        			getListPost(1,getUrlParameter('userId'), '');	
+        		}else{
+        			console.log('user id= '+ $('input#userId').val());
+        			getListPost(1,$('#userId').val(), '');
+        		}
+    		} 
+    		
+    		function getUrlParameter(sParam)
+    		{
+    		    var sPageURL = window.location.search.substring(1);
+    		    var sURLVariables = sPageURL.split('&');
+    		    for (var i = 0; i < sURLVariables.length; i++) 
+    		    {
+    		        var sParameterName = sURLVariables[i].split('=');
+    		        if (sParameterName[0] == sParam) 
+    		        {
+    		            return sParameterName[1];
+    		        }
+    		    }
+    		} 
+    		
+
+    		//get list animal function
+    		function getListPost(pageNum, userId, description) {
+    			//set hidden searching animal type
+    			$('#userIdHidden').text(userId);
+    			//show loading spinner image
+    			$('#spinner').fadeIn();
+    			$.ajax({
+   					type : "GET",
+   					url : "getAllPostForUser",
+   					data : {
+   						pageNum : pageNum,
+   						userId : userId,
+   						description: description
+   					},
+   					}).done(function(data) {
+   						var data = jQuery.parseJSON(data);
+   						console.log('log = '+data);
+   						//hide loading spinner image when ajax done
+   						$('#spinner').fadeOut();
+   						//check valid message form server
+   						if (data.message) {
+   							$('#message').text(data.message);
+   						} else {
+   							//if have no message, jquery set data to table, hide message
+   							$('#message').text("");
+   							setDataTable(data.listPost);
+   							setInfoData(
+   									data.totalRow,
+   									data.limitRow,
+   									data.pageNum,
+   									data.totalPage);
+   							setPagination(
+   									data.totalPage,
+   									pageNum, userId);
+   						}
+   					}).fail(function() {
+   						//hide loading spinner image
+   						$('#spinner').fadeOut();
+   						//set message error
+   						$('#message')
+   								.text(
+   										"Have something error--Please try agian later");
+   						//remove data in table
+   						$("#content-posts").empty();
+   						$("#infor-data").empty();
+   						$("#page-selection").empty();
+   				});
+    		}
+
+    		//build hmlt data in table
+    		function setDataTable(listPost) {
+    			$("#content-posts").empty();
+    			$('.blog-name').text(listPost[0].user.firstname + ' ' + listPost[0].user.lastname
+    					+ '\'s Blog' );
+    			var body = '';
+    			for (var i = 0, size = listPost.length; i < size; i++) {
+
+    				body += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="post-style">';
+    					if(listPost[i].user.id == $('input#userId').val()){
+							body += '<label><a href="mainpage/detailpost?postId='+listPost[i].id+'" >'+ listPost[i].title +'</a></label>'
+			            	               + '<label style="  float: right;margin-right: 15%;"><a class="glyphicon glyphicon-pencil" href="../mainpage/editpost?postId='+listPost[i].id+'" ></a>'
+			            	               +    '&nbsp;&nbsp;'
+			                               +    '<a class="glyphicon glyphicon-trash" href="" id="deletePost_'+listPost[i].id+'" onClick="deletePost('+listPost[i].id+')" ></a>'
+			            	               + '</label>';
+			            		   
+		               	}else{
+		            	   body +='<label><a href="mainpage/detailpost?postId='+listPost[i].id+'" >'+ listPost[i].title +'</a></label>';
+		            	}
+    					body += '<p id="postInfo">Date created : '
+    						+ listPost[i].created_at
+    						+ ', Date modifed: '
+    						+ listPost[i].modified_at
+    						+ ', Author: <a href="">'
+    						+ listPost[i].user.username
+    						+ '</a></p>'
+    						+ '<p>'+listPost[i].content+'</p>'
+    						+ '</div>'
+    			}
+
+    			$('#content-posts').append(body);
+    		}
+
+    		//set information of data in table
+    		function setInfoData(totalRow, limitRow, page,
+    				totalPage) {
+    			if (page * limitRow >= totalRow) {
+    				$("#infor-data").text(
+    						"Current page " + page + " of "
+    								+ totalPage + ", from "
+    								+ ((page - 1) * limitRow +1)
+    								+ " to " + totalRow + " of "
+    								+ totalRow);
+    			} else {
+    				$("#infor-data").text(
+    						"Current page " + page + " of "
+    								+ totalPage + ", from "
+    								+ ((page - 1) * limitRow + 1)
+    								+ " to " + page * limitRow
+    								+ " of " + totalRow);
+    			}
+
+    		}
+
+    		//set pagination to div page-selection 
+    		function setPagination(totalPage, pageNum, userId) {
+    			$('#page-selection').bootpag({
+    				total : totalPage,
+    				page : pageNum,
+    				maxVisible : 5
+    			});
+    		}
+            
+            function deletePost(id){
+				event.preventDefault();
+    			console.log('id = '+id);
+    			$('#spinner').fadeIn();
+    			$.ajax({
+    				type : "GET",
+    				url : "../mainpage/post/delete",
+    				data:{postId: id}
+    			}).done(function(data) {
+    				console.log('log'+data);
+    				var data = jQuery.parseJSON(data);
+    				if(data.message){
+    					if(data.message == 209){
+    						$('#message').text('Delete post success');
+    						loadPage()
+    					}else{
+    						$('#message').text(data.message);	
+    					}
+    					
+    				}	
+    				$('#spinner').fadeOut();
+    			}).fail(function() {
+    				//hide loading spinner image
+    				$('#spinner').fadeOut();
+    			});
+    		}
+            
         </script>
     </head>
     <body>
@@ -252,7 +291,7 @@
                                 
                             
                                 <ul class="nav navbar-nav navbar-right" >
-                                    <li id="header-button"><a href="../mainpage/profile" id="current-blog-name">Uay Le U</a></li>
+                                    <li id="header-button"><a href="../mainpage/profile" id="current-blog-name"></a></li>
                                     <li id="header-button"><a href="../logout">Logout</a></li>
                                 </ul>    
                             
@@ -271,6 +310,9 @@
 				</div>
 				
 				<div class="row">
+					<div style="text-align: center; height: 30px;">
+								<label class="message" id="message">${message}</label>
+							</div>
 					<form method="get" id="search-post-form" name="search-post-form">
 						<div class="input-group"
 							style="width: 100%; margin: 0 auto; display: 0 auto;">

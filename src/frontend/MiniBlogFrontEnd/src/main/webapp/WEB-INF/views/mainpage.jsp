@@ -12,11 +12,13 @@
 		<link rel="stylesheet" type="type/css" href="css/bootstrap.min.css">
 		<link rel="stylesheet" type="type/css" href="css/style.css">
 		<link rel="stylesheet" type="type/css" href="css/m-styles.min.css">
+		<link rel="stylesheet" type="text/css" href="js/jquery-confirm/css/jquery-confirm.css" />
 		
 		<script src="js/jquery-2.1.3.js"></script>
 		<script src="js/detectmobilebrowser.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/jquery.bootpag.min.js"></script>
+		<script type="text/javascript" src="js/jquery-confirm/js/jquery-confirm.js"></script>
 		
 		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -54,21 +56,19 @@
      					if (data.message) {
      						$('#message').text(data.message);
      					} else {
-     						
+     						$('#userId').val(data.user.id);
      						$('.blog-name').text(data.user.firstname + ' ' + data.user.lastname);
      					}
+     					getListPost(1,"");
      				}).fail(function() {
     					//hide loading spinner image
     					$('#spinner').fadeOut();
        				});
         		}
-				
-		
-				//load ajax when load page
-				getListPost(1,"");
 		
 				//get list animal function
 				function getListPost(pageNum, description) {
+					console.log('user id post = '+$('input#userId').val())
 					//set hidden searching animal type
 					$('#descriptionHidden').text(description);
 					//show loading spinner image
@@ -119,17 +119,26 @@
 				function setDataTable(listPost) {
 					$("#content-posts").empty();
 					var body = '';
+					
 					for (var i = 0, size = listPost.length; i < size; i++) {
 		
-						body += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="post-style">'
-								+ '<p ><a href="mainpage/detailpost?postId='+listPost[i].id+'">'
-								+ listPost[i].title
-								+ '</a></p>'
-								+ '<p >Date created : '
+						body += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="post-style">';
+						if(listPost[i].user.id == $('input#userId').val()){
+							body += '<label><a href="mainpage/detailpost?postId='+listPost[i].id+'" >'+ listPost[i].title +'</a></label>'
+			            	               + '<label style="  float: right;margin-right: 15%;"><a class="glyphicon glyphicon-pencil" href="mainpage/editpost?postId='+listPost[i].id+'" ></a>'
+			            	               +    '&nbsp;&nbsp;'
+			                               +    '<a class="glyphicon glyphicon-trash" href="" id="deletePost_'+listPost[i].id+'" onClick="deletePost('+listPost[i].id+')" ></a>'
+			            	               + '</label>';
+			            		   
+		               	}else{
+		            	   body +='<label><a href="mainpage/detailpost?postId='+listPost[i].id+'" >'+ listPost[i].title +'</a></label>';
+		            	}
+								
+						body	+= '<p id="postInfo">Date created : '
 								+ listPost[i].created_at
 								+ ', Date modifed: '
 								+ listPost[i].modified_at
-								+ ', Author: <a href="">'
+								+ ', Author: <a href="mainpage/userpage?userId='+listPost[i].user.id+'">'
 								+ listPost[i].user.username
 								+ '</a></p>'
 								+ '<p>'+listPost[i].content+'</p>'
@@ -172,10 +181,48 @@
 				//handle click on pagination
 				$('#page-selection').bootpag().on("page",
 						function(event, num) {
-							var animal = $('#descriptionHidden').text();
-							getListPost(pageNum, description);
+							console.log('num = '+num);
+						 	var description = $('#descriptionHidden').text();
+							
+							getListPost(num, description);
 				});
 			});
+			function deletePost(id){
+				event.preventDefault();
+    			console.log('id = '+id);
+    			$('#spinner').fadeIn();
+    			$.ajax({
+    				type : "GET",
+    				url : "mainpage/post/delete",
+    				data:{postId: id}
+    			}).done(function(data) {
+    				console.log('log'+data);
+    				var data = jQuery.parseJSON(data);
+    				if(data.message){
+    					if(data.message == 209){
+    						$.alert({
+								title : 'Alert!',
+								content : "Delete post success"
+										+ "--Redirecting to main page",
+								confirm : function() {
+									window.location.href = "mainpage";
+								}
+							});
+							console.log(data.redirect);
+							setTimeout(function() {
+								window.location.href = "mainpage";
+									},5000);
+    					}else{
+    						$('#message').text(data.message);	
+    					}
+    					
+    				}	
+    				$('#spinner').fadeOut();
+    			}).fail(function() {
+    				//hide loading spinner image
+    				$('#spinner').fadeOut();
+    			});
+    		}
 		</script>
 	</head>
 	<body>
@@ -244,6 +291,7 @@
 				</div>
 	
 				<div class="row">
+					<input type="hidden" name="userId" id="userId">
 					<form method="get" id="search-post-form" name="search-post-form">
 						<div class="input-group"
 							style="width: 100%; margin: 0 auto; display: 0 auto;">
