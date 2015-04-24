@@ -1,0 +1,70 @@
+ Về sự phân cấp, quyền hạn, sở hữu cho File
+
+Sự phân cấp, quyền và sự sở hữu rõ ràng đơn giản đã tạo lên sức mạnh bảo mật của
+Unix/Linux. Vấn đề đầu tiên mà chúng ta cần kiểm tra có lẽ là sự phân cấp, quyền hạn, sở hữu
+các File trên hệ thống của bạn. Nếu không được cấu hình một cách chính xác điều này hết sức
+nguy hiểm. Cho lý do này bạn lên thường xuyên kiểm toán hệ thống File trên Server của bạn.
+Đặc biệt lên chú ý đến ID của root. Có một số chương trình cho phép người sử dụng trên hệ
+thống của bạn có thể tự do Set UID mà không cần root. Chắc tôi không cần nói, bạn cũng biết là
+phải làm gì với các chương trình loại này rồi chứ ? Bây giờ chúng ta tìm các File có sự phân cấp,
+quyền hạn không ổn định trên hệ thống của bạn và sau đó điều chỉnh lại giá trị an toàn cho
+chúng:
+
+root@localhotst# find / -type f -perm +6000 -ls
+59520 30 -rwsr-xr-x 1 root root 30560 Apr 15 1999 /usr/bin/chage
+59560 16 -r-sr-sr-x 1 root lp 15816 Jan 6 2000 /usr/bin/lpq
+
+root@localhotst# chmod -s /usr/bin/chage /usr/bin/lpq
+root@localhotst# ls -l /usr/bin/lpq /usr/bin/chage
+-rwxr-xr-x 1 root root 30560 Apr 15 1999 /usr/bin/chage
+-r-xr-xr-x 1 root lp 15816 Jan 6 2000 /usr/bin/lpq
+
+Các dòng lệnh trên tìm các File có UID root hay tương đương root. Tiếp đó gán thuộc tính chỉ
+cho phép root mới có quyền thực thi nó.
+ 
+Chúng ta tiếp tục tìm những File cho phép ghi lại trên hệ thống của bạn. Điều gì sẽ xảy ra nếu kẻ
+tấn công có thể tự do thay đổi nội dung các File ?
+
+root@localhost# find / -perm -2 ! -type l -ls
+
+Trong các thao tác bình thường việc ghi, thay đổi nội dung File thường được thực hiện ở các thư
+mục như /dev và /tmp...Nếu bạn thấy ở các thư mục khác mà các File lại có thể tự do ghi lại
+được thì có lẽ là có vấn đề nảy sinh rồi đó.
+
+Bạn cũng lên quan tâm đến các File không có chủ sở hữu (không thuộc bất cứ User hay Group
+nào). Tất nhiên là không ai sở hữu chúng thì kẻ tấn công rất có thể sẽ sở hữu chúng ;-( Để tìm
+các File không có chủ sở hữu bạn dùng lệnh:
+
+root@localhost# find / -nouser -o -nogroup
+
+Với việc sử dụng lệnh "lsattr" và "chattr" bạn có thể thay đổi đặc tính cho các File và thư mục
+dưới cấp độ cao cấp của một quản trị hệ thống như khả năng điều khiển quá trình xoá File, thay
+đổi File và với những tính năng khác mà lệnh "chmod" không thể thực hiện được.
+
+Việc cấp phát quyền hạn sở hữu cho File theo một quy tắc thống nhất, trong suốt, không thay
+đổi...Tỏ ra có hiệu quả đặc biệt trong việc ngăn chặn quá trình xoá, thay đổi các tập tin Log của
+kẻ tấn công, hay việc cài đặt Trojan vào những File nhị phân Binnary trên hệ thống của bạn.
+Lệnh "chattr" được sử dụng để gán hay gỡ bỏ quyền hạn sở hữu cho File, thì lệnh "lsattr" được
+sử dụng để liệt kê chúng.
+
+Các File Log cần phải được bảo vệ một cách hợp lý. Khi dữ liệu được ghi vào File Log một lần,
+nó sẽ không thể được phép chỉnh sửa hay thay đổi. Sở dỹ có nhu cầu này, bởi hiện tại có rất
+nhiều Script cho phép kẻ tấn công tấn công xoá bỏ, chỉnh sửa nội dung trên File Log. Để xiết
+chặt hơn an toàn cho File Log chúng ta cần sử dụng lệnh "chattr" và "lsattr" với một vài đối
+tượng:
+
+root@localhost# chattr +i /bin/login
+root@localhost# chattr +a /var/log/messages
+root@localhost# lsattr /bin/login /var/log/messages
+----i--- /bin/login
+-----a-- /var/log/messages
+
+Tóm lại! sau phần này bạn lên chú ý: Không bao giờ cho phép người sử dụng được phép chạy
+các chương trình Set UID, hay những chương trình khác có đặc quyền như root trên Home
+Directory của bạn. Luôn kiểm toán và quan tâm đến hệ thống File trên Server của bạn, đặc biệt là
+với những loại File có nguy cơ cao đã nêu ở trên.
+
+- Bạn lên sử dụng tuỳ chọn nouid trong /etc/fstab để cho phép sự chỉnh sửa ghi lại ở các khu
+vực đã định với từng người sử dụng.
+- Tính năng noexec và nodev cho các File trong Home Directory của người dùng để không cho
+phép họ tự động thực thi các chương trình hay tạo các thiết bị Block.

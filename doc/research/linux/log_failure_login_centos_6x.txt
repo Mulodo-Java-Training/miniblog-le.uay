@@ -1,0 +1,58 @@
+lock user login after failed login attempts in Red Hat 6.x and CentOS 6.x
+
+Earlier in RedHat based distro we used to setup pam_tally.so for locking the user login after some failed login attempts.
+
+Now in Red Hat 6.x and CentOS 6.x we will use pam_tally2.so .
+
+# cd /etc/pam.d
+# cp -p password-auth-ac password-auth-ac.bak
+
+note:password-auth is softlink of original file password-auth-ac . ls -la password-auth
+
+Now add these two lines in password-auth-ac or password-auth
+
+auth required pam_tally2.so deny=3 unlock_time=36000 audit
+
+account required pam_tally2.so
+
+Below is the sample of my system’s password-auth file.
+
+[root@localhost ~]# cat /etc/pam.d/password-auth
+#%PAM-1.0
+# This file is auto-generated.
+# User changes will be destroyed the next time authconfig is run.
+auth required pam_env.so
+auth sufficient pam_unix.so nullok try_first_pass
+auth required pam_tally2.so deny=3 unlock_time=36000 audit
+auth requisite pam_succeed_if.so uid >= 500 quiet
+auth required pam_deny.so
+
+account required pam_unix.so
+account sufficient pam_localuser.so
+account required pam_tally2.so
+account sufficient pam_succeed_if.so uid < 500 quiet
+account required pam_permit.so
+
+password requisite pam_cracklib.so try_first_pass retry=3 type=
+password sufficient pam_unix.so sha512 shadow nullok try_first_pass use_authtok
+password required pam_deny.so
+
+session optional pam_keyinit.so revoke
+session required pam_limits.so
+session [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid
+session required pam_unix.so
+[root@localhost ~]#
+
+By default the failed logs are saved in /var/log/tallylog
+
+To see user’s no. of failed attempts,command is –
+
+pam_tally2 -u username
+
+To reset failed login log(like faillog -u username -r), use below command
+
+pam_tally2 -u username –reset
+
+To know what are the options you can use with pam_tally2.so .Read the file from below given path.
+
+cat /usr/share/doc/pam-1.1.1/txts/README.pam_tally2

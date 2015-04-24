@@ -1,0 +1,42 @@
+Setting up the base logging directory
+First, we need to configure a base directory for storing the log files. We’re going to create the /var/log/syslog directory. Then we’re going to add a corresponding SELinux file context policy, which will maintain the correct labels on the new directory and it’s content. (Don’t disable SELinux… and stop using software by vendors that ask you to disable it.)
+
+# mkdir /var/log/syslog
+# /usr/sbin/semanage fcontext -a -t var_log_t "/var/log/syslog(/.*)?"
+# /sbin/restorecon -R -v /var/log/syslog
+
+ 
+
+Configuring rsyslog
+In /etc/rsyslog.conf, uncomment the UDP and TCP module lines. This configured rsyslogd to listen for remote syslog messages.
+
+# Provides UDP syslog reception
+$ModLoad imudp
+$UDPServerRun 514
+
+
+# Provides TCP syslog reception
+$ModLoad imtcp
+$InputTCPServerRun 514
+
+ 
+
+Next, we’re going to create an rsyslog configuration file that will log messages into the directory structure. We want a separate file for each host and we want a separate log for each day. We’ll create a directory structure broken down by year, month and day. Create the /etc/rsyslog.d/remote-hosts.conf file, using the following content.
+
+# Log remote messages by date & hostname
+$template DailyPerHostLogs,"/var/log/syslog/%$YEAR%/%$MONTH%/%$DAY%/%HOSTNAME%_messages.log"
+*.info;mail.none;authpriv.none;cron.none                -?DailyPerHostLogs
+
+ 
+
+Finally, we need to restart rsyslogd to have the configuration changes put into effect.
+
+[root@citasvcsl6int01 ~]# service rsyslog restart
+Shutting down system logger:                               [  OK  ]
+Starting system logger:                                    [  OK  ]
+[root@citasvcsl6int01 ~]#
+
+ 
+
+Finishing Up
+That it. Now you just need to configure the syslog daemon on your other systems to send messages to your new syslog server.

@@ -1,0 +1,9 @@
+install mysql on ubuntu
+
+- sudo apt-get install mysql-server mysql-client
+- sudo nano /etc/mysql/my.cnf
+ fix bind-address            = 127.0.0.1 to 0.0.0.0 (cai nay la cho accept all connection, co the tuy chon ip)
+- sudo service mysql restart
+- mysql -u root -p
+- grant all privileges on [database].* to [user]@localhost identified by "[password]";
+- flush privileges;
