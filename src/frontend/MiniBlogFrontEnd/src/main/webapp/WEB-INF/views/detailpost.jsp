@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="
 ">
@@ -10,10 +10,10 @@
         <title>Detail post page</title>
 
         <!-- Bootstrap CSS -->
-        <link rel="stylesheet" type="type/css" href="../css/bootstrap.min.css">
-        <link rel="stylesheet" type="type/css" href="../css/style.css">
-        <link rel="stylesheet" type="type/css" href="../css/m-styles.min.css">
-        <link rel="stylesheet" type="text/css" href="../js/jquery-confirm/css/jquery-confirm.css" />
+        <link rel="stylesheet"  href="../css/bootstrap.min.css">
+        <link rel="stylesheet"  href="../css/style.css">
+        <link rel="stylesheet"  href="../css/m-styles.min.css">
+        <link rel="stylesheet"  href="../js/jquery-confirm/css/jquery-confirm.css" />
 
         <script type="text/javascript" src="../js/jquery-2.1.3.js"></script>
         <script type="text/javascript" src="../js/detectmobilebrowser.js"></script>
@@ -46,7 +46,6 @@
         				url : "../mainpage/getUserInfo"
         			}).done(function(data) {
         				var data = jQuery.parseJSON(data);
-        				console.log('log = ' + data.user);
         				//hide loading spinner image when ajax done
         				//check valid message form server
         				if (data.message) {
@@ -64,11 +63,9 @@
         		}
                 
                 if(getUrlParameter('postId') && getUrlParameter('postId') != ''){
-                	console.log('log postId = '+getUrlParameter('postId'));
                 	$('#postId').val(getUrlParameter('postId'));
                 	getPostInfo(getUrlParameter('postId'));
                 }else{
-                	console.log('log message');
                 	$('#message').text('Invalid post Id');
                 }
 
@@ -78,9 +75,10 @@
         			$.ajax({
         				type : "GET",
         				url : "getPostInfo",
+        				contentType: "application/x-www-form-urlencoded;charset=utf-8",
         				data:{postId: postId}
         			}).done(function(data) {
-        				console.log('log'+data);
+        				data = jQuery.parseJSON(data);
         				if(data.message){
         					$('#message').text(data.message);
         				}else{
@@ -94,8 +92,6 @@
         		}
         		
         		function setPostData(post){
-        		   console.log('user id = '+$('input#userId').val());
-        		   console.log('post user id = '+post.user.id);
         		   $('#post-content-withoud-comment').empty();
         	       $('#comment-tbody').empty();
         		   var postBody = '';
@@ -275,7 +271,6 @@
           								commentId : commentEditId
           							}
           						}).done(function(data) {
-          							console.log('data edit comment +'+data);
        								var data = jQuery.parseJSON(data);
        								
        								if (data.message) {
@@ -294,8 +289,7 @@
        							})
           						.fail(function() {
           							$('#editCommentMessage').text('Have some error--Try again later');
-  									$('#spinner').fadeOut();														
-  									console.log('fail');														
+  									$('#spinner').fadeOut();																												
           						});
           					} 
 
@@ -303,7 +297,6 @@
             });
             function deleteComment(id){
     			event.preventDefault();
-    			console.log('id = '+id);
     			
     			$('#spinner').fadeIn();
     			$.ajax({
@@ -311,7 +304,6 @@
     				url : "comments/deleteComment",
     				data:{commentId: id}
     			}).done(function(data) {
-    				console.log('log'+data);
     				if(data.message){
     					
     					if(data.message == 212){
@@ -330,14 +322,12 @@
     		}
 			function deletePost(id){
 				event.preventDefault();
-    			console.log('id = '+id);
     			$('#spinner').fadeIn();
     			$.ajax({
     				type : "GET",
     				url : "post/delete",
     				data:{postId: id}
     			}).done(function(data) {
-    				console.log('log'+data);
     				var data = jQuery.parseJSON(data);
     				if(data.message){
     					if(data.message == 209){
@@ -349,7 +339,6 @@
 									window.location.href = "../mainpage";
 								}
 							});
-							console.log(data.redirect);
 							setTimeout(function() {
 								window.location.href = "../mainpage";
 									},5000);
@@ -366,7 +355,6 @@
     		}
             
             function editComment(id) {
-            	console.log('id = '+id);
             	$("#formComment").modal('show');
         		var oldContent = $('#contentComment_'+id).text();
         		$('#contentCommentEdit').text(oldContent);
@@ -481,7 +469,7 @@
 		                            </div>
 		                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
 		                                <input class="btn btn-primary " type="submit" id="submitComment" value="Add"
-		                                    name="add" style="float: right" />
+		                                    name="add" />
                                     </div>
 		                        </form>
 	                        </div>

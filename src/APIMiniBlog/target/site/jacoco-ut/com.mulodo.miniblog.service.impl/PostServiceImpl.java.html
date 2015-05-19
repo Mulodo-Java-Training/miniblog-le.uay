@@ -61,7 +61,7 @@ import com.mulodo.miniblog.service.PostService;
      * @exception HandlerException
      */
     @Override
-    public Data getAllPostForUser(int pageNum, int author_id, Boolean isOwerUser)
+    public Data getAllPostForUser(int pageNum, int author_id, String description, Boolean isOwerUser)
             throws HandlerException
     {
 <span class="fc" id="L67">        Data data = null;</span>
@@ -70,8 +70,8 @@ import com.mulodo.miniblog.service.PostService;
 <span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if (pageNum &gt; 0) {</span>
             // get list post folow page number
             // get total post follow condition
-<span class="fc" id="L73">            listPost = this.postDAO.getAllPost(pageNum, author_id, null, true, isOwerUser);</span>
-<span class="fc" id="L74">            totalPost = this.postDAO.getAllPostSize(author_id, null, true, isOwerUser);</span>
+<span class="fc" id="L73">            listPost = this.postDAO.getAllPost(pageNum, author_id, description, true, isOwerUser);</span>
+<span class="fc" id="L74">            totalPost = this.postDAO.getAllPostSize(author_id, description, true, isOwerUser);</span>
         }
 <span class="fc bfc" id="L76" title="All 2 branches covered.">        if (listPost != null) {</span>
 <span class="fc" id="L77">            int totalPage = (int) Math.round(totalPost / Constraints.LIMIT_ROW + 0.5);</span>

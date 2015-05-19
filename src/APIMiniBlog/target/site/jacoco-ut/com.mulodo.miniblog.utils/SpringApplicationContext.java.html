@@ -4,8 +4,10 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 
-<span class="fc" id="L8">public class SpringApplicationContext implements ApplicationContextAware</span>
+
+<span class="fc" id="L10">public class SpringApplicationContext implements ApplicationContextAware</span>
 {
 
     private static ApplicationContext requestContext;
@@ -13,8 +15,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
     {
-<span class="fc" id="L16">        requestContext = applicationContext;</span>
-<span class="fc" id="L17">    }</span>
+<span class="fc" id="L18">        requestContext = applicationContext;</span>
+<span class="fc" id="L19">    }</span>
 
     /**
      * getBean use for getting bean from application context
@@ -25,11 +27,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
      */
     public static Object getBean(String beanName)
     {
-        // if have no current application context, set new application contenxt
-<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (requestContext == null) {</span>
-<span class="fc" id="L30">            requestContext = new ClassPathXmlApplicationContext(&quot;classpath:/WEB-INF/applicationContext.xml&quot;);</span>
+        // if have no current application context, set new  application contenxt
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        if (requestContext == null) {</span>
+<span class="fc" id="L32">            requestContext = new ClassPathXmlApplicationContext(&quot;file:src/main/webapp/WEB-INF/applicationContext.xml&quot;);</span>
         }
-<span class="fc" id="L32">        return requestContext.getBean(beanName);</span>
+<span class="fc" id="L34">        return requestContext.getBean(beanName);</span>
     }
 
 }

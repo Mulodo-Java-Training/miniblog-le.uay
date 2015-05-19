@@ -147,7 +147,6 @@ public class PostController {
 				.getAttribute(Constraints.ACCESS_KEY);
 
 		ResponseData responseData = null;
-
 		try{
 			responseData = postService.addPost(accessKey, title,
 					content);
@@ -240,8 +239,6 @@ public class PostController {
 					ConstraintsPostError.CODE_2500.getValue());
 			return jsonObject.toString();
 		}
-		System.out.println("id= "+postId);
-		System.out.println("json = "+new JSONObject(responseData));
 		if (responseData != null && responseData.getMeta() != null) {
 			if (responseData.getMeta().getCode() == ConstraintsMessage.CODE_207
 					.getKey()) {
@@ -295,7 +292,7 @@ public class PostController {
  	}
 
 	
-	@RequestMapping(value = "/mainpage/getPostInfo", method = RequestMethod.GET, headers="Accept=application/json")
+	@RequestMapping(value = "/mainpage/getPostInfo", method = RequestMethod.GET)
 	@ResponseBody
 	public String getPostInfo(@RequestParam("postId") String postId, HttpServletRequest request) {
 		
@@ -399,17 +396,13 @@ public class PostController {
 						ConstraintsUserError.CODE_1000.getValue());
 			}
 		}else{
-			
-			System.out.println("is null="+jsonDataPostComment.getJSONArray("listComment").isNull(0));
 			if(!jsonDataPostComment.getJSONArray("listComment").isNull(0)){
 				
 				jsonDataPost.getJSONObject("post").put("comments", jsonDataPostComment.getJSONArray("listComment"));
 			}
 			
 			jsonObject.put("data", jsonDataPost);
-			System.out.println("json post infor = "+jsonObject.toString());
 		}
-		
 		return jsonObject.toString();
  	}
 

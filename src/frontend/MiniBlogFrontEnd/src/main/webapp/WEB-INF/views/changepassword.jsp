@@ -9,10 +9,10 @@
 <title>Change password Page</title>
 
 <!-- Bootstrap CSS -->
-<link rel="stylesheet" type="type/css"
+<link rel="stylesheet" 
 	href="../../css/bootstrap.min.css">
-<link rel="stylesheet" type="type/css" href="../../css/style.css">
-<link rel="stylesheet" type="type/css" href="../../css/m-styles.min.css">
+<link rel="stylesheet"  href="../../css/style.css">
+<link rel="stylesheet"  href="../../css/m-styles.min.css">
 <link rel="stylesheet" type="text/css"
 	href="../../js/jquery-confirm/css/jquery-confirm.css" />
 

@@ -76,81 +76,83 @@ import com.mulodo.miniblog.model.User;
 <span class="fc" id="L76">            criteria.createAlias(&quot;user&quot;, &quot;us&quot;);</span>
             // get specific column
 <span class="fc" id="L78">            criteria.setProjection(Projections.projectionList()</span>
-<span class="fc" id="L79">                    .add(Projections.property(&quot;id&quot;).as(&quot;id&quot;))</span>
-<span class="fc" id="L80">                    .add(Projections.property(&quot;title&quot;).as(&quot;title&quot;))</span>
-<span class="fc" id="L81">                    .add(Projections.property(&quot;content&quot;).as(&quot;content&quot;))</span>
-<span class="fc" id="L82">                    .add(Projections.property(&quot;created_at&quot;).as(&quot;created_at&quot;))</span>
-<span class="fc" id="L83">                    .add(Projections.property(&quot;modified_at&quot;).as(&quot;modified_at&quot;))</span>
-<span class="fc" id="L84">                    .add(Projections.property(&quot;status&quot;).as(&quot;status&quot;))</span>
-<span class="fc" id="L85">                    .add(Projections.property(&quot;us.id&quot;).as(&quot;author_id&quot;))</span>
-<span class="fc" id="L86">                    .add(Projections.property(&quot;us.username&quot;).as(&quot;username&quot;))</span>
-<span class="fc" id="L87">                    .add(Projections.property(&quot;us.status&quot;).as(&quot;status&quot;)));</span>
+                    .add(Projections.property(&quot;id&quot;).as(&quot;id&quot;))
+                    .add(Projections.property(&quot;title&quot;).as(&quot;title&quot;))
+                    .add(Projections.property(&quot;content&quot;).as(&quot;content&quot;))
+                    .add(Projections.property(&quot;created_at&quot;).as(&quot;created_at&quot;))
+                    .add(Projections.property(&quot;modified_at&quot;).as(&quot;modified_at&quot;))
+                    .add(Projections.property(&quot;status&quot;).as(&quot;status&quot;))
+                    .add(Projections.property(&quot;us.id&quot;).as(&quot;author_id&quot;))
+                    .add(Projections.property(&quot;us.username&quot;).as(&quot;username&quot;))
+                    .add(Projections.property(&quot;us.firstname&quot;).as(&quot;firstname&quot;))
+                    .add(Projections.property(&quot;us.lastname&quot;).as(&quot;lastname&quot;))
+                    .add(Projections.property(&quot;us.status&quot;).as(&quot;status&quot;)));
 
             // if author id positive integer and get post for user
-<span class="pc bpc" id="L90" title="1 of 4 branches missed.">            if (author_id &gt; 0 &amp;&amp; isForUser) {</span>
+<span class="pc bpc" id="L92" title="1 of 4 branches missed.">            if (author_id &gt; 0 &amp;&amp; isForUser) {</span>
                 // get all post for user
-<span class="fc bfc" id="L92" title="All 2 branches covered.">                if (isOwnerUser) {</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">                if (isOwnerUser) {</span>
                     // get all post for current user that user owner
-<span class="fc" id="L94">                    criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
-<span class="fc" id="L95">                } else {</span>
+<span class="fc" id="L96">                    criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
+                } else {
                     // get all post for other user with condition:
                     // user active and post of that user is active
-<span class="fc" id="L98">                    criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
-<span class="fc" id="L99">                    criteria.add(Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));</span>
-<span class="fc" id="L100">                    criteria.add(Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE));</span>
+<span class="fc" id="L100">                    criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
+<span class="fc" id="L101">                    criteria.add(Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));</span>
+<span class="fc" id="L102">                    criteria.add(Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE));</span>
                 }
-<span class="pc bpc" id="L102" title="2 of 4 branches missed.">            } else if (author_id &gt; 0 &amp;&amp; !isForUser) {</span>
+<span class="pc bpc" id="L104" title="2 of 4 branches missed.">            } else if (author_id &gt; 0 &amp;&amp; !isForUser) {</span>
                 // if get post not for user, follow condition:
                 // 1: get post of other user :post have active status and user is active user  
                 // 2: get post of current login user: all post of current login user
-<span class="fc" id="L106">                Criterion criterionPostUserActive = Restrictions.and(</span>
-<span class="fc" id="L107">                        Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE),</span>
-<span class="fc" id="L108">                        Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));</span>
-<span class="fc" id="L109">                Criterion criterionCurrentActive = Restrictions.eq(&quot;us.id&quot;, author_id);</span>
-<span class="fc" id="L110">                criteria.add(Restrictions.or(criterionCurrentActive, criterionPostUserActive));</span>
+<span class="fc" id="L108">                Criterion criterionPostUserActive = Restrictions.and(</span>
+                        Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE),
+                        Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));
+<span class="fc" id="L111">                Criterion criterionCurrentActive = Restrictions.eq(&quot;us.id&quot;, author_id);</span>
+<span class="fc" id="L112">                criteria.add(Restrictions.or(criterionCurrentActive, criterionPostUserActive));</span>
             }
             // set condition title and content like description
-<span class="fc bfc" id="L113" title="All 2 branches covered.">            if (description != null) {</span>
-<span class="fc" id="L114">                criteria.add(Restrictions.disjunction()</span>
-<span class="fc" id="L115">                        .add(Restrictions.like(&quot;title&quot;, &quot;%&quot; + description + &quot;%&quot;))</span>
-<span class="fc" id="L116">                        .add(Restrictions.like(&quot;content&quot;, &quot;%&quot; + description + &quot;%&quot;)));</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">            if (description != null) {</span>
+<span class="fc" id="L116">                criteria.add(Restrictions.disjunction()</span>
+                        .add(Restrictions.like(&quot;title&quot;, &quot;%&quot; + description + &quot;%&quot;))
+                        .add(Restrictions.like(&quot;content&quot;, &quot;%&quot; + description + &quot;%&quot;)));
             }
             
             // add order post by created time
-<span class="fc" id="L120">            criteria.addOrder(Order.desc(&quot;created_at&quot;));</span>
+<span class="fc" id="L122">            criteria.addOrder(Order.desc(&quot;created_at&quot;));</span>
 
-<span class="fc bfc" id="L122" title="All 2 branches covered.">            if (!criteria.list().isEmpty()) {</span>
-<span class="fc" id="L123">                listPost = new ArrayList&lt;Post&gt;();</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc" id="L125">                listPost = new ArrayList&lt;Post&gt;();</span>
                 // get list post from data to list object(result)
-<span class="fc" id="L125">                List&lt;Object[]&gt; result = criteria.list();</span>
+<span class="fc" id="L127">                List&lt;Object[]&gt; result = criteria.list();</span>
                 
-<span class="fc" id="L127">                Post post = null;</span>
+<span class="fc" id="L129">                Post post = null;</span>
 
-<span class="fc bfc" id="L129" title="All 2 branches covered.">                for (Iterator&lt;Object[]&gt; it = result.iterator(); it.hasNext();) {</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">                for (Iterator&lt;Object[]&gt; it = result.iterator(); it.hasNext();) {</span>
                     
                     // get every array object in result, and transfer to comment
-<span class="fc" id="L132">                    Object[] myResult = (Object[]) it.next();</span>
-<span class="fc" id="L133">                    post = new Post();</span>
-<span class="fc" id="L134">                    post.setId((int) myResult[0]);</span>
-<span class="fc" id="L135">                    post.setTitle((String) myResult[1]);</span>
-<span class="fc" id="L136">                    post.setContent((String) myResult[2]);</span>
-<span class="fc" id="L137">                    post.setCreated_at((Date) myResult[3]);</span>
-<span class="fc" id="L138">                    post.setModified_at((Date) myResult[4]);</span>
-<span class="fc" id="L139">                    post.setStatus((int) myResult[5]);</span>
-<span class="fc" id="L140">                    post.setUser(new User((int) myResult[6], (String) myResult[7],</span>
-<span class="fc" id="L141">                            (int) myResult[8]));</span>
+<span class="fc" id="L134">                    Object[] myResult = (Object[]) it.next();</span>
+<span class="fc" id="L135">                    post = new Post();</span>
+<span class="fc" id="L136">                    post.setId((int) myResult[0]);</span>
+<span class="fc" id="L137">                    post.setTitle((String) myResult[1]);</span>
+<span class="fc" id="L138">                    post.setContent((String) myResult[2]);</span>
+<span class="fc" id="L139">                    post.setCreated_at((Date) myResult[3]);</span>
+<span class="fc" id="L140">                    post.setModified_at((Date) myResult[4]);</span>
+<span class="fc" id="L141">                    post.setStatus((int) myResult[5]);</span>
+<span class="fc" id="L142">                    post.setUser(new User((int) myResult[6], (String) myResult[7], </span>
+                            (String)  myResult[8], (String)  myResult[9], (int) myResult[10]));
                     
                     //add post to list post
-<span class="fc" id="L144">                    listPost.add(post);</span>
-<span class="fc" id="L145">                    logger.info(&quot;Comment in get all commente for user :&quot; + post.getId());</span>
-                }
-<span class="fc" id="L147">                return listPost;</span>
+<span class="fc" id="L146">                    listPost.add(post);</span>
+<span class="fc" id="L147">                    logger.info(&quot;Comment in get all comment for user :&quot; + post.getId());</span>
+<span class="fc" id="L148">                }</span>
+<span class="fc" id="L149">                return listPost;</span>
             } else {
-<span class="fc" id="L149">                return null;</span>
+<span class="fc" id="L151">                return null;</span>
             }
-<span class="nc" id="L151">        } catch (HibernateException ex) {</span>
-<span class="nc" id="L152">            ex.printStackTrace();</span>
-<span class="nc" id="L153">            throw new HandlerException(ex.getMessage());</span>
+<span class="nc" id="L153">        } catch (HibernateException ex) {</span>
+<span class="nc" id="L154">            ex.printStackTrace();</span>
+<span class="nc" id="L155">            throw new HandlerException(ex.getMessage());</span>
         }
 
     }
@@ -173,49 +175,49 @@ import com.mulodo.miniblog.model.User;
             Boolean isOwnerUser) throws HandlerException
     {
         try {
-<span class="fc" id="L176">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L178">            session = this.sessionFactory.getCurrentSession();</span>
 
-<span class="fc" id="L178">            Criteria criteria = session.createCriteria(Post.class, &quot;post&quot;);</span>
+<span class="fc" id="L180">            Criteria criteria = session.createCriteria(Post.class, &quot;post&quot;);</span>
 
-<span class="fc" id="L180">            criteria.createAlias(&quot;user&quot;, &quot;us&quot;);</span>
+<span class="fc" id="L182">            criteria.createAlias(&quot;user&quot;, &quot;us&quot;);</span>
 
             // if author id positive integer and get post for user
-<span class="pc bpc" id="L183" title="1 of 4 branches missed.">            if (author_id &gt; 0 &amp;&amp; isForUser) {</span>
+<span class="pc bpc" id="L185" title="1 of 4 branches missed.">            if (author_id &gt; 0 &amp;&amp; isForUser) {</span>
                 
                 //get all post for user
-<span class="fc bfc" id="L186" title="All 2 branches covered.">                if (isOwnerUser) {</span>
-<span class="fc" id="L187">                    criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
-<span class="fc" id="L188">                } else {</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">                if (isOwnerUser) {</span>
+<span class="fc" id="L189">                    criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
+                } else {
                     // get all post for other user with condition:
                     // user active and post of that user is active
-<span class="fc" id="L191">                    criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
-<span class="fc" id="L192">                    criteria.add(Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));</span>
-<span class="fc" id="L193">                    criteria.add(Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE));</span>
+<span class="fc" id="L193">                    criteria.add(Restrictions.eq(&quot;us.id&quot;, author_id));</span>
+<span class="fc" id="L194">                    criteria.add(Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));</span>
+<span class="fc" id="L195">                    criteria.add(Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE));</span>
                 }
-<span class="pc bpc" id="L195" title="2 of 4 branches missed.">            } else if (author_id &gt; 0 &amp;&amp; !isForUser) {</span>
+<span class="pc bpc" id="L197" title="2 of 4 branches missed.">            } else if (author_id &gt; 0 &amp;&amp; !isForUser) {</span>
                 // if get post not for user, follow condition:
                 // 1: get post of other user :post have active status and user is active user  
                 // 2: get post of current login user: all post of current login user
-<span class="fc" id="L199">                Criterion criterionPostUserActive = Restrictions.and(</span>
-<span class="fc" id="L200">                        Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE),</span>
-<span class="fc" id="L201">                        Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));</span>
-<span class="fc" id="L202">                Criterion criterionCurrentActive = Restrictions.eq(&quot;us.id&quot;, author_id);</span>
-<span class="fc" id="L203">                criteria.add(Restrictions.or(criterionCurrentActive, criterionPostUserActive));</span>
+<span class="fc" id="L201">                Criterion criterionPostUserActive = Restrictions.and(</span>
+                        Restrictions.eq(&quot;status&quot;, Constraints.POST_ACTIVE),
+                        Restrictions.eq(&quot;us.status&quot;, Constraints.USER_ACTIVE));
+<span class="fc" id="L204">                Criterion criterionCurrentActive = Restrictions.eq(&quot;us.id&quot;, author_id);</span>
+<span class="fc" id="L205">                criteria.add(Restrictions.or(criterionCurrentActive, criterionPostUserActive));</span>
             }
 
             // set condition title and content like description
-<span class="fc bfc" id="L207" title="All 2 branches covered.">            if (description != null) {</span>
-<span class="fc" id="L208">                criteria.add(Restrictions.disjunction()</span>
-<span class="fc" id="L209">                        .add(Restrictions.like(&quot;title&quot;, &quot;%&quot; + description + &quot;%&quot;))</span>
-<span class="fc" id="L210">                        .add(Restrictions.like(&quot;content&quot;, &quot;%&quot; + description + &quot;%&quot;)));</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">            if (description != null) {</span>
+<span class="fc" id="L210">                criteria.add(Restrictions.disjunction()</span>
+                        .add(Restrictions.like(&quot;title&quot;, &quot;%&quot; + description + &quot;%&quot;))
+                        .add(Restrictions.like(&quot;content&quot;, &quot;%&quot; + description + &quot;%&quot;)));
             }
 
-<span class="fc" id="L213">            Integer totalPost = ((Number) criteria.setProjection(Projections.rowCount())</span>
-<span class="fc" id="L214">                    .uniqueResult()).intValue();</span>
-<span class="fc" id="L215">            return totalPost;</span>
-<span class="nc" id="L216">        } catch (HibernateException ex) {</span>
-<span class="nc" id="L217">            ex.printStackTrace();</span>
-<span class="nc" id="L218">            throw new HandlerException(ex.getMessage());</span>
+<span class="fc" id="L215">            Integer totalPost = ((Number) criteria.setProjection(Projections.rowCount())</span>
+                    .uniqueResult()).intValue();
+<span class="fc" id="L217">            return totalPost;</span>
+<span class="nc" id="L218">        } catch (HibernateException ex) {</span>
+<span class="nc" id="L219">            ex.printStackTrace();</span>
+<span class="nc" id="L220">            throw new HandlerException(ex.getMessage());</span>
         }
     }
 
@@ -232,24 +234,24 @@ import com.mulodo.miniblog.model.User;
     public void deleteByTitle(String title) throws HandlerException
     {
         try {
-<span class="fc" id="L235">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L237">            session = this.sessionFactory.getCurrentSession();</span>
 
-<span class="fc" id="L237">            Criteria criteria = session.createCriteria(Post.class);</span>
+<span class="fc" id="L239">            Criteria criteria = session.createCriteria(Post.class);</span>
 
-<span class="fc" id="L239">            criteria.add(Restrictions.eq(&quot;title&quot;, title));</span>
-<span class="fc bfc" id="L240" title="All 2 branches covered.">            if (!criteria.list().isEmpty()) {</span>
-<span class="fc" id="L241">                Post post = (Post) criteria.list().get(0);</span>
-<span class="fc" id="L242">                session.delete(post);</span>
-<span class="fc" id="L243">                logger.info(&quot;Post deleted successfully, post details=&quot; + post);</span>
+<span class="fc" id="L241">            criteria.add(Restrictions.eq(&quot;title&quot;, title));</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc" id="L243">                Post post = (Post) criteria.list().get(0);</span>
+<span class="fc" id="L244">                session.delete(post);</span>
+<span class="fc" id="L245">                logger.info(&quot;Post deleted successfully, post details=&quot; + post);</span>
             }
 
-<span class="pc" id="L246">        } catch (HibernateException ex) {</span>
-<span class="nc" id="L247">            ex.printStackTrace();</span>
-<span class="nc" id="L248">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
-<span class="nc" id="L249">            throw new HandlerException(ex.getMessage());</span>
-        }
+<span class="nc" id="L248">        } catch (HibernateException ex) {</span>
+<span class="nc" id="L249">            ex.printStackTrace();</span>
+<span class="nc" id="L250">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+<span class="nc" id="L251">            throw new HandlerException(ex.getMessage());</span>
+<span class="fc" id="L252">        }</span>
 
-<span class="fc" id="L252">    }</span>
+<span class="fc" id="L254">    }</span>
 
     /**
      * findByTitle use for find post by title in the database for unit test
@@ -264,25 +266,25 @@ import com.mulodo.miniblog.model.User;
     public Post findByTitle(String title) throws HandlerException
     {
         try {
-<span class="fc" id="L267">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L269">            session = this.sessionFactory.getCurrentSession();</span>
 
-<span class="fc" id="L269">            Criteria criteria = session.createCriteria(Post.class);</span>
+<span class="fc" id="L271">            Criteria criteria = session.createCriteria(Post.class);</span>
 
-<span class="fc" id="L271">            criteria.add(Restrictions.eq(&quot;title&quot;, title));</span>
-<span class="fc" id="L272">            Post post = null;</span>
-<span class="fc bfc" id="L273" title="All 2 branches covered.">            if (criteria.list().isEmpty()) {</span>
-<span class="fc" id="L274">                return null;</span>
+<span class="fc" id="L273">            criteria.add(Restrictions.eq(&quot;title&quot;, title));</span>
+<span class="fc" id="L274">            Post post = null;</span>
+<span class="fc bfc" id="L275" title="All 2 branches covered.">            if (criteria.list().isEmpty()) {</span>
+<span class="fc" id="L276">                return null;</span>
             } else {
-<span class="fc" id="L276">                post = (Post) criteria.list().get(0);</span>
+<span class="fc" id="L278">                post = (Post) criteria.list().get(0);</span>
             }
 
-<span class="fc" id="L279">            logger.info(&quot;Post find by title successfully, post details=&quot; + post);</span>
-<span class="fc" id="L280">            return post;</span>
+<span class="fc" id="L281">            logger.info(&quot;Post find by title successfully, post details=&quot; + post);</span>
+<span class="fc" id="L282">            return post;</span>
 
-<span class="nc" id="L282">        } catch (HibernateException ex) {</span>
-<span class="nc" id="L283">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
-<span class="nc" id="L284">            ex.printStackTrace();</span>
-<span class="nc" id="L285">            throw new HandlerException(ex.getMessage());</span>
+<span class="nc" id="L284">        } catch (HibernateException ex) {</span>
+<span class="nc" id="L285">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+<span class="nc" id="L286">            ex.printStackTrace();</span>
+<span class="nc" id="L287">            throw new HandlerException(ex.getMessage());</span>
         }
     }
 }

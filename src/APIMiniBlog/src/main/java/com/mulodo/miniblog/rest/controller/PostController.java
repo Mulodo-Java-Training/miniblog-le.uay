@@ -107,7 +107,10 @@ public class PostController
         if (tokenService == null || postService == null) {
             setDataSource();
         }
-
+        
+        System.out.println("title =" + title);
+        System.out.println("content = "+ content);
+        
         // declare jsonObject for build return data
         JSONObject jsonObject = new JSONObject();
         // validate data from client and add to meta

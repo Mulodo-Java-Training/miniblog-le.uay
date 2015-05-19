@@ -10,10 +10,10 @@
         <title>Add post Page</title>
 
         <!-- Bootstrap CSS -->
-        <link rel="stylesheet" type="type/css" href="../css/bootstrap.min.css">
-        <link rel="stylesheet" type="type/css" href="../css/style.css">
-        <link rel="stylesheet" type="type/css" href="../css/m-styles.min.css">
-        <link rel="stylesheet" type="text/css" href="../css/jquery.cleditor.css" />
+        <link rel="stylesheet"  href="../css/bootstrap.min.css">
+        <link rel="stylesheet"  href="../css/style.css">
+        <link rel="stylesheet"  href="../css/m-styles.min.css">
+        <link rel="stylesheet"  href="../css/jquery.cleditor.css" />
 
         <script src="../js/jquery-2.1.3.js"></script>
         <script src="../js/detectmobilebrowser.js"></script>
@@ -80,8 +80,6 @@
 			                required: true
         				},
         				content: {
-        					minlength: 1,
-			                maxlength: 3000,
 			                required: true
         				},
         			},messages: {
@@ -175,6 +173,7 @@
         				url : "getPostInfo",
         				data:{postId: postId}
         			}).done(function(data) {
+        				data = jQuery.parseJSON(data);
         				console.log('log'+data);
         				if(data.message){
         					$('#message').text(data.message);

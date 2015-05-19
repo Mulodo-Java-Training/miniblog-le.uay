@@ -17,12 +17,19 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.SessionImplementor;
+import org.hibernate.impl.CriteriaImpl;
+import org.hibernate.loader.criteria.CriteriaJoinWalker;
+import org.hibernate.loader.criteria.CriteriaQueryTranslator;
+import org.hibernate.persister.entity.OuterJoinLoadable;
 import org.hibernate.transform.Transformers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mulodo.miniblog.connection.ReadOnlyConnection;
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.UserDAO;
 import com.mulodo.miniblog.exeption.HandlerException;
@@ -132,6 +139,23 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
 
             criteria.add(Restrictions.eq("username", username));
             criteria.add(Restrictions.eq("password", password));
+            
+            CriteriaImpl criteriaImpl = (CriteriaImpl)criteria;
+            SessionImplementor session = criteriaImpl.getSession();
+            SessionFactoryImplementor factory = session.getFactory();
+            CriteriaQueryTranslator translator=new CriteriaQueryTranslator(factory,criteriaImpl,criteriaImpl.getEntityOrClassName(),CriteriaQueryTranslator.ROOT_SQL_ALIAS);
+            String[] implementors = factory.getImplementors( criteriaImpl.getEntityOrClassName() );
+
+            CriteriaJoinWalker walker = new CriteriaJoinWalker((OuterJoinLoadable)factory.getEntityPersister(implementors[0]), 
+                                    translator,
+                                    factory, 
+                                    criteriaImpl, 
+                                    criteriaImpl.getEntityOrClassName(), 
+                                    session.getLoadQueryInfluencers()   );
+
+            String sql=walker.getSQLString();
+            
+            System.out.println("sql = " +sql);
 
             if (!criteria.list().isEmpty()) {
                 user = (User) criteria.list().get(0);
@@ -155,6 +179,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
+//    @ReadOnlyConnection
     public List<User> findByName(String name) throws HandlerException
     {
         try {

@@ -17,12 +17,19 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.SessionImplementor;
+import org.hibernate.impl.CriteriaImpl;
+import org.hibernate.loader.criteria.CriteriaJoinWalker;
+import org.hibernate.loader.criteria.CriteriaQueryTranslator;
+import org.hibernate.persister.entity.OuterJoinLoadable;
 import org.hibernate.transform.Transformers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mulodo.miniblog.connection.ReadOnlyConnection;
 import com.mulodo.miniblog.contraints.Constraints;
 import com.mulodo.miniblog.dao.UserDAO;
 import com.mulodo.miniblog.exeption.HandlerException;
@@ -34,10 +41,10 @@ import com.mulodo.miniblog.model.User;
  * @author UayLU
  */
 @Repository(&quot;userDAO&quot;)
-<span class="fc" id="L37">public class UserDAOImpl extends GenericDAOImpl&lt;User&gt; implements UserDAO</span>
+<span class="fc" id="L44">public class UserDAOImpl extends GenericDAOImpl&lt;User&gt; implements UserDAO</span>
 {
 
-<span class="fc" id="L40">    private static final Logger logger = LoggerFactory.getLogger(UserDAOImpl.class);</span>
+<span class="fc" id="L47">    private static final Logger logger = LoggerFactory.getLogger(UserDAOImpl.class);</span>
 
     /**
      * isUserExits use to check exist user in database
@@ -53,23 +60,23 @@ import com.mulodo.miniblog.model.User;
     {
         try {
 
-<span class="fc" id="L56">            session = this.sessionFactory.getCurrentSession();</span>
-<span class="fc" id="L57">            Criteria criteria = session.createCriteria(User.class);</span>
+<span class="fc" id="L63">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L64">            Criteria criteria = session.createCriteria(User.class);</span>
 
-<span class="pc bpc" id="L59" title="1 of 2 branches missed.">            if (username != null) {</span>
-<span class="fc" id="L60">                criteria.add(Restrictions.eq(&quot;username&quot;, username));</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">            if (username != null) {</span>
+<span class="fc" id="L67">                criteria.add(Restrictions.eq(&quot;username&quot;, username));</span>
             }
 
-<span class="fc bfc" id="L63" title="All 2 branches covered.">            if (criteria.list().isEmpty()) {</span>
-<span class="fc" id="L64">                return false;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            if (criteria.list().isEmpty()) {</span>
+<span class="fc" id="L71">                return false;</span>
             }
-<span class="fc" id="L66">            User user = (User) criteria.list().get(0);</span>
-<span class="fc" id="L67">            logger.info(&quot;Check user successfully,  details=&quot; + user.getId());</span>
-<span class="pc bpc" id="L68" title="2 of 4 branches missed.">            return user.getId() != 0 &amp;&amp; user.getUsername().equals(username);</span>
+<span class="fc" id="L73">            User user = (User) criteria.list().get(0);</span>
+<span class="fc" id="L74">            logger.info(&quot;Check user successfully,  details=&quot; + user.getId());</span>
+<span class="pc bpc" id="L75" title="2 of 4 branches missed.">            return user.getId() != 0 &amp;&amp; user.getUsername().equals(username);</span>
 
-<span class="nc" id="L70">        } catch (HibernateException ex) {</span>
+<span class="nc" id="L77">        } catch (HibernateException ex) {</span>
 
-<span class="nc" id="L72">            throw new HandlerException(ex.getMessage());</span>
+<span class="nc" id="L79">            throw new HandlerException(ex.getMessage());</span>
         }
     }
 
@@ -90,23 +97,23 @@ import com.mulodo.miniblog.model.User;
 
         try {
 
-<span class="fc" id="L93">            session = this.sessionFactory.getCurrentSession();</span>
-<span class="fc" id="L94">            Criteria criteria = session.createCriteria(User.class);</span>
+<span class="fc" id="L100">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L101">            Criteria criteria = session.createCriteria(User.class);</span>
 
-<span class="pc bpc" id="L96" title="1 of 2 branches missed.">            if (email != null) {</span>
-<span class="fc" id="L97">                criteria.add(Restrictions.eq(&quot;email&quot;, email));</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">            if (email != null) {</span>
+<span class="fc" id="L104">                criteria.add(Restrictions.eq(&quot;email&quot;, email));</span>
             }
 
-<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (criteria.list().isEmpty()) {</span>
-<span class="fc" id="L101">                return false;</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            if (criteria.list().isEmpty()) {</span>
+<span class="fc" id="L108">                return false;</span>
             }
-<span class="fc" id="L103">            User userDB = (User) criteria.list().get(0);</span>
+<span class="fc" id="L110">            User userDB = (User) criteria.list().get(0);</span>
 
-<span class="pc bpc" id="L105" title="1 of 4 branches missed.">            return !(user != null &amp;&amp; user.getId() == userDB.getId());</span>
+<span class="pc bpc" id="L112" title="1 of 4 branches missed.">            return !(user != null &amp;&amp; user.getId() == userDB.getId());</span>
 
-<span class="nc" id="L107">        } catch (HibernateException ex) {</span>
+<span class="nc" id="L114">        } catch (HibernateException ex) {</span>
 
-<span class="nc" id="L109">            throw new HandlerException(ex.getMessage());</span>
+<span class="nc" id="L116">            throw new HandlerException(ex.getMessage());</span>
         }
     }
 
@@ -125,22 +132,39 @@ import com.mulodo.miniblog.model.User;
     public User isValidLogin(String username, String password) throws HandlerException
     {
         try {
-<span class="fc" id="L128">            User user = null;</span>
+<span class="fc" id="L135">            User user = null;</span>
 
-<span class="fc" id="L130">            session = this.sessionFactory.getCurrentSession();</span>
-<span class="fc" id="L131">            Criteria criteria = session.createCriteria(User.class);</span>
+<span class="fc" id="L137">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L138">            Criteria criteria = session.createCriteria(User.class);</span>
 
-<span class="fc" id="L133">            criteria.add(Restrictions.eq(&quot;username&quot;, username));</span>
-<span class="fc" id="L134">            criteria.add(Restrictions.eq(&quot;password&quot;, password));</span>
+<span class="fc" id="L140">            criteria.add(Restrictions.eq(&quot;username&quot;, username));</span>
+<span class="fc" id="L141">            criteria.add(Restrictions.eq(&quot;password&quot;, password));</span>
+            
+<span class="fc" id="L143">            CriteriaImpl criteriaImpl = (CriteriaImpl)criteria;</span>
+<span class="fc" id="L144">            SessionImplementor session = criteriaImpl.getSession();</span>
+<span class="fc" id="L145">            SessionFactoryImplementor factory = session.getFactory();</span>
+<span class="fc" id="L146">            CriteriaQueryTranslator translator=new CriteriaQueryTranslator(factory,criteriaImpl,criteriaImpl.getEntityOrClassName(),CriteriaQueryTranslator.ROOT_SQL_ALIAS);</span>
+<span class="fc" id="L147">            String[] implementors = factory.getImplementors( criteriaImpl.getEntityOrClassName() );</span>
 
-<span class="fc bfc" id="L136" title="All 2 branches covered.">            if (!criteria.list().isEmpty()) {</span>
-<span class="fc" id="L137">                user = (User) criteria.list().get(0);</span>
-<span class="fc" id="L138">                logger.info(&quot;Person loaded successfully, Person details=&quot; + user);</span>
+<span class="fc" id="L149">            CriteriaJoinWalker walker = new CriteriaJoinWalker((OuterJoinLoadable)factory.getEntityPersister(implementors[0]), </span>
+                                    translator,
+                                    factory, 
+                                    criteriaImpl, 
+                                    criteriaImpl.getEntityOrClassName(), 
+                                    session.getLoadQueryInfluencers()   );
+
+<span class="fc" id="L156">            String sql=walker.getSQLString();</span>
+            
+<span class="fc" id="L158">            System.out.println(&quot;sql = &quot; +sql);</span>
+
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc" id="L161">                user = (User) criteria.list().get(0);</span>
+<span class="fc" id="L162">                logger.info(&quot;Person loaded successfully, Person details=&quot; + user);</span>
             }
-<span class="fc" id="L140">            return user;</span>
-<span class="nc" id="L141">        } catch (HibernateException ex) {</span>
+<span class="fc" id="L164">            return user;</span>
+<span class="nc" id="L165">        } catch (HibernateException ex) {</span>
 
-<span class="nc" id="L143">            throw new HandlerException(ex.getMessage());</span>
+<span class="nc" id="L167">            throw new HandlerException(ex.getMessage());</span>
         }
     }
 
@@ -155,38 +179,39 @@ import com.mulodo.miniblog.model.User;
     @SuppressWarnings(&quot;unchecked&quot;)
     @Override
     @Transactional
+//    @ReadOnlyConnection
     public List&lt;User&gt; findByName(String name) throws HandlerException
     {
         try {
-<span class="fc" id="L161">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L186">            session = this.sessionFactory.getCurrentSession();</span>
 
-<span class="fc" id="L163">            Criteria criteria = session.createCriteria(User.class);</span>
+<span class="fc" id="L188">            Criteria criteria = session.createCriteria(User.class);</span>
 
-<span class="fc" id="L165">            criteria.add(</span>
-<span class="fc" id="L166">                    Restrictions.disjunction().add(Restrictions.like(&quot;username&quot;, &quot;%&quot; + name + &quot;%&quot;))</span>
-<span class="fc" id="L167">                            .add(Restrictions.like(&quot;firstname&quot;, &quot;%&quot; + name + &quot;%&quot;))</span>
-<span class="fc" id="L168">                            .add(Restrictions.like(&quot;lastname&quot;, &quot;%&quot; + name + &quot;%&quot;)))</span>
-<span class="fc" id="L169">                    .add(Restrictions.eq(&quot;status&quot;, Constraints.USER_ACTIVE))</span>
-<span class="fc" id="L170">                    .setProjection(</span>
-<span class="fc" id="L171">                            Projections.projectionList().add(Projections.property(&quot;id&quot;), &quot;id&quot;)</span>
-<span class="fc" id="L172">                                    .add(Projections.property(&quot;username&quot;), &quot;username&quot;)</span>
-<span class="fc" id="L173">                                    .add(Projections.property(&quot;firstname&quot;), &quot;firstname&quot;)</span>
-<span class="fc" id="L174">                                    .add(Projections.property(&quot;lastname&quot;), &quot;lastname&quot;)</span>
-<span class="fc" id="L175">                                    .add(Projections.property(&quot;status&quot;), &quot;status&quot;)</span>
-<span class="fc" id="L176">                                    .add(Projections.property(&quot;email&quot;), &quot;email&quot;))</span>
-<span class="fc" id="L177">                    .setResultTransformer(Transformers.aliasToBean(User.class));</span>
+<span class="fc" id="L190">            criteria.add(</span>
+                    Restrictions.disjunction().add(Restrictions.like(&quot;username&quot;, &quot;%&quot; + name + &quot;%&quot;))
+                            .add(Restrictions.like(&quot;firstname&quot;, &quot;%&quot; + name + &quot;%&quot;))
+                            .add(Restrictions.like(&quot;lastname&quot;, &quot;%&quot; + name + &quot;%&quot;)))
+                    .add(Restrictions.eq(&quot;status&quot;, Constraints.USER_ACTIVE))
+                    .setProjection(
+                            Projections.projectionList().add(Projections.property(&quot;id&quot;), &quot;id&quot;)
+                                    .add(Projections.property(&quot;username&quot;), &quot;username&quot;)
+                                    .add(Projections.property(&quot;firstname&quot;), &quot;firstname&quot;)
+                                    .add(Projections.property(&quot;lastname&quot;), &quot;lastname&quot;)
+                                    .add(Projections.property(&quot;status&quot;), &quot;status&quot;)
+                                    .add(Projections.property(&quot;email&quot;), &quot;email&quot;))
+                    .setResultTransformer(Transformers.aliasToBean(User.class));
 
-<span class="fc" id="L179">            List&lt;User&gt; usersList = new ArrayList&lt;User&gt;();</span>
-<span class="pc bpc" id="L180" title="1 of 2 branches missed.">            if (!criteria.list().isEmpty()) {</span>
-<span class="fc" id="L181">                usersList = criteria.list();</span>
-<span class="fc bfc" id="L182" title="All 2 branches covered.">                for (User us : usersList) {</span>
-<span class="fc" id="L183">                    logger.info(&quot;Person List::&quot; + us);</span>
-                }
+<span class="fc" id="L204">            List&lt;User&gt; usersList = new ArrayList&lt;User&gt;();</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc" id="L206">                usersList = criteria.list();</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">                for (User us : usersList) {</span>
+<span class="fc" id="L208">                    logger.info(&quot;Person List::&quot; + us);</span>
+<span class="fc" id="L209">                }</span>
             }
-<span class="fc" id="L186">            return usersList;</span>
-<span class="nc" id="L187">        } catch (HibernateException ex) {</span>
+<span class="fc" id="L211">            return usersList;</span>
+<span class="nc" id="L212">        } catch (HibernateException ex) {</span>
 
-<span class="nc" id="L189">            throw new HandlerException(ex.getMessage());</span>
+<span class="nc" id="L214">            throw new HandlerException(ex.getMessage());</span>
         }
     }
 
@@ -203,24 +228,24 @@ import com.mulodo.miniblog.model.User;
     public Boolean deleteByUsername(String username) throws HandlerException
     {
         try {
-<span class="fc" id="L206">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L231">            session = this.sessionFactory.getCurrentSession();</span>
 
-<span class="fc" id="L208">            Criteria criteria = session.createCriteria(User.class);</span>
+<span class="fc" id="L233">            Criteria criteria = session.createCriteria(User.class);</span>
 
-<span class="fc" id="L210">            criteria.add(Restrictions.eq(&quot;username&quot;, username));</span>
-<span class="fc bfc" id="L211" title="All 2 branches covered.">            if (criteria.list().isEmpty()) {</span>
-<span class="fc" id="L212">                return false;</span>
+<span class="fc" id="L235">            criteria.add(Restrictions.eq(&quot;username&quot;, username));</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">            if (criteria.list().isEmpty()) {</span>
+<span class="fc" id="L237">                return false;</span>
             } else {
-<span class="fc" id="L214">                User user = (User) criteria.list().get(0);</span>
-<span class="fc" id="L215">                session.delete(user);</span>
+<span class="fc" id="L239">                User user = (User) criteria.list().get(0);</span>
+<span class="fc" id="L240">                session.delete(user);</span>
 
-<span class="fc" id="L217">                logger.info(&quot;User deleted successfully, user details=&quot; + user);</span>
-<span class="fc" id="L218">                return true;</span>
+<span class="fc" id="L242">                logger.info(&quot;User deleted successfully, user details=&quot; + user);</span>
+<span class="fc" id="L243">                return true;</span>
             }
 
-<span class="nc" id="L221">        } catch (HibernateException ex) {</span>
+<span class="nc" id="L246">        } catch (HibernateException ex) {</span>
 
-<span class="nc" id="L223">            throw new HandlerException(ex.getMessage());</span>
+<span class="nc" id="L248">            throw new HandlerException(ex.getMessage());</span>
         }
     }
 
@@ -236,21 +261,21 @@ import com.mulodo.miniblog.model.User;
     @Transactional
     public User findByUsername(String username) throws HandlerException
     {
-<span class="fc" id="L239">        User user = null;</span>
+<span class="fc" id="L264">        User user = null;</span>
 
         try {
-<span class="fc" id="L242">            session = this.sessionFactory.getCurrentSession();</span>
-<span class="fc" id="L243">            Criteria criteria = session.createCriteria(User.class);</span>
-<span class="fc" id="L244">            criteria.add(Restrictions.eq(&quot;username&quot;, username));</span>
-<span class="pc bpc" id="L245" title="1 of 2 branches missed.">            if (!criteria.list().isEmpty()) {</span>
-<span class="fc" id="L246">                user = (User) criteria.list().get(0);</span>
-<span class="fc" id="L247">                logger.info(&quot;Find user successfully, user details=&quot; + user);</span>
+<span class="fc" id="L267">            session = this.sessionFactory.getCurrentSession();</span>
+<span class="fc" id="L268">            Criteria criteria = session.createCriteria(User.class);</span>
+<span class="fc" id="L269">            criteria.add(Restrictions.eq(&quot;username&quot;, username));</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">            if (!criteria.list().isEmpty()) {</span>
+<span class="fc" id="L271">                user = (User) criteria.list().get(0);</span>
+<span class="fc" id="L272">                logger.info(&quot;Find user successfully, user details=&quot; + user);</span>
             }
-<span class="fc" id="L249">            return user;</span>
-<span class="nc" id="L250">        } catch (HibernateException ex) {</span>
+<span class="fc" id="L274">            return user;</span>
+<span class="nc" id="L275">        } catch (HibernateException ex) {</span>
 
-<span class="nc" id="L252">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
-<span class="nc" id="L253">            throw new HandlerException(ex.getMessage());</span>
+<span class="nc" id="L277">            logger.info(&quot;Hibernate exception, Details=&quot; + ex.getMessage());</span>
+<span class="nc" id="L278">            throw new HandlerException(ex.getMessage());</span>
         }
     }
 }

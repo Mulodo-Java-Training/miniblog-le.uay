@@ -10,10 +10,10 @@
         <title>Add post Page</title>
 
         <!-- Bootstrap CSS -->
-        <link rel="stylesheet" type="type/css" href="../css/bootstrap.min.css">
-        <link rel="stylesheet" type="type/css" href="../css/style.css">
-        <link rel="stylesheet" type="type/css" href="../css/m-styles.min.css">
-        <link rel="stylesheet" type="text/css" href="../css/jquery.cleditor.css" />
+        <link rel="stylesheet" href="../css/bootstrap.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="../css/m-styles.min.css">
+        <link rel="stylesheet" href="../css/jquery.cleditor.css" />
 
         <script src="../js/jquery-2.1.3.js"></script>
         <script src="../js/detectmobilebrowser.js"></script>
@@ -54,6 +54,7 @@
         			var content = tinyMCE.activeEditor.getContent(); // get the content
         		    $('#content').val(content); // put it in the textarea
         		    var title = $('#title').val();
+        		    console.log('content'+ content);
         		    $.ajax({
         				type:"POST",
         				url:"addpost",
@@ -78,8 +79,6 @@
 			                required: true
         				},
         				content: {
-        					minlength: 1,
-			                maxlength: 3000,
 			                required: true
         				},
         			},messages: {
@@ -88,8 +87,7 @@
         					maxlength: " Invalid title - Less than 150 character"
         				},
 						content:{
-							required: "Content is required",
-							
+							required: "Content is required"
 						} 
 					},
 			        highlight: function(element) {

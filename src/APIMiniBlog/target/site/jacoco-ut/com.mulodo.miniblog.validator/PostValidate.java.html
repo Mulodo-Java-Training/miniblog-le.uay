@@ -47,34 +47,35 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
 <span class="fc bfc" id="L47" title="All 2 branches covered.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
 <span class="fc" id="L49">            listMessage.add(new Message(Constraints.CODE_2503));</span>
-<span class="fc" id="L50">        } else {</span>
-            // check valid length of string
-<span class="fc" id="L52">            isValid = ValidatorUtils.isValidLength(content, 1, 3000);</span>
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">            if (!isValid) {</span>
-                // check if have error, add message error to listmessage
-<span class="nc" id="L55">                listMessage.add(new Message(Constraints.CODE_2505));</span>
-            }
         }
+//            else {
+//            // check valid length of string
+//            isValid = ValidatorUtils.isValidLength(content, 1, 3000);
+//            if (!isValid) {
+//                // check if have error, add message error to listmessage
+//                listMessage.add(new Message(Constraints.CODE_2505));
+//            }
+//        }
 
         // check null empty or white space if string
-<span class="fc" id="L60">        isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(title);</span>
-<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (!isValid) {</span>
-<span class="fc" id="L62">            listMessage.add(new Message(Constraints.CODE_2502));</span>
-<span class="fc" id="L63">        } else {</span>
+<span class="fc" id="L61">        isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(title);</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (!isValid) {</span>
+<span class="fc" id="L63">            listMessage.add(new Message(Constraints.CODE_2502));</span>
+        } else {
             // check valid length of string
-<span class="fc" id="L65">            isValid = ValidatorUtils.isValidLength(title, 1, 150);</span>
-<span class="pc bpc" id="L66" title="1 of 2 branches missed.">            if (!isValid) {</span>
+<span class="fc" id="L66">            isValid = ValidatorUtils.isValidLength(title, 1, 150);</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">            if (!isValid) {</span>
                 // check if have error, add message error to listmessage
-<span class="nc" id="L68">                listMessage.add(new Message(Constraints.CODE_2504));</span>
+<span class="nc" id="L69">                listMessage.add(new Message(Constraints.CODE_2504));</span>
             }
         }
 
-<span class="fc bfc" id="L72" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L74">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
-<span class="fc" id="L75">            return meta;</span>
+<span class="fc" id="L75">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
+<span class="fc" id="L76">            return meta;</span>
         }
-<span class="fc" id="L77">        return null;</span>
+<span class="fc" id="L78">        return null;</span>
     }
 
     /**
@@ -90,26 +91,26 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
     {
 
         // List message contain error message validate
-<span class="fc" id="L93">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+<span class="fc" id="L94">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
 
-<span class="fc" id="L95">        Boolean isValid = ValidatorUtils.isPositiveInteger(id);</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (!isValid) {</span>
+<span class="fc" id="L96">        Boolean isValid = ValidatorUtils.isPositiveInteger(id);</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L98">            listMessage.add(new Message(Constraints.CODE_2508));</span>
+<span class="fc" id="L99">            listMessage.add(new Message(Constraints.CODE_2508));</span>
         }
 
-<span class="fc" id="L101">        isValid = ValidatorUtils.isStatusInteger(status);</span>
-<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (!isValid) {</span>
+<span class="fc" id="L102">        isValid = ValidatorUtils.isStatusInteger(status);</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L104">            listMessage.add(new Message(Constraints.CODE_2507));</span>
+<span class="fc" id="L105">            listMessage.add(new Message(Constraints.CODE_2507));</span>
         }
 
-<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L109">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
-<span class="fc" id="L110">            return meta;</span>
+<span class="fc" id="L110">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
+<span class="fc" id="L111">            return meta;</span>
         }
-<span class="fc" id="L112">        return null;</span>
+<span class="fc" id="L113">        return null;</span>
     }
 
     /**
@@ -127,51 +128,44 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
     {
 
         // List message contain error message validate
-<span class="fc" id="L130">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+<span class="fc" id="L131">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
 
         Boolean isValid;
 
         // check null empty or white space if string
-<span class="fc" id="L135">        isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(content);</span>
-<span class="fc bfc" id="L136" title="All 2 branches covered.">        if (!isValid) {</span>
+<span class="fc" id="L136">        isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(content);</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L138">            listMessage.add(new Message(Constraints.CODE_2503));</span>
-<span class="fc" id="L139">        } else {</span>
-            // check valid length of string
-<span class="fc" id="L141">            isValid = ValidatorUtils.isValidLength(content, 1, 3000);</span>
-<span class="pc bpc" id="L142" title="1 of 2 branches missed.">            if (!isValid) {</span>
-                // check if have error, add message error to listmessage
-<span class="nc" id="L144">                listMessage.add(new Message(Constraints.CODE_2505));</span>
-            }
+<span class="fc" id="L139">            listMessage.add(new Message(Constraints.CODE_2503));</span>
         }
 
         // check null empty or white space if string
-<span class="fc" id="L149">        isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(title);</span>
-<span class="fc bfc" id="L150" title="All 2 branches covered.">        if (!isValid) {</span>
+<span class="fc" id="L143">        isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(title);</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        if (!isValid) {</span>
 
             // check if have error, add message error to listmessage
-<span class="fc" id="L153">            listMessage.add(new Message(Constraints.CODE_2502));</span>
-<span class="fc" id="L154">        } else {</span>
+<span class="fc" id="L147">            listMessage.add(new Message(Constraints.CODE_2502));</span>
+        } else {
             // check valid length of string
-<span class="fc" id="L156">            isValid = ValidatorUtils.isValidLength(title, 1, 150);</span>
-<span class="pc bpc" id="L157" title="1 of 2 branches missed.">            if (!isValid) {</span>
+<span class="fc" id="L150">            isValid = ValidatorUtils.isValidLength(title, 1, 150);</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">            if (!isValid) {</span>
                 // check if have error, add message error to listmessage
-<span class="nc" id="L159">                listMessage.add(new Message(Constraints.CODE_2504));</span>
+<span class="nc" id="L153">                listMessage.add(new Message(Constraints.CODE_2504));</span>
             }
         }
 
-<span class="fc" id="L163">        isValid = ValidatorUtils.isPositiveInteger(id);</span>
-<span class="fc bfc" id="L164" title="All 2 branches covered.">        if (!isValid) {</span>
+<span class="fc" id="L157">        isValid = ValidatorUtils.isPositiveInteger(id);</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L166">            listMessage.add(new Message(Constraints.CODE_2508));</span>
+<span class="fc" id="L160">            listMessage.add(new Message(Constraints.CODE_2508));</span>
         }
 
-<span class="fc bfc" id="L169" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L171">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
-<span class="fc" id="L172">            return meta;</span>
+<span class="fc" id="L165">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
+<span class="fc" id="L166">            return meta;</span>
         }
-<span class="fc" id="L174">        return null;</span>
+<span class="fc" id="L168">        return null;</span>
     }
 
     /**
@@ -185,20 +179,20 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
     {
 
         // List message contain error message validate
-<span class="fc" id="L188">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+<span class="fc" id="L182">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
 
-<span class="fc" id="L190">        Boolean isValid = ValidatorUtils.isPositiveInteger(id);</span>
-<span class="fc bfc" id="L191" title="All 2 branches covered.">        if (!isValid) {</span>
+<span class="fc" id="L184">        Boolean isValid = ValidatorUtils.isPositiveInteger(id);</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L193">            listMessage.add(new Message(Constraints.CODE_2508));</span>
+<span class="fc" id="L187">            listMessage.add(new Message(Constraints.CODE_2508));</span>
         }
 
-<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L198">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
-<span class="fc" id="L199">            return meta;</span>
+<span class="fc" id="L192">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
+<span class="fc" id="L193">            return meta;</span>
         }
-<span class="fc" id="L201">        return null;</span>
+<span class="fc" id="L195">        return null;</span>
     }
 
     /**
@@ -212,19 +206,19 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
     {
 
         // List message contain error message validate
-<span class="fc" id="L215">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
-<span class="fc" id="L216">        Boolean isValid = ValidatorUtils.isPositiveInteger(pageNum);</span>
-<span class="fc bfc" id="L217" title="All 2 branches covered.">        if (!isValid) {</span>
+<span class="fc" id="L209">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+<span class="fc" id="L210">        Boolean isValid = ValidatorUtils.isPositiveInteger(pageNum);</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L219">            listMessage.add(new Message(Constraints.CODE_2510));</span>
+<span class="fc" id="L213">            listMessage.add(new Message(Constraints.CODE_2510));</span>
         }
 
-<span class="fc bfc" id="L222" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L224">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
-<span class="fc" id="L225">            return meta;</span>
+<span class="fc" id="L218">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
+<span class="fc" id="L219">            return meta;</span>
         }
-<span class="fc" id="L227">        return null;</span>
+<span class="fc" id="L221">        return null;</span>
     }
 
     /**
@@ -240,25 +234,45 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
     {
 
         // List message contain error message validate
-<span class="fc" id="L243">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
-<span class="fc" id="L244">        Boolean isValid = ValidatorUtils.isPositiveInteger(pageNum);</span>
+<span class="fc" id="L237">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+<span class="fc" id="L238">        Boolean isValid = ValidatorUtils.isPositiveInteger(pageNum);</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">        if (!isValid) {</span>
+            // check if have error, add message error to listmessage
+<span class="fc" id="L241">            listMessage.add(new Message(Constraints.CODE_2510));</span>
+        }
+
+<span class="fc" id="L244">        isValid = ValidatorUtils.isPositiveInteger(user_id);</span>
 <span class="fc bfc" id="L245" title="All 2 branches covered.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L247">            listMessage.add(new Message(Constraints.CODE_2510));</span>
+<span class="fc" id="L247">            listMessage.add(new Message(Constraints.CODE_2508));</span>
         }
 
-<span class="fc" id="L250">        isValid = ValidatorUtils.isPositiveInteger(user_id);</span>
-<span class="fc bfc" id="L251" title="All 2 branches covered.">        if (!isValid) {</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L253">            listMessage.add(new Message(Constraints.CODE_2508));</span>
+<span class="fc" id="L252">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
+<span class="fc" id="L253">            return meta;</span>
+        }
+<span class="fc" id="L255">        return null;</span>
+    }
+
+    public Meta validateGetPostInfo(String postId)
+    {
+        
+     // List message contain error message validate
+<span class="nc" id="L262">        List&lt;Message&gt; listMessage = new ArrayList&lt;Message&gt;();</span>
+        
+<span class="nc" id="L264">        Boolean isValid = ValidatorUtils.isPositiveInteger(postId);</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">        if (!isValid) {</span>
+            // check if have error, add message error to listmessage
+<span class="nc" id="L267">            listMessage.add(new Message(Constraints.CODE_2508));</span>
         }
 
-<span class="fc bfc" id="L256" title="All 2 branches covered.">        if (!listMessage.isEmpty()) {</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">        if (!listMessage.isEmpty()) {</span>
             // check if have error, add message error to listmessage
-<span class="fc" id="L258">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
-<span class="fc" id="L259">            return meta;</span>
+<span class="nc" id="L272">            Meta meta = new Meta(Constraints.CODE_2500, listMessage);</span>
+<span class="nc" id="L273">            return meta;</span>
         }
-<span class="fc" id="L261">        return null;</span>
+<span class="nc" id="L275">        return null;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

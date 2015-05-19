@@ -9,9 +9,9 @@
         <title>User Page</title>
 
         <!-- Bootstrap CSS -->
-        <link rel="stylesheet" type="type/css" href="../css/bootstrap.min.css">
-        <link rel="stylesheet" type="type/css" href="../css/style.css">
-        <link rel="stylesheet" type="type/css" href="../css/m-styles.min.css">
+        <link rel="stylesheet"  href="../css/bootstrap.min.css">
+        <link rel="stylesheet"  href="../css/style.css">
+        <link rel="stylesheet"  href="../css/m-styles.min.css">
 
         <script src="../js/jquery-2.1.3.js"></script>
         <script src="../js/detectmobilebrowser.js"></script>
@@ -171,14 +171,14 @@
 
     				body += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="post-style">';
     					if(listPost[i].user.id == $('input#userId').val()){
-							body += '<label><a href="mainpage/detailpost?postId='+listPost[i].id+'" >'+ listPost[i].title +'</a></label>'
+							body += '<label><a href="detailpost?postId='+listPost[i].id+'" >'+ listPost[i].title +'</a></label>'
 			            	               + '<label style="  float: right;margin-right: 15%;"><a class="glyphicon glyphicon-pencil" href="../mainpage/editpost?postId='+listPost[i].id+'" ></a>'
 			            	               +    '&nbsp;&nbsp;'
 			                               +    '<a class="glyphicon glyphicon-trash" href="" id="deletePost_'+listPost[i].id+'" onClick="deletePost('+listPost[i].id+')" ></a>'
 			            	               + '</label>';
 			            		   
 		               	}else{
-		            	   body +='<label><a href="mainpage/detailpost?postId='+listPost[i].id+'" >'+ listPost[i].title +'</a></label>';
+		            	   body +='<label><a href="detailpost?postId='+listPost[i].id+'" >'+ listPost[i].title +'</a></label>';
 		            	}
     					body += '<p id="postInfo">Date created : '
     						+ listPost[i].created_at

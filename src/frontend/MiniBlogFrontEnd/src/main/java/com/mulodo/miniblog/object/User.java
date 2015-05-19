@@ -25,7 +25,7 @@ import com.mulodo.miniblog.utils.JsonDateSerializer;
  * @author UayLU
  */
 @JsonAutoDetect
-public class User
+public class  User 
 {
 
     private int id;

@@ -45,7 +45,7 @@ public class Post
     @Column(nullable = false, name = &quot;title&quot;, length = 150)
     private String title;
 
-    @Column(nullable = false, name = &quot;content&quot;, length = 5000)
+    @Column(nullable = false, name = &quot;content&quot;, columnDefinition = &quot;TEXT&quot;)
     private String content;
 
     @Column(nullable = false, name = &quot;created_at&quot;, columnDefinition = &quot;DATETIME&quot;)

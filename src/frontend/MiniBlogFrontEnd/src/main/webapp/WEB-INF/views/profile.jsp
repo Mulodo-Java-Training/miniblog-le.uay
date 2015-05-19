@@ -9,9 +9,9 @@
 <title>Profile Page</title>
 
 <!-- Bootstrap CSS -->
-<link rel="stylesheet" type="type/css" href="../css/bootstrap.min.css">
-<link rel="stylesheet" type="type/css" href="../css/style.css">
-<link rel="stylesheet" type="type/css" href="../css/m-styles.min.css">
+<link rel="stylesheet"  href="../css/bootstrap.min.css">
+<link rel="stylesheet"  href="../css/style.css">
+<link rel="stylesheet"  href="../css/m-styles.min.css">
 
 <script src="../js/jquery-2.1.3.js"></script>
 <script src="../js/detectmobilebrowser.js"></script>

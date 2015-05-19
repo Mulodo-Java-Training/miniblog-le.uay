@@ -57,7 +57,7 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
 <span class="fc bfc" id="L57" title="All 2 branches covered.">        if (isValid) {</span>
             // check valid length of string
 <span class="fc" id="L59">            isValid = ValidatorUtils.isValidLength(username, Constraints.MIN_USERNAME,</span>
-<span class="fc" id="L60">                    Constraints.MAX_USERNAME);</span>
+                    Constraints.MAX_USERNAME);
 <span class="fc bfc" id="L61" title="All 2 branches covered.">            if (!isValid) {</span>
                 // check if have error, add message error to listmessage
 <span class="fc" id="L63">                listMessage.add(new Message(Constraints.CODE_2011));</span>
@@ -84,7 +84,7 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
 <span class="fc bfc" id="L84" title="All 2 branches covered.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
 <span class="fc" id="L86">            listMessage.add(new Message(Constraints.CODE_2003));</span>
-<span class="fc" id="L87">        } else {</span>
+        } else {
             // check valid length of string
 <span class="fc" id="L89">            isValid = ValidatorUtils.isValidLength(lastname, 1, 45);</span>
 <span class="fc bfc" id="L90" title="All 2 branches covered.">            if (!isValid) {</span>
@@ -98,7 +98,7 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
 <span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
 <span class="nc" id="L100">            listMessage.add(new Message(Constraints.CODE_2004));</span>
-<span class="nc" id="L101">        } else {</span>
+        } else {
             // check valid length of string
 <span class="fc" id="L103">            isValid = ValidatorUtils.isValidLength(firstname, 1, 45);</span>
 <span class="fc bfc" id="L104" title="All 2 branches covered.">            if (!isValid) {</span>
@@ -111,7 +111,7 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
 <span class="fc bfc" id="L111" title="All 2 branches covered.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
 <span class="fc" id="L113">            listMessage.add(new Message(Constraints.CODE_2005));</span>
-<span class="fc" id="L114">        } else {</span>
+        } else {
             // check valid length of string
 <span class="fc" id="L116">            isValid = ValidatorUtils.isValidLength(email, 1, 100);</span>
 <span class="pc bpc" id="L117" title="1 of 2 branches missed.">            if (!isValid) {</span>
@@ -151,7 +151,7 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
 <span class="fc bfc" id="L151" title="All 2 branches covered.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
 <span class="fc" id="L153">            listMessage.add(new Message(Constraints.CODE_2003));</span>
-<span class="fc" id="L154">        } else {</span>
+        } else {
             // check valid length of string
 <span class="fc" id="L156">            isValid = ValidatorUtils.isValidLength(lastname, 1, 45);</span>
 <span class="fc bfc" id="L157" title="All 2 branches covered.">            if (!isValid) {</span>
@@ -165,7 +165,7 @@ import com.mulodo.miniblog.utils.ValidatorUtils;
 <span class="fc bfc" id="L165" title="All 2 branches covered.">        if (!isValid) {</span>
             // check if have error, add message error to listmessage
 <span class="fc" id="L167">            listMessage.add(new Message(Constraints.CODE_2004));</span>
-<span class="fc" id="L168">        } else {</span>
+        } else {
             // check valid length of string
 <span class="fc" id="L170">            isValid = ValidatorUtils.isValidLength(firstname, 1, 45);</span>
 <span class="fc bfc" id="L171" title="All 2 branches covered.">            if (!isValid) {</span>

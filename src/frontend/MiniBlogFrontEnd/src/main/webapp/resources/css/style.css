@@ -15,7 +15,7 @@ html, body {
 
 #header-button a{
 	color: white;
-	font-size: 20;
+	font-size: 20px;
 }
 
 /*css login*/
@@ -222,5 +222,4 @@ a {
 	background:#bababa;
 	opacity:0.7;
 	height : 100%;
-	weight : 100%;
 }

@@ -10,9 +10,9 @@
 		<title>Register Page</title>
 
 		<!-- Bootstrap CSS -->
-		<link rel="stylesheet" type="type/css" href="css/bootstrap.min.css">
-		<link rel="stylesheet" type="type/css" href="css/style.css">
-		<link rel="stylesheet" type="type/css" href="css/m-styles.min.css">
+		<link rel="stylesheet"  href="css/bootstrap.min.css">
+		<link rel="stylesheet"  href="css/style.css">
+		<link rel="stylesheet"  href="css/m-styles.min.css">
 
 		<script src="js/jquery-2.1.3.js"></script>
 		<script src="js/detectmobilebrowser.js"></script>
@@ -160,7 +160,7 @@
 			                                    <label for="username" class="col-md-3 control-label">Username</label>
 			                                    <div class="col-md-9" style="height:69px;">
 			                                    	<div class="col-md-12">
-			                                        	<input type="text" class="form-control" name="username" placeholder="User name" value=${username}>
+			                                        	<input type="text" class="form-control" name="username" placeholder="User name" value="${username}">
 			                                        </div>
 			                                        <div class="col-md-12">
 			                                        	<div style="text-align:left;"><span class="message">${usernameError}</span></div>	
@@ -173,7 +173,7 @@
 			                                    <label for="firstname" class="col-md-3 control-label">First Name</label>
 			                                    <div class="col-md-9" style="height:69px;">
 			                                    	<div class="col-md-12">
-			                                        	<input type="text" class="form-control" name="firstname" placeholder="First Name" value=${firstname}>
+			                                        	<input type="text" class="form-control" name="firstname" placeholder="First Name" value="${firstname}">
 			                                        </div>
 			                                        <div class="col-md-12">
 			                                        	<div style="text-align:left;"><span class="message">${firstnameError}</span></div>
@@ -187,7 +187,7 @@
 			                                    <label for="lastname" class="col-md-3 control-label">Last Name</label>
 			                                    <div class="col-md-9" style="height:69px;">
 			                                    	<div class="col-md-12">
-			                                        	<input type="text" class="form-control" name="lastname" placeholder="Last Name" value=${lastname}>
+			                                        	<input type="text" class="form-control" name="lastname" placeholder="Last Name" value="${lastname}">
 			                                        </div>
 			                                        <div class="col-md-12">
 			                                        	<div style="text-align:left;"><span class="message">${lastnameError}</span></div>
@@ -201,7 +201,7 @@
 			                                    <label for="password" class="col-md-3 control-label">Password</label>
 			                                    <div class="col-md-9" style="height:69px;">
 			                                    	<div class="col-md-12">
-			                                        	<input type="password" class="form-control" id="password" name="password" placeholder="Password" value=${password}>
+			                                        	<input type="password" class="form-control" id="password" name="password" placeholder="Password" value="${password}">
 			                                        </div>
 			                                        <div class="col-md-12">
 			                                        	<div style="text-align:left;"><span class="message">${passwordError}</span></div>
@@ -228,7 +228,7 @@
 			                                    <label for="email" class="col-md-3 control-label">Email</label>
 			                                    <div class="col-md-9" style="height:69px;">
 			                                    	<div class="col-md-12" >
-			                                        	<input type="text" class="form-control" name="email" placeholder="Email" value=${email}>
+			                                        	<input type="text" class="form-control" name="email" placeholder="Email" value="${email}">
 			                                        </div>
 			                                        <div class="col-md-12">
 			                                        	<div style="text-align:left;"><span class="message">${emailError}</span></div>	

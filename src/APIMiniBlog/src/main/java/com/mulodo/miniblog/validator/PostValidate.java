@@ -47,14 +47,15 @@ public class PostValidate
         if (!isValid) {
             // check if have error, add message error to listmessage
             listMessage.add(new Message(Constraints.CODE_2503));
-        } else {
-            // check valid length of string
-            isValid = ValidatorUtils.isValidLength(content, 1, 3000);
-            if (!isValid) {
-                // check if have error, add message error to listmessage
-                listMessage.add(new Message(Constraints.CODE_2505));
-            }
         }
+//            else {
+//            // check valid length of string
+//            isValid = ValidatorUtils.isValidLength(content, 1, 3000);
+//            if (!isValid) {
+//                // check if have error, add message error to listmessage
+//                listMessage.add(new Message(Constraints.CODE_2505));
+//            }
+//        }
 
         // check null empty or white space if string
         isValid = ValidatorUtils.isNotNullNotEmptyNotWhiteSpace(title);
@@ -136,13 +137,6 @@ public class PostValidate
         if (!isValid) {
             // check if have error, add message error to listmessage
             listMessage.add(new Message(Constraints.CODE_2503));
-        } else {
-            // check valid length of string
-            isValid = ValidatorUtils.isValidLength(content, 1, 3000);
-            if (!isValid) {
-                // check if have error, add message error to listmessage
-                listMessage.add(new Message(Constraints.CODE_2505));
-            }
         }
 
         // check null empty or white space if string

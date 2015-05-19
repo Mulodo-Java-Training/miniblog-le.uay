@@ -4,6 +4,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+
 
 public class SpringApplicationContext implements ApplicationContextAware
 {
@@ -25,9 +27,9 @@ public class SpringApplicationContext implements ApplicationContextAware
      */
     public static Object getBean(String beanName)
     {
-        // if have no current application context, set new application contenxt
+        // if have no current application context, set new  application contenxt
         if (requestContext == null) {
-            requestContext = new ClassPathXmlApplicationContext("classpath:/WEB-INF/applicationContext.xml");
+            requestContext = new ClassPathXmlApplicationContext("file:src/main/webapp/WEB-INF/applicationContext.xml");
         }
         return requestContext.getBean(beanName);
     }

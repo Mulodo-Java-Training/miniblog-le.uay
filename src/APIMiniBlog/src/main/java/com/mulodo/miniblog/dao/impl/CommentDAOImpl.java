@@ -63,11 +63,11 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
             session = this.sessionFactory.getCurrentSession();
 
             Criteria criteria = session.createCriteria(Comment.class, "comment");
-            
+
             // create inner join with user table
             criteria.createAlias("user", "us");
-            
-            //get specific column 
+
+            // get specific column
             criteria.setProjection(Projections.projectionList()
                     .add(Projections.property("id").as("id"))
                     .add(Projections.property("content").as("content"))
@@ -80,7 +80,7 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
             criteria.createAlias("post", "pt");
             // set post_id condition
             criteria.add(Restrictions.eq("pt.id", post_id));
-            // if user is not owner post, get only post have active status 
+            // if user is not owner post, get only post have active status
             if (!isOwnerPost) {
                 criteria.add(Restrictions.eq("pt.status", Constraints.POST_ACTIVE));
             }
@@ -91,7 +91,7 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
             // declare list comments
             List<Comment> listComments = new ArrayList<Comment>();
             if (!criteria.list().isEmpty()) {
-                
+
                 // get list data to list object
                 List<Object[]> result = criteria.list();
                 Comment comment = null;
@@ -141,7 +141,7 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
             session = this.sessionFactory.getCurrentSession();
 
             Criteria criteria = session.createCriteria(Comment.class, "comment");
-            
+
             // create inner join with user table
             criteria.createAlias("user", "us");
             criteria.setProjection(Projections.projectionList().add(Projections.property("id"))
@@ -156,32 +156,35 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
             criteria.createAlias("post", "pt");
             // create inner join with user table from post table
             criteria.createAlias("post.user", "pu");
-            
+
             if (isOwnerUser) {
-                //if get all comment for currnet login user, set user_id to condition
+                // if get all comment for currnet login user, set user_id to
+                // condition
                 // between post and user table
                 Criterion criterionPostUserActive = Restrictions.eq("pu.id", user_id);
-                // set condition status active for other post that user is not owner
+                // set condition status active for other post that user is not
+                // owner
                 Criterion criterionCurrentActive = Restrictions.eq("pt.status",
                         Constraints.POST_ACTIVE);
-                // set condition get all comment of current login user and comment of post active
+                // set condition get all comment of current login user and
+                // comment of post active
                 criteria.add(Restrictions.or(criterionPostUserActive, criterionCurrentActive));
             } else {
                 // if not current login user, get all commet from post active
                 criteria.add(Restrictions.eq("pt.status", Constraints.POST_ACTIVE));
             }
 
-            // set order comment by created time 
+            // set order comment by created time
             criteria.addOrder(Order.desc("created_at"));
 
             List<Comment> listComments = new ArrayList<Comment>();
             if (!criteria.list().isEmpty()) {
-                
+
                 // get list data to list object (result)
                 List<Object[]> result = criteria.list();
                 Comment comment = null;
                 for (Iterator<Object[]> it = result.iterator(); it.hasNext();) {
-                    
+
                     // get every array object in result, and transfer to comment
                     Object[] myResult = (Object[]) it.next();
                     comment = new Comment();
@@ -191,7 +194,7 @@ public class CommentDAOImpl extends GenericDAOImpl<Comment> implements CommentDA
                     comment.setModified_at((Date) myResult[3]);
                     comment.setUser(new User((int) myResult[4], (String) myResult[5],
                             (int) myResult[6]));
-                    
+
                     // add comment to list comments
                     listComments.add(comment);
                     logger.info("Comment in get all commente for user :" + comment.getId());

@@ -144,7 +144,7 @@ public class PostDAOImpl extends GenericDAOImpl<Post> implements PostDAO
                     
                     //add post to list post
                     listPost.add(post);
-                    logger.info("Comment in get all commente for user :" + post.getId());
+                    logger.info("Comment in get all comment for user :" + post.getId());
                 }
                 return listPost;
             } else {

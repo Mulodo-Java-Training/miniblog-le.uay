@@ -110,13 +110,13 @@ import com.mulodo.miniblog.exeption.HandlerException;
         try {
 
 <span class="fc" id="L112">            this.genericType = (Class&lt;T&gt;) GenericTypeResolver.resolveTypeArgument(getClass(),</span>
-<span class="fc" id="L113">                    GenericDAOImpl.class);</span>
+                    GenericDAOImpl.class);
 <span class="fc" id="L114">            session = this.sessionFactory.getCurrentSession();</span>
 
 <span class="fc" id="L116">            T p = (T) session.load(this.genericType, id);</span>
 <span class="pc bpc" id="L117" title="1 of 2 branches missed.">            if (p != null) {</span>
 <span class="fc" id="L118">                session.delete(p);</span>
-<span class="fc" id="L119">            } else {</span>
+            } else {
 <span class="nc" id="L120">                return false;</span>
             }
 
@@ -144,7 +144,7 @@ import com.mulodo.miniblog.exeption.HandlerException;
     {
         try {
 <span class="fc" id="L146">            this.genericType = (Class&lt;T&gt;) GenericTypeResolver.resolveTypeArgument(getClass(),</span>
-<span class="fc" id="L147">                    GenericDAOImpl.class);</span>
+                    GenericDAOImpl.class);
 <span class="fc" id="L148">            session = this.sessionFactory.getCurrentSession();</span>
 <span class="fc" id="L149">            T p = (T) session.get(this.genericType, id);</span>
 <span class="fc bfc" id="L150" title="All 2 branches covered.">            if (p != null) {</span>

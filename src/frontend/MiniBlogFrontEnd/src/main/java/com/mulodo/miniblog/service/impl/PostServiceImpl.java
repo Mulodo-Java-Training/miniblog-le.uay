@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,7 +37,7 @@ public class PostServiceImpl implements PostService {
 			String description) {
 
 		restTemplate = new RestTemplate();
-
+		
 		ResponseData responseData = null;
 
 		HttpHeaders headers = new HttpHeaders();
@@ -76,17 +78,24 @@ public class PostServiceImpl implements PostService {
 		headers.setContentType(mediaType);
 
 		String requestBody = "title=" + title + "&content=" + content;
+		
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+		map.add("title", title);
+		map.add("content", content); 
+		
+//		HttpEntity<String> request = new HttpEntity<String>(requestBody,
+//				headers);
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 
-		HttpEntity<String> request = new HttpEntity<String>(requestBody,
-				headers);
-
+		System.out.println("requestBody = "+requestBody);
 		restTemplate.getMessageConverters().add(
 				new MappingJackson2HttpMessageConverter());
 		try {
 
-			responseEntity = restTemplate
-					.exchange(Constraints.ROOT_URL + "posts/add",
-							HttpMethod.POST, request, ResponseData.class);
+//			responseEntity = restTemplate
+//					.exchange(Constraints.ROOT_URL + "posts/add",
+//							HttpMethod.POST, request, ResponseData.class);
+			responseEntity = restTemplate.postForEntity(Constraints.ROOT_URL+"posts/add", request, ResponseData.class); 
 			responseData = new ResponseData();
 			responseData = responseEntity.getBody();
 
@@ -137,17 +146,18 @@ public class PostServiceImpl implements PostService {
 		restTemplate = new RestTemplate();
 
 		ResponseData responseData = null;
-
+		
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(Constraints.ACCESS_KEY, accessKey);
 		headers.setContentType(mediaType);
 
-		String requestBody = "id=" + postId + "&title=" + title + "&content="
-				+ content;
-
-		HttpEntity<String> request = new HttpEntity<String>(requestBody,
-				headers);
-
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+		map.add("title", title);
+		map.add("content", content); 
+		
+//		HttpEntity<String> request = new HttpEntity<String>(requestBody,
+//				headers);
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 		restTemplate.getMessageConverters().add(
 				new MappingJackson2HttpMessageConverter());
 		try {
@@ -271,7 +281,6 @@ public class PostServiceImpl implements PostService {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-
 		return responseData;
 	}
 	

@@ -3,39 +3,34 @@
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.mulodo.miniblog.rest.security.SpringApplicationContext;
 import com.mulodo.miniblog.service.CommentService;
 import com.mulodo.miniblog.service.PostService;
 import com.mulodo.miniblog.service.TokenService;
 import com.mulodo.miniblog.service.UserService;
 
-public class ApplicationContextUtils
+<span class="nc" id="L11">public class ApplicationContextUtils</span>
 {
-    private ApplicationContext appContext;
+<span class="nc" id="L13">    private static ApplicationContext appContext = new ClassPathXmlApplicationContext(</span>
+            &quot;classpath:/WEB-INF/applicationContext.xml&quot;);
 
-<span class="nc" id="L16">    public ApplicationContextUtils(){</span>
-//        appContext = new ClassPathXmlApplicationContext(
-//                &quot;classpath:/WEB-INF/applicationContext.xml&quot;);
-<span class="nc" id="L19">    }</span>
-    
     public static TokenService getTokenServiceDataSource()
     {
-<span class="fc" id="L23">        return (TokenService) SpringApplicationContext.getBean(&quot;tokenService&quot;);</span>
+<span class="nc" id="L18">        return (TokenService) appContext.getBean(&quot;tokenService&quot;);</span>
     }
 
     public static UserService getUserServiceDataSource()
     {
-<span class="fc" id="L28">        return (UserService) SpringApplicationContext.getBean(&quot;userService&quot;);</span>
+<span class="nc" id="L23">        return (UserService) appContext.getBean(&quot;userService&quot;);</span>
     }
 
     public static PostService getPostServiceDataSource()
     {
-<span class="fc" id="L33">        return (PostService) SpringApplicationContext.getBean(&quot;postService&quot;);</span>
+<span class="nc" id="L28">        return (PostService) appContext.getBean(&quot;postService&quot;);</span>
     }
 
     public static CommentService getCommentServiceDataSource()
     {
-<span class="fc" id="L38">        return (CommentService) SpringApplicationContext.getBean(&quot;commentService&quot;);</span>
+<span class="nc" id="L33">        return (CommentService) appContext.getBean(&quot;commentService&quot;);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>
