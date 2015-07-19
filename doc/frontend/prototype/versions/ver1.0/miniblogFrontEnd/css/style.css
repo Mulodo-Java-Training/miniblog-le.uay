@@ -1,0 +1,175 @@
+#header{
+	background-color: #9fc78a;
+	height:56px;
+
+}
+
+#container{
+	background-color: #EEEEEE;  
+    min-height: 100%;
+}
+
+html, body {
+    height: 100%;
+}
+
+#header-button a{
+	color: white;
+	font-size: 20;
+}
+
+/*css login*/
+#login-form{
+	margin-top: 50px;
+}
+
+.panel-heading {
+    padding: 5px 15px;
+}
+
+.panel-footer {
+	padding: 1px 15px;
+	color: #A0A0A0;
+}
+
+.profile-img {
+	margin: 0 auto 10px;
+	display: block;
+}
+
+#group-input-message{
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+
+#group-input-message div div{
+	margin: 0px;
+	padding: 0px;
+	padding-right: 20px;
+	color: red;	
+
+}
+
+#group-input-message div div p{
+	margin-left: 10px;
+}
+
+#group-input-message div{
+	margin: 0px;
+	padding: 0px;
+	color: red;
+
+}
+
+/*content*/
+#body-content{
+	width: 80%;
+	margin: 0 auto;
+}
+
+#content-posts{
+	margin-top:15px
+}
+
+#post-style p:first-child{
+	font-weight: bold;
+}
+
+#post-style p:nth-child(2){
+	color:#b5b5b5;
+	font-size: 12px;
+}
+
+#post-style p:nth-child(3){
+	text-align: justify;
+    text-justify: inter-word;
+}
+
+#post-content p{
+	text-align: justify;
+    text-justify: inter-word;
+}
+
+#post-content div:first-child label{
+	font-weight: bold;
+}
+
+#post-content div:nth-child(2){
+	color:#b5b5b5;
+	font-size: 12px;
+}
+
+#pagination{
+	text-align: center;
+}
+
+#body-profile{
+	box-shadow: 3px 3px 5px 6px #ccc;
+	background-color: white;
+	text-align: center;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	margin:0 auto;
+	width: 400px;
+	display: block;
+	margin-top: 30px;
+}
+
+#body-profile div{
+	margin-top: 7px;
+
+}
+ 
+#body-profile div div:nth-child(odd){
+	text-align: right;
+	float: left;	
+	color: #686b6b;
+}
+
+
+
+#body-profile div div:nth-child(even){
+	text-align: left;
+	list-style: none;
+	color: #adb1b2;
+	border-bottom: solid 1px #dacfc0;
+ }
+
+#blog-name{
+	text-align: center;
+	margin-top: 20px;
+	font-size: 20px;
+	color: #9fc78a;
+}
+
+#add-post div div:first-child label{
+	display: block;
+    text-align: right;
+    line-height: 150%;
+    font-size: .85em;
+}
+
+#add-post div div:nth-child(2) input{
+	width: 100%;
+}
+#add-post div div:nth-child(2) textarea{
+	width: 100%;
+	height: 250px;
+}
+
+#dataTable tr, td p:nth-child(odd){
+	color: #333333;
+	font-size: 14px;
+	margin-bottom: 2px;
+	text-align: justify;
+    text-justify: inter-word;
+}
+
+#dataTable tr, td p:nth-child(even){
+	color:#b5b5b5;
+	font-size: 12px;
+}
+
+a {
+    text-decoration: none !important;
+}

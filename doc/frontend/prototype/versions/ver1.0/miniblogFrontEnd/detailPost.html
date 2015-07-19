@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="
+">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Detail post page</title>
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" type="type/css" href="css/bootstrap.min.css">
+        <link rel="stylesheet" type="type/css" href="css/style.css">
+        <link rel="stylesheet" type="type/css" href="css/m-styles.min.css">
+
+        <script src="js/jquery-2.1.3.js"></script>
+        <script src="js/detectmobilebrowser.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.bootpag.min.js"></script>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                if($.browser.mobile)
+                {
+                    $('#body-content').css('width','100%');
+                }
+            });
+        </script>
+    </head>
+    <body>
+
+        <div class="container" style="margin:0 auto;background-color:#EEEEEE; min-height:100%">
+                
+            <div class="row" id="header" >
+                <!-- Fixed navbar -->
+                <nav class="navbar navbar-default navbar-fixed-top" id="header">
+                    <div class="container" >
+                        <div class="navbar-header" id="header-button">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" >
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="#">Mini Blog</a>
+                        </div>
+                        <div id="navbar" class="navbar-collapse collapse" style="background-color: #9fc78a;">
+                            
+                                <ul class="nav navbar-nav">
+                                    <li class="active"><a href="#">Main page</a></li>
+                                    <li id="header-button"><a href="#">My blog</a></li>
+                                    <li id="header-button"><a href="#">Add post</a></li>
+                                </ul>
+                                
+                                <form class="navbar-form" style=" display:inline-block;" method="get" id="search-form" name="search-form">
+                                    <div class="input-group" style="width:270px;">
+                                        <input type="text" style="border-radius: 0px;" class="form-control" placeholder="username, firstname, lastname" id="query"  name="query" value="">
+                                        <div class="input-group-btn">
+                                            <button type="submit" style="border-radius: 0px;" class="btn btn-danger">
+                                                <span class="glyphicon glyphicon-search"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>       
+                                
+                            
+                                <ul class="nav navbar-nav navbar-right" >
+                                    <li id="header-button"><a href="profile.html">Uay Le U</a></li>
+                                    <li id="header-button"><a href="homepage.html">Logout</a></li>
+                                </ul>    
+                            
+                        </div>
+                    </div>
+                    
+                </nav>
+            </div>
+            
+            <div class="row" id="body-content">
+
+                <div class="row" style="margin-top:50px">
+                    <ul class="breadcrumb" style="border-radius: 0px;">
+                        <li><a href="#">Main page</a></li>
+                        <li class="active"><a href="#">Detail post page</a></li>
+                        
+                    </ul>
+                </div>
+
+                <div class="row" id="blog-name" style="margin-bottom:20px;margin-top:10px">
+                    <label>Detail post</label>    
+                </div>
+                
+                <div class="row" style="height:400px;" id="post-content">
+                    
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 " >
+                        <label>Software prototyping</label>        
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <p >Date : 2015/02/03 12:15:20, Author: <a href="#">Uay Le U</a></p>
+                    </div>    
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <p>
+                            Software prototyping is the activity of creating prototypes of software applications, i.e., incomplete versions of the software program being developed. It is an activity that can occur in software development and is comparable to prototyping as known from other fields, such as mechanical engineering or manufacturing.
+
+                            A prototype typically simulates only a few aspects of, and may be completely different from, the final product.
+
+                            Prototyping has several benefits: The software designer and implementer can get valuable feedback from the users early in the project. The client and the contractor can compare if the software made matches the software specification, according to which the software program is built. It also allows the software engineer some insight into the accuracy of initial project estimates and whether the deadlines and milestones proposed can be successfully met. The degree of completeness and the techniques used in the prototyping have been in development and debate since its proposal in the early 1970s.[6]
+                            The original purpose of a prototype is to allow users of the software to evaluate developers' proposals for the design of the eventual product by actually trying them out, rather than having to interpret and evaluate the design based on descriptions. Prototyping can also be used by end users to describe and prove requirements that have not been considered, and that can be a key factor in the commercial relationship between developers and their clients.[1] Interaction design in particular makes heavy use of prototyping with that goal.
+
+                            This process is in contrast with the 1960s and 1970s monolithic development cycle of building the entire program first and then working out any inconsistencies between design and implementation, which led to higher software costs and poor estimates of time and cost.[citation needed] The monolithic approach has been dubbed the "Slaying the (software) Dragon" technique, since it assumes that the software designer and developer is a single hero who has to slay the entire dragon alone. Prototyping can also avoid the great expense and difficulty of changing a finished software product.
+
+                            The practice of prototyping is one of the points Frederick P. Brooks makes in his 1975 book The Mythical Man-Month and his 10-year anniversary article No Silver Bullet.
+
+                            An early example of large-scale software prototyping was the implementation of NYU's Ada/ED translator for the Ada programming language.[2] It was implemented in SETL with the intent of producing an executable semantic model for the Ada language, emphasizing clarity of design and user interface over speed and efficiency. The NYU Ada/ED system was the first validated Ada implementation, certified on April 11, 1983.[
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                            
+                        </div>
+                        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                            
+                            <table class="table " id="dataTable" >
+                                <colgroup>
+                                    <col style="width:100%">
+                                </colgroup>  
+                                
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <p>Software Prototype is the fist step before Engineerer start coding step.</p>
+                                            <p>
+                                                Date : 2015/02/03 12:15:20, Author: 
+                                                <a href="#">Uay Le U</a>
+                                            </p>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>Software Prototype is the fist step before Engineerer start coding step. Using wireframe for designing prototype.
+                                            Wireframe is differrent with prototype.
+                                            </p>
+                                            <p>
+                                                Date : 2015/02/03 12:15:20, Author: 
+                                                <a href="#">Uay Le U</a>
+                                            </p>
+
+                                        </td>
+                                        <td>
+                                            <p>
+                                                <a class="glyphicon glyphicon-pencil" onclick=""></a>
+                                                &nbsp;&nbsp;
+                                                <a class="glyphicon glyphicon-trash" href="postdetail.html" ></a>
+                                            </p>
+                                        </td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>Software Prototype is the fist step before Engineerer start coding step.</p>
+                                            <p>
+                                                Date : 2015/02/03 12:15:20, Author: 
+                                                <a href="#">Uay Le U</a>
+                                            </p>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <form method="POST" action="" accept-charset="UTF-8"
+                                            role="form" class="form-signin" name="comment">
+                                                <input name="articles_id" type="text" value="${post.id}"
+                                                    required hidden="true">
+                                                <textarea name="description" class="panel-body" rows="auto"
+                                                    cols="90" placeholder="Your comment..."></textarea>
+                                                <input class="btn btn-primary " type="submit" value="Add"
+                                                    name="add" style="float: right" />
+                                        </form>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        
+                                    </tr>
+                                    
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
